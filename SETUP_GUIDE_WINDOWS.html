@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SAMS – Windows 10 Setup Guide</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; color: #1a1a1a; background: #f8f9fa; }
+  .page { max-width: 860px; margin: 0 auto; padding: 32px 24px; }
+  h1 { font-size: 26px; color: #1F3A5F; margin-bottom: 4px; }
+  .subtitle { color: #6b7280; font-size: 13px; margin-bottom: 28px; }
+  h2 { font-size: 16px; color: #1F3A5F; margin: 28px 0 10px; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px; }
+  h3 { font-size: 13px; font-weight: 600; color: #374151; margin: 14px 0 6px; }
+  p { color: #374151; line-height: 1.6; margin-bottom: 8px; }
+  .step { background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; }
+  .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .step-num { width: 32px; height: 32px; background: #1F3A5F; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; flex-shrink: 0; }
+  .step-title { font-size: 15px; font-weight: 700; color: #111; }
+  .step-sub { font-size: 11px; color: #9ca3af; }
+  code { background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 6px; font-family: 'Courier New', monospace; font-size: 12px; color: #be185d; }
+  pre { background: #1e293b; color: #e2e8f0; padding: 14px 16px; border-radius: 8px; font-size: 12px; line-height: 1.6; overflow-x: auto; margin: 8px 0; font-family: 'Courier New', monospace; }
+  pre .comment { color: #64748b; }
+  pre .cmd { color: #86efac; }
+  pre .val { color: #fbbf24; }
+  .note { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 10px 14px; margin: 8px 0; font-size: 12px; color: #92400e; }
+  .success { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 10px 14px; margin: 8px 0; font-size: 12px; color: #166534; }
+  .error { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 10px 14px; margin: 8px 0; font-size: 12px; color: #991b1b; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+  th { background: #1F3A5F; color: white; padding: 8px 10px; text-align: left; }
+  td { padding: 7px 10px; border-bottom: 1px solid #f3f4f6; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-green { background: #d1fae5; color: #065f46; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  ul { padding-left: 20px; margin: 6px 0; }
+  ul li { margin-bottom: 4px; color: #374151; line-height: 1.5; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cred-box { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 14px 16px; }
+  .cred-box h3 { color: #0369a1; margin-bottom: 8px; }
+  .cred-row { display: flex; gap: 6px; align-items: center; margin-bottom: 4px; font-size: 12px; }
+  .cred-label { color: #6b7280; width: 70px; flex-shrink: 0; }
+  .cred-val { font-family: monospace; font-weight: 600; color: #1F3A5F; background: white; padding: 2px 8px; border-radius: 4px; border: 1px solid #e0f2fe; }
+  @media print { body { background: white; } .page { padding: 10px; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>🎓 SAMS Setup Guide</h1>
+  <p class="subtitle">Student Admission Management System &nbsp;|&nbsp; Windows 10 Home Edition &nbsp;|&nbsp; Using pgAdmin 4</p>
+
+  <!-- Requirements -->
+  <h2>What You Need to Install</h2>
+  <div class="step">
+    <p>You only need two things. pgAdmin 4 means PostgreSQL is already installed ✓</p>
+    <table>
+      <thead><tr><th>Software</th><th>Why</th><th>Download</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Node.js 20 LTS</strong></td><td>Runs the backend server and frontend build tool</td><td>nodejs.org/en/download → Windows Installer (.msi)</td><td><span class="badge badge-red">Must install</span></td></tr>
+        <tr><td><strong>PostgreSQL</strong></td><td>Database</td><td>Already installed (pgAdmin 4 is here)</td><td><span class="badge badge-green">Already have it ✓</span></td></tr>
+      </tbody>
+    </table>
+    <div class="note">⚠️ When installing Node.js, tick <strong>"Add to PATH"</strong> — this is checked by default. After installing, open a new Command Prompt and type <code>node --version</code> to confirm.</div>
+  </div>
+
+  <!-- Step 1 -->
+  <h2>Step 1 — Create the Database in pgAdmin 4</h2>
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div><div class="step-title">Open pgAdmin 4 and create the database</div><div class="step-sub">Takes about 2 minutes</div></div>
+    </div>
+
+    <h3>Option A — Using the Query Tool (recommended)</h3>
+    <ol style="padding-left:20px; margin: 8px 0; line-height: 2">
+      <li>Open <strong>pgAdmin 4</strong></li>
+      <li>In the left tree, right-click <strong>PostgreSQL</strong> → <strong>Query Tool</strong></li>
+      <li>Paste the SQL below and click ▶ (Execute / F5)</li>
+    </ol>
+
+    <pre><span class="comment">-- Run this entire block in pgAdmin Query Tool:</span>
+<span class="cmd">CREATE DATABASE</span> sams_db;
+<span class="cmd">CREATE USER</span> sams_user <span class="cmd">WITH PASSWORD</span> <span class="val">'Sams@2026!'</span>;
+<span class="cmd">GRANT ALL PRIVILEGES ON DATABASE</span> sams_db <span class="cmd">TO</span> sams_user;
+
+<span class="comment">-- Connect to the new database, then run:</span>
+\<span class="cmd">c</span> sams_db
+<span class="cmd">GRANT ALL ON SCHEMA</span> public <span class="cmd">TO</span> sams_user;
+<span class="cmd">ALTER DEFAULT PRIVILEGES IN SCHEMA</span> public
+  <span class="cmd">GRANT ALL ON TABLES TO</span> sams_user;
+<span class="cmd">ALTER DEFAULT PRIVILEGES IN SCHEMA</span> public
+  <span class="cmd">GRANT ALL ON SEQUENCES TO</span> sams_user;</pre>
+
+    <div class="note">💡 The <code>\c sams_db</code> command only works in psql terminal. In pgAdmin Query Tool, after running the first 3 lines, change the database dropdown from <strong>postgres</strong> to <strong>sams_db</strong>, then run the last 3 lines.</div>
+
+    <h3>Option B — GUI method</h3>
+    <ol style="padding-left:20px; margin: 8px 0; line-height: 2">
+      <li>Right-click <strong>Databases</strong> → Create → Database → Name: <code>sams_db</code> → Save</li>
+      <li>Right-click <strong>Login/Group Roles</strong> → Create → Login/Group Role<br>
+          Name: <code>sams_user</code> | Password: <code>Sams@2026!</code> | Privileges: Can login ✓ → Save</li>
+      <li>Right-click <strong>sams_db</strong> → Properties → Security → Add <code>sams_user</code> with <strong>ALL</strong> → Save</li>
+    </ol>
+
+    <div class="success">✓ When done, you should see <strong>sams_db</strong> in the Databases list in pgAdmin.</div>
+  </div>
+
+  <!-- Step 2 -->
+  <h2>Step 2 — Configure the Backend .env File</h2>
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div><div class="step-title">Create the backend environment file</div><div class="step-sub">Tells the app how to connect to your database</div></div>
+    </div>
+
+    <p>Inside the <code>sams-fullstack\backend</code> folder, create a file named exactly <code>.env</code> (no other name, just <code>.env</code>). Paste this content:</p>
+
+    <pre>PORT=5000
+NODE_ENV=development
+
+<span class="comment"># --- Database ---</span>
+DB_HOST=localhost
+DB_PORT=<span class="val">5432</span>
+DB_NAME=sams_db
+DB_USER=sams_user
+DB_PASSWORD=<span class="val">Sams@2026!</span>
+
+<span class="comment"># --- JWT Secret (keep this private) ---</span>
+JWT_SECRET=sams_local_dev_secret_key_change_this_in_production_min64chars_2026xx
+JWT_EXPIRES_IN=8h
+JWT_REFRESH_EXPIRES_IN=7d
+
+<span class="comment"># --- Files ---</span>
+UPLOAD_DIR=./uploads
+MAX_FILE_SIZE_MB=10
+
+<span class="comment"># --- CORS ---</span>
+CLIENT_URL=http://localhost:5173
+
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX=500</pre>
+
+    <div class="note">⚠️ If your PostgreSQL runs on a different port (check pgAdmin → server properties), change <code>DB_PORT</code>. Default is <code>5432</code>.<br><br>
+    If you used a different password in Step 1, update <code>DB_PASSWORD</code> to match.</div>
+
+    <h3>How to create a .env file in Windows</h3>
+    <ol style="padding-left:20px; margin:6px 0; line-height:2">
+      <li>Open the <code>backend</code> folder in File Explorer</li>
+      <li>Right-click empty space → New → Text Document</li>
+      <li>Name it <code>.env</code> — Windows may warn about removing the extension, click <strong>Yes</strong></li>
+      <li>Open it with Notepad and paste the content above</li>
+      <li>File → Save</li>
+    </ol>
+    <div class="note">💡 Alternative: Open Command Prompt in the backend folder and run: <code>copy NUL .env</code> — then edit with Notepad.</div>
+  </div>
+
+  <!-- Step 3 -->
+  <h2>Step 3 — Install Dependencies</h2>
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div><div class="step-title">Run 2_install_dependencies.bat</div><div class="step-sub">Double-click the file — takes 2–5 minutes</div></div>
+    </div>
+    <p>In the <code>sams-fullstack</code> folder, double-click <strong>2_install_dependencies.bat</strong></p>
+    <p>This runs <code>npm install</code> in both the backend and frontend folders.</p>
+    <div class="success">✓ Done when you see "Dependencies installed successfully!"</div>
+    <div class="error">❌ If it says "node is not recognized" — Node.js isn't installed or PATH wasn't set. Reinstall Node.js with "Add to PATH" checked and restart your computer.</div>
+  </div>
+
+  <!-- Step 4 -->
+  <h2>Step 4 — Create Database Tables</h2>
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div><div class="step-title">Run 3_run_migration_and_seed.bat</div><div class="step-sub">Creates all 12 tables + demo accounts</div></div>
+    </div>
+    <p>Double-click <strong>3_run_migration_and_seed.bat</strong></p>
+    <div class="success">✓ Done when you see the demo account credentials printed.</div>
+    <div class="error">❌ If migration fails with "password authentication failed" — check DB_PASSWORD in <code>backend\.env</code> matches what you set in Step 1.</div>
+    <div class="error">❌ If it says "connection refused" — PostgreSQL service isn't running. Open Services (Win+R → services.msc) and start <strong>postgresql-x64-16</strong> (or your version).</div>
+
+    <h3>Verify in pgAdmin 4</h3>
+    <p>After running, refresh your <strong>sams_db</strong> in pgAdmin → Schemas → public → Tables. You should see 12 tables:</p>
+    <pre>audit_log, refresh_tokens, student_addresses, student_china_experience,
+student_documents, student_education, student_financial, student_language,
+student_notes, student_passport, student_work_experience, students, users</pre>
+  </div>
+
+  <!-- Step 5 -->
+  <h2>Step 5 — Start the Application</h2>
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div><div class="step-title">Double-click START_SAMS.bat (every time)</div><div class="step-sub">Opens backend + frontend, then launches browser</div></div>
+    </div>
+    <p>Double-click <strong>START_SAMS.bat</strong> — two black windows will open and your browser will go to <code>http://localhost:5173</code></p>
+    <div class="note">⚠️ Keep both black windows open while using SAMS. Closing them stops the servers.</div>
+
+    <h3>Login Credentials</h3>
+    <div class="two-col">
+      <div class="cred-box">
+        <h3>👑 Admin Account</h3>
+        <div class="cred-row"><span class="cred-label">Email:</span><span class="cred-val">admin@sams.edu</span></div>
+        <div class="cred-row"><span class="cred-label">Password:</span><span class="cred-val">Admin@2026!</span></div>
+        <div class="cred-row"><span class="cred-label">Access:</span><span>Full access, user management</span></div>
+      </div>
+      <div class="cred-box">
+        <h3>👤 Staff Account</h3>
+        <div class="cred-row"><span class="cred-label">Email:</span><span class="cred-val">staff@sams.edu</span></div>
+        <div class="cred-row"><span class="cred-label">Password:</span><span class="cred-val">Staff@2026!</span></div>
+        <div class="cred-row"><span class="cred-label">Access:</span><span>Students, documents, notes</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What's in SAMS -->
+  <h2>What You Can Do in SAMS</h2>
+  <div class="step">
+    <table>
+      <thead><tr><th>Feature</th><th>How to Use</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Add a Student</strong></td><td>Sidebar → New Student → fill all 10 sections → Save Draft as you go</td></tr>
+        <tr><td><strong>View All Students</strong></td><td>Sidebar → Student Records — search by name, passport, email, university</td></tr>
+        <tr><td><strong>Filter by Status</strong></td><td>Dashboard → click a stat card (Total / Pending / Approved / Documents Verified)</td></tr>
+        <tr><td><strong>Upload Documents</strong></td><td>Student form → Documents section → Upload button next to each document</td></tr>
+        <tr><td><strong>Export / Print</strong></td><td>Student detail page → Export button → opens printable page → Ctrl+P</td></tr>
+        <tr><td><strong>Change Status</strong></td><td>Student detail page → Status dropdown (top right)</td></tr>
+        <tr><td><strong>Add Staff Notes</strong></td><td>Student detail page → Notes tab → type and click Add Note</td></tr>
+        <tr><td><strong>Export All Students</strong></td><td>Settings → "Export All Students" button → printable list</td></tr>
+        <tr><td><strong>Add Staff Users</strong></td><td>Sidebar → User Management (Admin only) → Add User</td></tr>
+        <tr><td><strong>Change Password</strong></td><td>Sidebar → Settings → Change Password section</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Troubleshooting -->
+  <h2>Troubleshooting</h2>
+  <div class="step">
+    <table>
+      <thead><tr><th>Problem</th><th>Solution</th></tr></thead>
+      <tbody>
+        <tr><td>Browser shows "Cannot connect"</td><td>Wait 10 seconds — the servers take a moment to start. Try refreshing.</td></tr>
+        <tr><td>Login says "Invalid email or password"</td><td>Make sure seed ran (Step 4). Check for typos. Try admin@sams.edu exactly.</td></tr>
+        <tr><td>Backend window shows "password authentication failed"</td><td>DB_PASSWORD in backend\.env doesn't match what you set in pgAdmin. Fix and restart backend.</td></tr>
+        <tr><td>Backend window shows "ECONNREFUSED"</td><td>PostgreSQL isn't running. Open Services → start postgresql service.</td></tr>
+        <tr><td>npm install fails with "ENOENT"</td><td>You're running the bat file from wrong folder. Make sure you run it from inside <code>sams-fullstack\</code></td></tr>
+        <tr><td>Port 5000 already in use</td><td>Change PORT=5001 in backend\.env and update VITE proxy in vite.config.ts target.</td></tr>
+        <tr><td>Port 5173 already in use</td><td>Vite will auto-try 5174. Check the Frontend window for the actual URL.</td></tr>
+        <tr><td>File upload fails</td><td>Check the <code>backend\uploads</code> folder exists. If not, create it manually.</td></tr>
+        <tr><td>Tables not showing in pgAdmin</td><td>Right-click Tables → Refresh. Run 3_run_migration_and_seed.bat again.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PostgreSQL Service -->
+  <h2>Starting PostgreSQL if it's not running</h2>
+  <div class="step">
+    <p>If you see "connection refused" errors, PostgreSQL service may have stopped.</p>
+    <h3>Method 1 — Services window</h3>
+    <ol style="padding-left:20px;line-height:2">
+      <li>Press <strong>Win + R</strong>, type <code>services.msc</code>, press Enter</li>
+      <li>Find <strong>postgresql-x64-16</strong> (or your version)</li>
+      <li>Right-click → Start</li>
+    </ol>
+    <h3>Method 2 — Command Prompt (as Administrator)</h3>
+    <pre><span class="cmd">net start</span> postgresql-x64-16</pre>
+    <div class="note">Replace <code>16</code> with your PostgreSQL version number (check what version pgAdmin shows).</div>
+  </div>
+
+  <!-- Daily use -->
+  <h2>Daily Use — After First Setup</h2>
+  <div class="step">
+    <div class="success">
+      Every day, just double-click <strong>START_SAMS.bat</strong> — that's it!<br><br>
+      Make sure PostgreSQL is running first (pgAdmin 4 should be able to connect).
+    </div>
+  </div>
+
+  <div style="margin-top:32px; padding:16px; background:#f3f4f6; border-radius:8px; text-align:center; font-size:11px; color:#9ca3af;">
+    SAMS v2.0 &nbsp;|&nbsp; Student Admission Management System &nbsp;|&nbsp; Windows 10 Setup Guide
+  </div>
+</div>
+</body>
+</html>
