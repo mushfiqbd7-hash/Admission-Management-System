@@ -65,7 +65,7 @@ async function seed() {
         email: 'rahul.singh@example.com', mobile: '+91 99001 23456',
         target_university: 'Fudan University',
         degree_level: 'phd', passport_number: 'EF3456789',
-        application_status: 'documents_verified', priority: 'normal',
+        application_status: 'processing', priority: 'normal',
         gender: 'male'
       },
       {
