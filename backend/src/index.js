@@ -72,7 +72,7 @@ app.use(limiter);
 
 const authLimiter = rateLimit({
   windowMs: parseInt(process.env.AUTH_RATE_LIMIT_WINDOW_MS || '900000', 10),
-  max: parseInt(process.env.AUTH_RATE_LIMIT_MAX || '100', 10),
+  max: parseInt(process.env.AUTH_RATE_LIMIT_MAX || '1000', 10),
   message: { error: 'Too many login attempts. Try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
