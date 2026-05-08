@@ -1,4 +1,4 @@
-// backend/src/index.js – SAMS Backend Entry Point
+// backend/src/index.js - SAMS Backend Entry Point
 
 import express from 'express';
 import { createServer } from 'http';
@@ -30,8 +30,8 @@ const __dirname = dirname(__filename);
 const app = express();
 
 /*
-  Important for Render / Vercel / proxy deployment.
-  This helps Express and express-rate-limit detect the real client IP correctly.
+  Required for Render / Vercel proxy deployment.
+  This helps Express and express-rate-limit read the real client IP correctly.
 */
 app.set('trust proxy', 1);
 
@@ -40,6 +40,12 @@ const PORT = process.env.PORT || 5000;
 
 /* Socket.IO */
 initSocket(httpServer);
+
+/* Helper: safe env number parser */
+const parseEnvInt = (value, fallback) => {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isNaN(parsed) ? fallback : parsed;
+};
 
 /* Upload folders */
 const uploadDir = process.env.UPLOAD_DIR || join(__dirname, '../uploads');
@@ -66,7 +72,7 @@ const multerUpload = multer({
     },
   }),
   limits: {
-    fileSize: 20 * 1024 * 1024, // 20MB
+    fileSize: 20 * 1024 * 1024,
   },
 });
 
@@ -101,21 +107,20 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 
 /*
   Rate limiter fix:
-  - General limiter is high enough for normal app use.
   - Login has its own safer limiter.
-  - Successful login does NOT count against login limit.
-  - This helps fix the "second login must wait 15 minutes" problem.
+  - Successful login does not count against login limit.
+  - This fixes the issue where second login waits 15 minutes.
 */
 const generalLimiter = rateLimit({
-  windowMs: Number.parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
-  max: Number.parseInt(process.env.RATE_LIMIT_MAX || '1000', 10),
+  windowMs: parseEnvInt(process.env.RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000),
+  max: parseEnvInt(process.env.RATE_LIMIT_MAX, 1000),
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => req.path === '/api/auth/login',
+  skip: (req) =>
+    req.path === '/api/auth/login' || req.path === '/api/auth/login/',
   message: {
     error: 'Too many requests. Please try again later.',
   },
@@ -123,7 +128,7 @@ const generalLimiter = rateLimit({
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: Number.parseInt(process.env.LOGIN_RATE_LIMIT_MAX || '20', 10),
+  max: parseEnvInt(process.env.LOGIN_RATE_LIMIT_MAX, 20),
   skipSuccessfulRequests: true,
   standardHeaders: true,
   legacyHeaders: false,
@@ -233,7 +238,8 @@ app.get('/api/export/students/csv', authenticate, async (req, res) => {
       'Created Date',
     ];
 
-    const escapeCsv = (value) => `"${String(value ?? '').replace(/"/g, '""')}"`;
+    const escapeCsv = (value) =>
+      `"${String(value ?? '').replace(/"/g, '""')}"`;
 
     const csv = [
       headers.join(','),
@@ -259,7 +265,9 @@ app.get('/api/export/students/csv', authenticate, async (req, res) => {
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader(
       'Content-Disposition',
-      `attachment; filename="${label}_${new Date().toISOString().slice(0, 10)}.csv"`
+      `attachment; filename="${label}_${new Date()
+        .toISOString()
+        .slice(0, 10)}.csv"`
     );
 
     res.send(csv);
