@@ -25,6 +25,10 @@ dotenv.config();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
+
+// Required for Render/proxy deployment so rate limiting sees real client IPs.
+app.set('trust proxy', 1);
+
 const httpServer = createServer(app);
 const PORT = process.env.PORT || 5000;
 
@@ -70,13 +74,7 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-const authLimiter = rateLimit({
-  windowMs: parseInt(process.env.AUTH_RATE_LIMIT_WINDOW_MS || '900000', 10),
-  max: parseInt(process.env.AUTH_RATE_LIMIT_MAX || '1000', 10),
-  message: { error: 'Too many login attempts. Try again later.' },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -101,7 +99,7 @@ app.get('/api/health', async (_req, res) => {
 });
 
 // ── Main API Routes ───────────────────────────────────────────
-app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/students', studentsRoutes);
 app.use('/api/students', docsRoutes);
 app.use('/api/users', usersRoutes);
