@@ -54,8 +54,8 @@ echo.
 echo    http://localhost:5173
 echo.
 echo  Login credentials:
-echo    Admin : admin@sams.edu  /  Admin@2026!
-echo    Staff : staff@sams.edu  /  Staff@2026!
+echo    Admin : your_admin_email_here  /  your_admin_password_here
+echo    Staff : your_staff_email_here  /  your_staff_password_here
 echo.
 echo  API Health check:
 echo    http://localhost:5000/api/health
@@ -73,3 +73,4 @@ timeout /t 2 /nobreak >nul
 start http://localhost:5173
 
 pause
+

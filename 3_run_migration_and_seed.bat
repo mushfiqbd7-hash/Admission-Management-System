@@ -59,9 +59,10 @@ echo  ================================================
 echo.
 echo  Demo accounts created:
 echo.
-echo    Admin  : admin@sams.edu   / Admin@2026!
-echo    Staff  : staff@sams.edu   / Staff@2026!
+echo    Admin  : your_admin_email_here   / your_admin_password_here
+echo    Staff  : your_staff_email_here   / your_staff_password_here
 echo.
 echo  Next step: Run  4_start.bat  to launch the app
 echo.
 pause
+

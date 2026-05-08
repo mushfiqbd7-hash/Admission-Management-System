@@ -81,7 +81,7 @@
 
     <pre><span class="comment">-- Run this entire block in pgAdmin Query Tool:</span>
 <span class="cmd">CREATE DATABASE</span> sams_db;
-<span class="cmd">CREATE USER</span> sams_user <span class="cmd">WITH PASSWORD</span> <span class="val">'Sams@2026!'</span>;
+<span class="cmd">CREATE USER</span> sams_user <span class="cmd">WITH PASSWORD</span> <span class="val">'your_database_password_here'</span>;
 <span class="cmd">GRANT ALL PRIVILEGES ON DATABASE</span> sams_db <span class="cmd">TO</span> sams_user;
 
 <span class="comment">-- Connect to the new database, then run:</span>
@@ -98,7 +98,7 @@
     <ol style="padding-left:20px; margin: 8px 0; line-height: 2">
       <li>Right-click <strong>Databases</strong> → Create → Database → Name: <code>sams_db</code> → Save</li>
       <li>Right-click <strong>Login/Group Roles</strong> → Create → Login/Group Role<br>
-          Name: <code>sams_user</code> | Password: <code>Sams@2026!</code> | Privileges: Can login ✓ → Save</li>
+          Name: <code>sams_user</code> | Password: <code>your_database_password_here</code> | Privileges: Can login ✓ → Save</li>
       <li>Right-click <strong>sams_db</strong> → Properties → Security → Add <code>sams_user</code> with <strong>ALL</strong> → Save</li>
     </ol>
 
@@ -123,7 +123,7 @@ DB_HOST=localhost
 DB_PORT=<span class="val">5432</span>
 DB_NAME=sams_db
 DB_USER=sams_user
-DB_PASSWORD=<span class="val">Sams@2026!</span>
+DB_PASSWORD=<span class="val">your_database_password_here</span>
 
 <span class="comment"># --- JWT Secret (keep this private) ---</span>
 JWT_SECRET=sams_local_dev_secret_key_change_this_in_production_min64chars_2026xx
@@ -200,14 +200,14 @@ student_notes, student_passport, student_work_experience, students, users</pre>
     <div class="two-col">
       <div class="cred-box">
         <h3>👑 Admin Account</h3>
-        <div class="cred-row"><span class="cred-label">Email:</span><span class="cred-val">admin@sams.edu</span></div>
-        <div class="cred-row"><span class="cred-label">Password:</span><span class="cred-val">Admin@2026!</span></div>
+        <div class="cred-row"><span class="cred-label">Email:</span><span class="cred-val">your_admin_email_here</span></div>
+        <div class="cred-row"><span class="cred-label">Password:</span><span class="cred-val">your_admin_password_here</span></div>
         <div class="cred-row"><span class="cred-label">Access:</span><span>Full access, user management</span></div>
       </div>
       <div class="cred-box">
         <h3>👤 Staff Account</h3>
-        <div class="cred-row"><span class="cred-label">Email:</span><span class="cred-val">staff@sams.edu</span></div>
-        <div class="cred-row"><span class="cred-label">Password:</span><span class="cred-val">Staff@2026!</span></div>
+        <div class="cred-row"><span class="cred-label">Email:</span><span class="cred-val">your_staff_email_here</span></div>
+        <div class="cred-row"><span class="cred-label">Password:</span><span class="cred-val">your_staff_password_here</span></div>
         <div class="cred-row"><span class="cred-label">Access:</span><span>Students, documents, notes</span></div>
       </div>
     </div>
@@ -240,7 +240,7 @@ student_notes, student_passport, student_work_experience, students, users</pre>
       <thead><tr><th>Problem</th><th>Solution</th></tr></thead>
       <tbody>
         <tr><td>Browser shows "Cannot connect"</td><td>Wait 10 seconds — the servers take a moment to start. Try refreshing.</td></tr>
-        <tr><td>Login says "Invalid email or password"</td><td>Make sure seed ran (Step 4). Check for typos. Try admin@sams.edu exactly.</td></tr>
+        <tr><td>Login says "Invalid email or password"</td><td>Make sure seed ran (Step 4). Check for typos. Try your_admin_email_here exactly.</td></tr>
         <tr><td>Backend window shows "password authentication failed"</td><td>DB_PASSWORD in backend\.env doesn't match what you set in pgAdmin. Fix and restart backend.</td></tr>
         <tr><td>Backend window shows "ECONNREFUSED"</td><td>PostgreSQL isn't running. Open Services → start postgresql service.</td></tr>
         <tr><td>npm install fails with "ENOENT"</td><td>You're running the bat file from wrong folder. Make sure you run it from inside <code>sams-fullstack\</code></td></tr>
@@ -282,3 +282,4 @@ student_notes, student_passport, student_work_experience, students, users</pre>
 </div>
 </body>
 </html>
+

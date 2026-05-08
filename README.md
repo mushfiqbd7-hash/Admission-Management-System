@@ -36,7 +36,7 @@ cd backend && npm run dev          # :5000
 cd frontend && npm run dev         # :5173
 ```
 
-**Login:** admin@sams.edu / Admin@2026!
+**Login:** your_admin_email_here / your_admin_password_here
 
 ## Docker (Production)
 
@@ -63,3 +63,4 @@ Visit http://localhost
 docker exec sams_db pg_dump -U sams_user sams_db > backup.sql
 docker cp sams_backend:/app/uploads ./uploads_backup
 ```
+
