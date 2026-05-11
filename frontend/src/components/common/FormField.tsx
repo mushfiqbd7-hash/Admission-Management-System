@@ -1,4 +1,4 @@
-// src/components/common/FormField.tsx — Phase 1 Design System
+// src/components/common/FormField.tsx - Phase 1 Design System
 import React from 'react';
 
 interface FieldProps {
@@ -25,7 +25,119 @@ export function FormField({ label, required, error, children, className }: Field
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: boolean;
 }
+
+function formatDateForDisplay(value: unknown): string {
+  if (!value) return '';
+
+  const raw = String(value).trim();
+  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (!match) return raw;
+
+  const [, y, m, d] = match;
+  const date = new Date(Number(y), Number(m) - 1, Number(d));
+
+  if (isNaN(date.getTime())) return raw;
+
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+}
+
+function DateInput({ error, style, disabled, value, onChange, ...props }: InputProps) {
+  const pickerRef = React.useRef<HTMLInputElement | null>(null);
+  const isoValue = typeof value === 'string' ? value : '';
+
+  const openPicker = () => {
+    if (disabled) return;
+
+    const picker = pickerRef.current as
+      | (HTMLInputElement & { showPicker?: () => void })
+      | null;
+
+    if (!picker) return;
+
+    try {
+      if (typeof picker.showPicker === 'function') picker.showPicker();
+      else picker.click();
+    } catch {
+      picker.click();
+    }
+  };
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <input
+        className="sams-input"
+        type="text"
+        value={formatDateForDisplay(isoValue)}
+        placeholder="Date Month Year"
+        readOnly
+        disabled={disabled}
+        onClick={openPicker}
+        onFocus={openPicker}
+        style={{
+          borderColor: error ? '#fca5a5' : undefined,
+          cursor: disabled ? 'not-allowed' : 'pointer',
+          paddingRight: 72,
+          ...style,
+        }}
+      />
+
+      <button
+        type="button"
+        onClick={openPicker}
+        disabled={disabled}
+        style={{
+          position: 'absolute',
+          right: 8,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          height: 28,
+          padding: '0 10px',
+          borderRadius: 8,
+          border: '1px solid var(--border)',
+          background: 'var(--surface-sunken)',
+          color: 'var(--text-secondary)',
+          fontSize: 11,
+          fontWeight: 600,
+          cursor: disabled ? 'not-allowed' : 'pointer',
+          fontFamily: 'var(--font-ui)',
+        }}
+      >
+        Pick
+      </button>
+
+      <input
+        {...props}
+        ref={pickerRef}
+        type="date"
+        value={isoValue}
+        onChange={onChange}
+        disabled={disabled}
+        tabIndex={-1}
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          width: 1,
+          height: 1,
+          opacity: 0,
+          pointerEvents: 'none',
+        }}
+      />
+    </div>
+  );
+}
+
 export function Input({ error, style, ...props }: InputProps) {
+  if (props.type === 'date') {
+    return <DateInput error={error} style={style} {...props} />;
+  }
+
   return (
     <input
       className="sams-input"
@@ -38,6 +150,7 @@ export function Input({ error, style, ...props }: InputProps) {
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   error?: boolean;
 }
+
 export function Select({ error, style, children, ...props }: SelectProps) {
   return (
     <select
@@ -53,6 +166,7 @@ export function Select({ error, style, children, ...props }: SelectProps) {
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   error?: boolean;
 }
+
 export function Textarea({ error, style, ...props }: TextareaProps) {
   return (
     <textarea
@@ -68,6 +182,7 @@ interface SectionProps {
   children: React.ReactNode;
   className?: string;
 }
+
 export function FormSection({ title, children, className }: SectionProps) {
   return (
     <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-xs)' }} className={className}>
@@ -87,7 +202,11 @@ export function Grid2({ children, className }: { children: React.ReactNode; clas
   );
 }
 
-interface BadgeProps { children: React.ReactNode; variant?: 'gray' | 'red' | 'yellow' | 'green' | 'blue' | 'purple'; }
+interface BadgeProps {
+  children: React.ReactNode;
+  variant?: 'gray' | 'red' | 'yellow' | 'green' | 'blue' | 'purple';
+}
+
 const badgeMap: Record<string, string> = {
   gray:   'badge badge-draft',
   red:    'badge badge-rejected',
@@ -96,6 +215,7 @@ const badgeMap: Record<string, string> = {
   blue:   'badge badge-processing',
   purple: 'badge badge-pre_admission',
 };
+
 export function Badge({ children, variant = 'gray' }: BadgeProps) {
   return <span className={badgeMap[variant] || 'badge badge-draft'}>{children}</span>;
 }
