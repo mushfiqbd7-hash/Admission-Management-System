@@ -1,4 +1,4 @@
-﻿// src/components/students/StudentDetailPage.tsx
+// src/components/students/StudentDetailPage.tsx
 import { useState, type ReactNode } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -74,7 +74,7 @@ function InfoRow({
           value ? 'text-slate-900' : 'text-slate-400'
         } ${mono ? 'font-mono' : ''}`}
       >
-        {value || 'â€”'}
+        {value || '—'}
       </div>
     </div>
   );
@@ -247,11 +247,11 @@ export default function StudentDetailPage() {
           <div className="mt-1 text-[13px] text-slate-500">
             App No:{' '}
             <span className="font-mono font-bold text-blue-700">
-              {s.application_number || 'â€”'}
+              {s.application_number || '—'}
             </span>
-            <span className="mx-2">Â·</span>
+            <span className="mx-2">·</span>
             BookOpen:{' '}
-            <span className="font-mono font-bold">{s.passport_number || 'â€”'}</span>
+            <span className="font-mono font-bold">{s.passport_number || '—'}</span>
           </div>
         </div>
 
@@ -390,7 +390,7 @@ export default function StudentDetailPage() {
                     <InfoRow label="Field of Study" value={fmt(e.field_of_study)} />
                     <InfoRow
                       label="Period"
-                      value={[fmtDate(e.start_date), fmtDate(e.end_date)].filter(Boolean).join(' â€“ ')}
+                      value={[fmtDate(e.start_date), fmtDate(e.end_date)].filter(Boolean).join(' – ')}
                     />
                     {e.gpa ? <InfoRow label="GPA" value={fmt(e.gpa)} /> : null}
                   </div>
@@ -447,7 +447,7 @@ export default function StudentDetailPage() {
                   label="Period"
                   value={[fmtDate(china.start_date), fmtDate(china.end_date)]
                     .filter(Boolean)
-                    .join(' â€“ ')}
+                    .join(' – ')}
                 />
               </Section>
             )}
@@ -475,7 +475,7 @@ export default function StudentDetailPage() {
                       label="Period"
                       value={[fmtDate(w.start_date), fmtDate(w.end_date)]
                         .filter(Boolean)
-                        .join(' â€“ ')}
+                        .join(' – ')}
                     />
                     {w.description ? <InfoRow label="Description" value={fmt(w.description)} /> : null}
                   </div>

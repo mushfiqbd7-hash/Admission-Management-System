@@ -1,4 +1,6 @@
-﻿// src/utils/dateFormat.ts
+// src/utils/dateFormat.ts
+
+const EMPTY = String.fromCharCode(8212);
 
 const dateFormatter = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
@@ -38,7 +40,7 @@ function parseDate(value: unknown): Date | null {
 
 export function formatDate(value: unknown): string {
   const date = parseDate(value);
-  return date ? dateFormatter.format(date) : '—';
+  return date ? dateFormatter.format(date) : EMPTY;
 }
 
 export function formatDateOrNull(value: unknown): string | null {
@@ -48,5 +50,5 @@ export function formatDateOrNull(value: unknown): string | null {
 
 export function formatDateTime(value: unknown): string {
   const date = parseDate(value);
-  return date ? dateTimeFormatter.format(date) : '—';
+  return date ? dateTimeFormatter.format(date) : EMPTY;
 }

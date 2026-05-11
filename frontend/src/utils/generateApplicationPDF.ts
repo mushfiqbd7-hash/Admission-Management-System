@@ -1,6 +1,6 @@
-﻿// src/utils/generateApplicationPDF.ts
+// src/utils/generateApplicationPDF.ts
 // Generates a professional PDF of a student application using jsPDF.
-// No backend needed â€” runs entirely in the browser.
+// No backend needed — runs entirely in the browser.
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -9,28 +9,27 @@ import type { StudentDetail } from '@/types';
 import { DEGREE_LABELS, STATUS_LABELS } from '@/types';
 import { formatDate } from '@/utils/dateFormat';
 
-// â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Helpers ──────────────────────────────────────────────────────────────────
 const fmt = (v: unknown): string => {
-  if (v === null || v === undefined || v === '') return 'â€”';
+  if (v === null || v === undefined || v === '') return '—';
   return String(v);
 };
 
 const fmtDate = (d: string | null | undefined): string => {
-  if (!d) return 'â€”';
-  return d.split('T')[0];
+  return formatDate(d);
 };
 
 const sanitize = (s: string): string =>
   s.replace(/[/\\:*?"<>|]/g, '').replace(/\s+/g, '_').trim();
 
-// â”€â”€ Brand colour â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Brand colour ──────────────────────────────────────────────────────────────
 const NAVY: [number, number, number] = [31, 58, 95];
 const LIGHT_GRAY: [number, number, number] = [245, 246, 249];
 const MID_GRAY: [number, number, number] = [156, 163, 175];
 const DARK: [number, number, number] = [17, 24, 39];
 const WHITE: [number, number, number] = [255, 255, 255];
 
-// â”€â”€ Main export â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Main export ───────────────────────────────────────────────────────────────
 export function generateApplicationPDF(data: StudentDetail): void {
   const s    = data.student;
   const p    = data.passport;
@@ -47,13 +46,13 @@ export function generateApplicationPDF(data: StudentDetail): void {
   const permAddr = addr.find(a => a.address_type === 'permanent');
   const currAddr = addr.find(a => a.address_type === 'current');
 
-  // â”€â”€ Filename â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Filename ────────────────────────────────────────────────────────────────
   const passport  = sanitize(s.passport_number || 'NoPassport');
   const name      = sanitize(`${s.given_name || ''} ${s.family_name || ''}`.trim());
   const major     = sanitize(s.intended_major || 'NoMajor');
   const filename  = `${passport}-${name}-${major}.pdf`;
 
-  // â”€â”€ PDF setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── PDF setup ───────────────────────────────────────────────────────────────
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
@@ -62,7 +61,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
   const contentW = pageW - marginL - marginR;
   let y = 0;
 
-  // â”€â”€ Page header (drawn on every page via header hook) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Page header (drawn on every page via header hook) ──────────────────────
   const addPageHeader = () => {
     // Navy bar
     doc.setFillColor(...NAVY);
@@ -83,7 +82,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   };
 
-  // â”€â”€ Section heading helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Section heading helper ──────────────────────────────────────────────────
   const addSection = (title: string): number => {
     // If near bottom, new page
     if (y > pageH - 40) {
@@ -102,7 +101,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     return y;
   };
 
-  // â”€â”€ Two-column field row helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Two-column field row helper ─────────────────────────────────────────────
   const col = contentW / 2 - 2;
 
   const addFields = (fields: [string, string][]) => {
@@ -149,7 +148,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     y += 3;
   };
 
-  // â”€â”€ Single full-width text field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Single full-width text field ────────────────────────────────────────────
   const addFullField = (label: string, value: string) => {
     if (y > pageH - 20) { doc.addPage(); addPageHeader(); y = 28; }
     doc.setFillColor(...LIGHT_GRAY);
@@ -165,13 +164,13 @@ export function generateApplicationPDF(data: StudentDetail): void {
     y += 10;
   };
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════════════════════
   // BUILD PDF
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════════════════════
   addPageHeader();
   y = 28;
 
-  // â”€â”€ Application summary banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Application summary banner ──────────────────────────────────────────────
   if (s.application_number) {
     doc.setFillColor(239, 246, 255);
     doc.rect(marginL, y, contentW, 8, 'F');
@@ -184,13 +183,13 @@ export function generateApplicationPDF(data: StudentDetail): void {
     y += 10;
   }
 
-  // â”€â”€ 1. Personal Info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 1. Personal Info ────────────────────────────────────────────────────────
   addSection('1. Personal Information');
   addFields([
     ['Full Name',       `${fmt(s.given_name)} ${fmt(s.family_name)}`],
     ['Chinese Name',    fmt(s.chinese_name)],
     ['Date of Birth',   fmtDate(s.date_of_birth)],
-    ['Gender',          s.gender ? s.gender.charAt(0).toUpperCase() + s.gender.slice(1) : 'â€”'],
+    ['Gender',          s.gender ? s.gender.charAt(0).toUpperCase() + s.gender.slice(1) : '—'],
     ['Nationality',     fmt(s.nationality)],
     ['Passport No.',    fmt(s.passport_number)],
     ['Email',           fmt(s.email)],
@@ -199,7 +198,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     ['WeChat ID',       fmt(s.wechat_id)],
   ]);
 
-  // â”€â”€ 2. Address â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 2. Address ──────────────────────────────────────────────────────────────
   addSection('2. Address');
   if (permAddr) {
     doc.setFontSize(8);
@@ -239,7 +238,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   }
 
-  // â”€â”€ 3. Passport & Visa â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 3. Passport & Visa ──────────────────────────────────────────────────────
   addSection('3. Passport & Visa');
   if (p) {
     addFields([
@@ -264,7 +263,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   }
 
-  // â”€â”€ 4. Education â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 4. Education ────────────────────────────────────────────────────────────
   addSection('4. Education');
   if (edu.length > 0) {
     autoTable(doc, {
@@ -289,7 +288,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   }
 
-  // â”€â”€ 5. China Experience â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 5. China Experience ─────────────────────────────────────────────────────
   addSection('5. China Experience');
   if (china && china.has_experience) {
     addFields([
@@ -304,7 +303,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     addFields([['Has China Experience', 'No'], ['', '']]);
   }
 
-  // â”€â”€ 6. Financial Supporter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 6. Financial Supporter ──────────────────────────────────────────────────
   addSection('6. Financial Supporter');
   if (f) {
     addFields([
@@ -313,12 +312,12 @@ export function generateApplicationPDF(data: StudentDetail): void {
       ['Occupation',        fmt(f.occupation)],
       ['Annual Income',     f.annual_income_amount
         ? `${f.annual_income_currency || 'USD'} ${Number(f.annual_income_amount).toLocaleString()}`
-        : 'â€”'],
+        : '—'],
       ['Phone',             fmt(f.phone)],
       ['Email',             fmt(f.email)],
       ['Bank Name',         fmt(f.bank_name)],
       ['Account Holder',    fmt(f.account_holder_name)],
-      ['Current Balance',   f.current_balance ? `${f.annual_income_currency || 'USD'} ${Number(f.current_balance).toLocaleString()}` : 'â€”'],
+      ['Current Balance',   f.current_balance ? `${f.annual_income_currency || 'USD'} ${Number(f.current_balance).toLocaleString()}` : '—'],
       ['', ''],
     ]);
   } else {
@@ -327,7 +326,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   }
 
-  // â”€â”€ 7. Language Proficiency â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 7. Language Proficiency ─────────────────────────────────────────────────
   addSection('7. Language Proficiency');
   if (lang.length > 0) {
     autoTable(doc, {
@@ -349,7 +348,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   }
 
-  // â”€â”€ 8. Work Experience â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 8. Work Experience ──────────────────────────────────────────────────────
   addSection('8. Work Experience');
   if (work.length > 0) {
     autoTable(doc, {
@@ -374,24 +373,24 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   }
 
-  // â”€â”€ 9. Application Details â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 9. Application Details ──────────────────────────────────────────────────
   addSection('9. Application Details');
   addFields([
     ['Target University', fmt(s.target_university)],
     ['Intended Major',    fmt(s.intended_major)],
     ['Scholarship Type', fmt((s as unknown as {scholarship_type?:string}).scholarship_type)],
-    ['Degree Level',      s.degree_level ? DEGREE_LABELS[s.degree_level] : 'â€”'],
+    ['Degree Level',      s.degree_level ? DEGREE_LABELS[s.degree_level] : '—'],
     ['Start Term',        fmt(s.intended_start_term)],
     ['Status',            STATUS_LABELS[s.application_status] ?? s.application_status],
-    ['Priority',          s.priority ? s.priority.charAt(0).toUpperCase() + s.priority.slice(1) : 'â€”'],
+    ['Priority',          s.priority ? s.priority.charAt(0).toUpperCase() + s.priority.slice(1) : '—'],
   ]);
 
-  // â”€â”€ 10. Documents Checklist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 10. Documents Checklist ─────────────────────────────────────────────────
   addSection('10. Documents Checklist');
   const docRows = DOCUMENTS_LIST.map(doc => {
     const uploaded = docsMap[doc.key];
     return [
-      uploaded ? 'âœ“' : '',
+      uploaded ? '✓' : '',
       doc.label,
       doc.required ? 'Required' : 'Optional',
     ];
@@ -422,7 +421,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
 
   y = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 8;
 
-  // â”€â”€ Signature block â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Signature block ─────────────────────────────────────────────────────────
   if (y > pageH - 35) { doc.addPage(); addPageHeader(); y = 28; }
   const sigY = y + 20;
   doc.setDrawColor(...MID_GRAY);
@@ -433,20 +432,20 @@ export function generateApplicationPDF(data: StudentDetail): void {
   doc.text('Applicant Signature & Date', marginL, sigY + 5);
   doc.text('Authorised Staff Signature & Date', marginL + 90, sigY + 5);
 
-  // â”€â”€ Footer on every page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Footer on every page ────────────────────────────────────────────────────
   const totalPages = doc.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
     doc.setFontSize(7);
     doc.setTextColor(...MID_GRAY);
     doc.text(
-      `Generated by SAMS â€“ Student Admission Management System   |   ${formatDate(new Date())}`,
+      `Generated by SAMS – Student Admission Management System   |   ${formatDate(new Date())}`,
       marginL, pageH - 6
     );
     doc.text(`Page ${i} of ${totalPages}`, pageW - marginR, pageH - 6, { align: 'right' });
   }
 
-  // â”€â”€ Save â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Save ────────────────────────────────────────────────────────────────────
   doc.save(filename);
 }
 
