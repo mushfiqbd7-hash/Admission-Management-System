@@ -1,4 +1,4 @@
-// src/components/students/StudentDetailPage.tsx
+﻿// src/components/students/StudentDetailPage.tsx
 import { useState, type ReactNode } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -28,6 +28,7 @@ import { STATUS_LABELS, STATUS_COLORS, DEGREE_LABELS } from '@/types';
 import type { StudentDetail, ApplicationStatus } from '@/types';
 import { toast } from 'sonner';
 import { DOCUMENTS_LIST } from '@/utils/constants';
+import { formatDate, formatDateOrNull, formatDateTime } from '@/utils/dateFormat';
 import { generateApplicationPDF } from '@/utils/generateApplicationPDF';
 
 function calcAge(dob?: string | null): number | null {
@@ -53,7 +54,7 @@ function fmt(v: unknown) {
 }
 
 function fmtDate(v: unknown) {
-  return v ? String(v).split('T')[0] : null;
+  return formatDateOrNull(v);
 }
 
 function InfoRow({
@@ -73,7 +74,7 @@ function InfoRow({
           value ? 'text-slate-900' : 'text-slate-400'
         } ${mono ? 'font-mono' : ''}`}
       >
-        {value || '—'}
+        {value || 'â€”'}
       </div>
     </div>
   );
@@ -203,7 +204,7 @@ export default function StudentDetailPage() {
   const age = calcAge(s.date_of_birth);
 
   const dobDisplay = s.date_of_birth
-    ? `${s.date_of_birth.toString().split('T')[0]}${age !== null ? ` (${age})` : ''}`
+    ? `${formatDate(s.date_of_birth)}${age !== null ? ` (${age})` : ''}`
     : null;
 
   const tabs = [
@@ -246,11 +247,11 @@ export default function StudentDetailPage() {
           <div className="mt-1 text-[13px] text-slate-500">
             App No:{' '}
             <span className="font-mono font-bold text-blue-700">
-              {s.application_number || '—'}
+              {s.application_number || 'â€”'}
             </span>
-            <span className="mx-2">·</span>
+            <span className="mx-2">Â·</span>
             BookOpen:{' '}
-            <span className="font-mono font-bold">{s.passport_number || '—'}</span>
+            <span className="font-mono font-bold">{s.passport_number || 'â€”'}</span>
           </div>
         </div>
 
@@ -336,7 +337,7 @@ export default function StudentDetailPage() {
               />
               <InfoRow
                 label="Submitted"
-                value={new Date(s.created_at).toLocaleDateString('en-CA')}
+                value={formatDate(s.created_at)}
               />
             </Section>
 
@@ -389,7 +390,7 @@ export default function StudentDetailPage() {
                     <InfoRow label="Field of Study" value={fmt(e.field_of_study)} />
                     <InfoRow
                       label="Period"
-                      value={[fmtDate(e.start_date), fmtDate(e.end_date)].filter(Boolean).join(' – ')}
+                      value={[fmtDate(e.start_date), fmtDate(e.end_date)].filter(Boolean).join(' â€“ ')}
                     />
                     {e.gpa ? <InfoRow label="GPA" value={fmt(e.gpa)} /> : null}
                   </div>
@@ -446,7 +447,7 @@ export default function StudentDetailPage() {
                   label="Period"
                   value={[fmtDate(china.start_date), fmtDate(china.end_date)]
                     .filter(Boolean)
-                    .join(' – ')}
+                    .join(' â€“ ')}
                 />
               </Section>
             )}
@@ -474,7 +475,7 @@ export default function StudentDetailPage() {
                       label="Period"
                       value={[fmtDate(w.start_date), fmtDate(w.end_date)]
                         .filter(Boolean)
-                        .join(' – ')}
+                        .join(' â€“ ')}
                     />
                     {w.description ? <InfoRow label="Description" value={fmt(w.description)} /> : null}
                   </div>
@@ -603,7 +604,7 @@ export default function StudentDetailPage() {
                   </div>
 
                   <div className="font-mono text-[11px] text-slate-400">
-                    {new Date(n.created_at).toLocaleString()}
+                    {formatDateTime(n.created_at)}
                   </div>
                 </div>
 
