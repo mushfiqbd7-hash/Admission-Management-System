@@ -74,7 +74,7 @@ function InfoRow({
           value ? 'text-slate-900' : 'text-slate-400'
         } ${mono ? 'font-mono' : ''}`}
       >
-        {value || '—'}
+        {value || 'Ã¢â‚¬â€'}
       </div>
     </div>
   );
@@ -247,11 +247,11 @@ export default function StudentDetailPage() {
           <div className="mt-1 text-[13px] text-slate-500">
             App No:{' '}
             <span className="font-mono font-bold text-blue-700">
-              {s.application_number || '—'}
+              {s.application_number || 'Ã¢â‚¬â€'}
             </span>
-            <span className="mx-2">·</span>
+            <span className="mx-2">Ã‚Â·</span>
             BookOpen:{' '}
-            <span className="font-mono font-bold">{s.passport_number || '—'}</span>
+            <span className="font-mono font-bold">{s.passport_number || 'Ã¢â‚¬â€'}</span>
           </div>
         </div>
 
@@ -390,7 +390,7 @@ export default function StudentDetailPage() {
                     <InfoRow label="Field of Study" value={fmt(e.field_of_study)} />
                     <InfoRow
                       label="Period"
-                      value={[fmtDate(e.start_date), fmtDate(e.end_date)].filter(Boolean).join(' – ')}
+                      value={[fmtDate(e.start_date), fmtDate(e.end_date)].filter(Boolean).join(' Ã¢â‚¬â€œ ')}
                     />
                     {e.gpa ? <InfoRow label="GPA" value={fmt(e.gpa)} /> : null}
                   </div>
@@ -438,7 +438,7 @@ export default function StudentDetailPage() {
               </Section>
             )}
 
-            {china?.has_experience && (
+            {china && Boolean(china.has_experience) && (
               <Section title="China Experience" icon={Globe}>
                 <InfoRow label="Institution" value={fmt(china.university_name)} />
                 <InfoRow label="City" value={fmt(china.city)} />
@@ -447,7 +447,7 @@ export default function StudentDetailPage() {
                   label="Period"
                   value={[fmtDate(china.start_date), fmtDate(china.end_date)]
                     .filter(Boolean)
-                    .join(' – ')}
+                    .join(' Ã¢â‚¬â€œ ')}
                 />
               </Section>
             )}
@@ -475,7 +475,7 @@ export default function StudentDetailPage() {
                       label="Period"
                       value={[fmtDate(w.start_date), fmtDate(w.end_date)]
                         .filter(Boolean)
-                        .join(' – ')}
+                        .join(' Ã¢â‚¬â€œ ')}
                     />
                     {w.description ? <InfoRow label="Description" value={fmt(w.description)} /> : null}
                   </div>

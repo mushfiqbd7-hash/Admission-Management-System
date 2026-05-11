@@ -1,3 +1,4 @@
+import type { LucideIcon } from 'lucide-react';
 // src/components/users/UsersPage.tsx
 import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -157,7 +158,7 @@ function StatCard({
 }: {
   label: string;
   value: number;
-  icon: React.ComponentType<{ size?: number; style?: CSSProperties }>;
+  icon: LucideIcon;
   color: string;
   bg: string;
 }) {
@@ -518,7 +519,7 @@ export default function UsersPage() {
 
                           <div style={{ minWidth: 0 }}>
                             <div style={nameTextStyle}>{u.full_name || 'Unnamed User'}</div>
-                            <div style={idTextStyle}>ID: {u.id?.slice(0, 8) || '—'}</div>
+                            <div style={idTextStyle}>ID: {u.id?.slice(0, 8) || 'Ã¢â‚¬â€'}</div>
                           </div>
                         </div>
                       </td>
@@ -766,7 +767,7 @@ export default function UsersPage() {
   );
 }
 
-/* ───────────────────────── Styles ───────────────────────── */
+/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Styles Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 
 const pageStyle: CSSProperties = {
   height: '100%',
