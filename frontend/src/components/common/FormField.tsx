@@ -26,26 +26,6 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: boolean;
 }
 
-function formatDateForDisplay(value: unknown): string {
-  if (!value) return '';
-
-  const raw = String(value).trim();
-  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-
-  if (!match) return raw;
-
-  const [, y, m, d] = match;
-  const date = new Date(Number(y), Number(m) - 1, Number(d));
-
-  if (isNaN(date.getTime())) return raw;
-
-  return new Intl.DateTimeFormat('en-GB', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  }).format(date);
-}
-
 function DateInput({ error, style, disabled, value, onChange, ...props }: InputProps) {
   const pickerRef = React.useRef<HTMLInputElement | null>(null);
   const isoValue = typeof value === 'string' ? value : '';
@@ -72,8 +52,8 @@ function DateInput({ error, style, disabled, value, onChange, ...props }: InputP
       <input
         className="sams-input"
         type="text"
-        value={formatDateForDisplay(isoValue)}
-        placeholder="Date Month Year"
+        value={isoValue}
+        placeholder="YYYY-MM-DD"
         readOnly
         disabled={disabled}
         onClick={openPicker}
@@ -81,34 +61,9 @@ function DateInput({ error, style, disabled, value, onChange, ...props }: InputP
         style={{
           borderColor: error ? '#fca5a5' : undefined,
           cursor: disabled ? 'not-allowed' : 'pointer',
-          paddingRight: 72,
           ...style,
         }}
       />
-
-      <button
-        type="button"
-        onClick={openPicker}
-        disabled={disabled}
-        style={{
-          position: 'absolute',
-          right: 8,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          height: 28,
-          padding: '0 10px',
-          borderRadius: 8,
-          border: '1px solid var(--border)',
-          background: 'var(--surface-sunken)',
-          color: 'var(--text-secondary)',
-          fontSize: 11,
-          fontWeight: 600,
-          cursor: disabled ? 'not-allowed' : 'pointer',
-          fontFamily: 'var(--font-ui)',
-        }}
-      >
-        Pick
-      </button>
 
       <input
         {...props}
