@@ -63,6 +63,19 @@ ensureDir(msgUploadDir);
 ensureDir(sharedDocsDir);
 
 /* Shared document upload config */
+const sharedDocumentFileFilter = (_req, file, cb) => {
+  const allowedExt = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx', '.xls', '.xlsx'];
+  const originalName = file.originalname || '';
+  const dotIndex = originalName.lastIndexOf('.');
+  const ext = dotIndex >= 0 ? originalName.slice(dotIndex).toLowerCase() : '';
+
+  if (allowedExt.includes(ext)) {
+    return cb(null, true);
+  }
+
+  return cb(new Error('Invalid file type. Allowed: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX'));
+};
+
 const multerUpload = multer({
   storage: multer.diskStorage({
     destination: (_req, _file, cb) => cb(null, sharedDocsDir),
@@ -71,6 +84,7 @@ const multerUpload = multer({
       cb(null, `${Date.now()}-${safeName}`);
     },
   }),
+  fileFilter: sharedDocumentFileFilter,
   limits: {
     fileSize: 20 * 1024 * 1024,
   },
