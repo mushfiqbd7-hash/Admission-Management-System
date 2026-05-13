@@ -1,4 +1,4 @@
-// src/components/students/StudentForm.tsx — Phase 3
+// src/components/students/StudentForm.tsx â€” Phase 3
 // ALL logic, mutations, buildPayload, handleSave, handleDocUpload, handleDeleteDoc,
 // handleAddNote, handleSubmitConfirmed are 100% identical to original.
 import { useState, useRef } from 'react';
@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 import { useAuthStore } from '@/store/authStore';
 import { FormSection, Grid2, FormField, Input, Select, Textarea } from '@/components/common/FormField';
 import { ALL_COUNTRIES, ALL_CURRENCIES, DOCUMENTS_LIST } from '@/utils/constants';
-import type { StudentDetail } from '@/types';
+import type { StudentDetail, ApplicationStatus } from '@/types';
 import { STATUS_COLORS, STATUS_LABELS } from '@/types';
 
 const SECTIONS = [
@@ -43,7 +43,7 @@ const emptyEducationRow = (isHighest = false): EducationRow => ({
 
 interface Props { mode: 'create' | 'edit'; initialData?: StudentDetail; studentId?: string; }
 
-// ── Shared radio pill component ──────────────────────────────
+// â”€â”€ Shared radio pill component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function RadioPill({ name, value, checked, label, onChange }: {
   name: string; value: string | boolean; checked: boolean; label: string; onChange: () => void;
 }) {
@@ -64,7 +64,7 @@ function RadioPill({ name, value, checked, label, onChange }: {
   );
 }
 
-// ── Repeatable row card ──────────────────────────────────────
+// â”€â”€ Repeatable row card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function RowCard({ title, onRemove, children }: { title: string; onRemove?: () => void; children: React.ReactNode }) {
   return (
     <div style={{ background: 'var(--surface-sunken)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '16px' }}>
@@ -82,7 +82,7 @@ function RowCard({ title, onRemove, children }: { title: string; onRemove?: () =
   );
 }
 
-// ── Add row button ────────────────────────────────────────────
+// â”€â”€ Add row button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function AddRowBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button type="button" onClick={onClick}
@@ -101,7 +101,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const [step, setStep] = useState(0);
   const [savedId, setSavedId] = useState<string | null>(studentId || null);
 
-  // ── Form state (identical to original) ───────────────────
+  // â”€â”€ Form state (identical to original) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const s = initialData?.student;
   const p = initialData?.passport;
   const f = initialData?.financial;
@@ -134,7 +134,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
   const [educationRows, setEducationRows] = useState<EducationRow[]>(
     (initialData?.education as Array<Record<string,unknown>>)?.length
-      ? (initialData.education as Array<Record<string,unknown>>).map(e => ({
+      ? (initialData?.education as Array<Record<string,unknown>>).map(e => ({
           institution_name: String(e.institution_name||''), country: String(e.country||''),
           degree_obtained: String(e.degree_obtained||''), field_of_study: String(e.field_of_study||''),
           start_date: e.start_date ? String(e.start_date).split('T')[0] : '',
@@ -164,12 +164,12 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
   const [langRows, setLangRows] = useState(
     (initialData?.languages as Array<Record<string,string>>)?.length
-      ? initialData.languages as Array<Record<string,string>>
+      ? initialData?.languages as Array<Record<string,string>>
       : [{ language:'', test_name:'', score:'', test_date:'' }]
   );
   const [workRows, setWorkRows] = useState(
     (initialData?.work as Array<Record<string,string>>)?.length
-      ? initialData.work as Array<Record<string,string>>
+      ? initialData?.work as Array<Record<string,string>>
       : [{ employer:'', position:'', start_date:'', end_date:'', description:'' }]
   );
 
@@ -180,9 +180,9 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const fileRefs = useRef<Record<string, HTMLInputElement|null>>({});
   const [notes, setNotes] = useState('');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
-  const [status, setStatus] = useState(s?.application_status || 'pending');
+  const [status, setStatus] = useState<ApplicationStatus>(s?.application_status || 'pending');
 
-  // ── Mutations (identical to original) ────────────────────
+  // â”€â”€ Mutations (identical to original) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const createMutation = useMutation({
     mutationFn: (data: unknown) => studentsApi.create(data),
     onSuccess: (res) => {
@@ -207,7 +207,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
     onError: () => toast.error('Failed to update student'),
   });
 
-  // ── buildPayload (identical to original) ─────────────────
+  // â”€â”€ buildPayload (identical to original) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const buildPayload = () => ({
     ...personal,
     passport_number: passport.passport_number,
@@ -275,7 +275,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
   const isMutating = createMutation.isPending || updateMutation.isPending;
 
-  // ── Section rendering ─────────────────────────────────────
+  // â”€â”€ Section rendering â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const renderSection = () => {
     switch (SECTIONS[step].id) {
 
@@ -285,7 +285,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
             <Grid2>
               <FormField label="Family Name" required><Input placeholder="Family / Last name" {...P('family_name')} /></FormField>
               <FormField label="Given Name" required><Input placeholder="Given / First name" {...P('given_name')} /></FormField>
-              <FormField label="Chinese Name"><Input placeholder="中文姓名" {...P('chinese_name')} /></FormField>
+              <FormField label="Chinese Name"><Input placeholder="ä¸­æ–‡å§“å" {...P('chinese_name')} /></FormField>
               <FormField label="Date of Birth" required><Input type="date" {...P('date_of_birth')} /></FormField>
               <FormField label="Gender" required>
                 <div style={{ display: 'flex', gap: 20, paddingTop: 6 }}>
@@ -416,10 +416,10 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                     <FormField label="Visa Type" required>
                       <Select value={passport.visa_type} onChange={e => setPassport(p => ({...p, visa_type: e.target.value}))}>
                         <option value="">Select type</option>
-                        <option value="X1">X1 – Long-term Study</option>
-                        <option value="X2">X2 – Short-term Study</option>
-                        <option value="F">F – Non-commercial Visit</option>
-                        <option value="M">M – Business</option>
+                        <option value="X1">X1 â€“ Long-term Study</option>
+                        <option value="X2">X2 â€“ Short-term Study</option>
+                        <option value="F">F â€“ Non-commercial Visit</option>
+                        <option value="M">M â€“ Business</option>
                         <option value="Tourist">Tourist</option>
                       </Select>
                     </FormField>
@@ -513,7 +513,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               <FormField label="Annual Income" required>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <Select style={{ width: 130 }} value={financial.annual_income_currency} onChange={e => setFinancial(p=>({...p,annual_income_currency:e.target.value}))}>
-                    {ALL_CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} – {c.name}</option>)}
+                    {ALL_CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} â€“ {c.name}</option>)}
                   </Select>
                   <Input type="number" placeholder="Amount" value={String(financial.annual_income_amount)} onChange={e => setFinancial(p=>({...p,annual_income_amount:e.target.value}))} />
                 </div>
@@ -583,7 +583,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               </p>
             </div>
           )}
-          <FormSection title={`Documents Checklist — ${Object.keys(uploadedDocs).length}/${DOCUMENTS_LIST.length} uploaded`}>
+          <FormSection title={`Documents Checklist â€” ${Object.keys(uploadedDocs).length}/${DOCUMENTS_LIST.length} uploaded`}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {DOCUMENTS_LIST.map((doc, idx) => {
                 const uploaded = uploadedDocs[doc.key];
@@ -632,9 +632,9 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
           <FormSection title="Application Summary">
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 18 }}>
               {[
-                { label: 'Passport No.', value: passport.passport_number || '—', mono: true },
-                { label: 'Student Name', value: `${personal.given_name} ${personal.family_name}`.trim() || '—' },
-                { label: 'University',   value: personal.target_university || '—' },
+                { label: 'Passport No.', value: passport.passport_number || 'â€”', mono: true },
+                { label: 'Student Name', value: `${personal.given_name} ${personal.family_name}`.trim() || 'â€”' },
+                { label: 'University',   value: personal.target_university || 'â€”' },
               ].map(({ label, value, mono }) => (
                 <div key={label} style={{ background: 'var(--surface-sunken)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '12px 14px' }}>
                   <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 5, fontWeight: 500 }}>{label}</div>
@@ -651,7 +651,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               ].map(([l, v]) => (
                 <div key={l} style={{ display: 'flex', gap: 8, fontSize: 13 }}>
                   <span style={{ width: 140, color: 'var(--text-tertiary)', flexShrink: 0, fontWeight: 500 }}>{l}:</span>
-                  <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{v || '—'}</span>
+                  <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{v || 'â€”'}</span>
                 </div>
               ))}
             </div>
@@ -660,7 +660,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
           <FormSection title="Application Status">
             {canManageStatus ? (
               <FormField label="Set Status" required>
-                <Select value={status} onChange={e => setStatus(e.target.value)}>
+                <Select value={status} onChange={e => setStatus(e.target.value as ApplicationStatus)}>
                   <option value="draft">Draft</option><option value="pending">Pending</option>
                   <option value="approved">Approved</option><option value="revoked">Revoked</option>
                   <option value="processing">Processing</option><option value="pre_admission">Pre Admission</option>
@@ -679,7 +679,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
           {canManageStatus && (
             <FormSection title="Application Notes">
-              <Textarea rows={4} placeholder="Add a note (visible to all roles)…" value={notes} onChange={e => setNotes(e.target.value)} />
+              <Textarea rows={4} placeholder="Add a note (visible to all roles)â€¦" value={notes} onChange={e => setNotes(e.target.value)} />
               {savedId && (
                 <button onClick={handleAddNote} className="btn-ghost" style={{ marginTop: 10, fontSize: 12.5 }}>
                   Add Note
@@ -697,7 +697,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   return (
     <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
 
-      {/* ── Step sidebar ──────────────────────────────────── */}
+      {/* â”€â”€ Step sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div style={{ width: 196, background: 'var(--surface)', borderRight: '1px solid var(--border)', flexShrink: 0, overflowY: 'auto', padding: '14px 10px' }}>
         <p style={{ fontSize: 10.5, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10, padding: '0 6px' }}>
           Sections
@@ -729,7 +729,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
         })}
       </div>
 
-      {/* ── Main area ─────────────────────────────────────── */}
+      {/* â”€â”€ Main area â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
         {/* Section header */}
@@ -758,7 +758,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <button onClick={handleSave} disabled={isMutating} className="btn-ghost" style={{ gap: 6 }}>
               <Save size={13} />
-              {isMutating ? 'Saving…' : 'Save Draft'}
+              {isMutating ? 'Savingâ€¦' : 'Save Draft'}
             </button>
             {step < SECTIONS.length - 1 ? (
               <button onClick={() => setStep(s => s + 1)} className="btn-primary" style={{ gap: 6 }}>
@@ -770,14 +770,14 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#15803d'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#16a34a'; }}>
                 <Send size={13} />
-                {isMutating ? 'Submitting…' : 'Submit Application'}
+                {isMutating ? 'Submittingâ€¦' : 'Submit Application'}
               </button>
             )}
           </div>
         </div>
       </div>
 
-      {/* ── Submit modal (identical logic) ────────────────── */}
+      {/* â”€â”€ Submit modal (identical logic) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {showSubmitModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, backdropFilter: 'blur(4px)' }}>
           <div className="card" style={{ width: 440, padding: '28px 28px 24px', boxShadow: 'var(--shadow-xl)' }}>
@@ -813,7 +813,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               <button onClick={handleSubmitConfirmed} disabled={isMutating}
                 style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 14px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 'var(--radius-md)', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-ui)', opacity: isMutating ? 0.6 : 1 }}>
                 <Send size={13} />
-                {isMutating ? 'Submitting…' : 'Confirm & Submit'}
+                {isMutating ? 'Submittingâ€¦' : 'Confirm & Submit'}
               </button>
             </div>
           </div>

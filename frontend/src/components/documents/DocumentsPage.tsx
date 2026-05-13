@@ -94,19 +94,19 @@ const documentsApi = {
 };
 
 function formatSize(bytes: number): string {
-  if (!bytes) return '—';
+  if (!bytes) return 'â€”';
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function formatDate(value: string): string {
-  if (!value) return '—';
+  if (!value) return 'â€”';
   return new Date(value).toLocaleDateString('en-CA');
 }
 
 function getMimeLabel(mime: string): string {
-  if (!mime) return '—';
+  if (!mime) return 'â€”';
   if (mime === 'application/pdf') return 'PDF';
   if (mime.startsWith('image/')) return mime.split('/')[1]?.toUpperCase() || 'IMAGE';
   if (mime.includes('word')) return 'DOCX';
@@ -483,7 +483,7 @@ export default function DocumentsPage() {
 
       const url = URL.createObjectURL(
         new Blob([res.data], {
-          type: doc.mime_type || res.headers['content-type'],
+          type: String(doc.mime_type || res.headers['content-type'] || 'application/octet-stream'),
         })
       );
 
@@ -510,7 +510,7 @@ export default function DocumentsPage() {
       });
 
       const blob = new Blob([res.data], {
-        type: doc.mime_type || res.headers['content-type'],
+        type: String(doc.mime_type || res.headers['content-type'] || 'application/octet-stream'),
       });
 
       const url = URL.createObjectURL(blob);
@@ -693,7 +693,7 @@ export default function DocumentsPage() {
                     </td>
 
                     <td style={bodyTdStyle}>
-                      <div style={uploadedNameStyle}>{doc.uploaded_by_name || '—'}</div>
+                      <div style={uploadedNameStyle}>{doc.uploaded_by_name || 'â€”'}</div>
 
                       {doc.uploaded_by_role && (
                         <div style={uploadedRoleStyle}>{doc.uploaded_by_role}</div>
@@ -800,7 +800,7 @@ export default function DocumentsPage() {
   );
 }
 
-/* ───────────────────────── Styles ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const pageStyle: CSSProperties = {
   height: '100%',

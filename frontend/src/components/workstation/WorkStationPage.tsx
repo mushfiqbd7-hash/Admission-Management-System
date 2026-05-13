@@ -127,11 +127,11 @@ function getSubmitter(s: WorkStudent) {
     return s.submitted_by_role.charAt(0).toUpperCase() + s.submitted_by_role.slice(1);
   }
 
-  return '—';
+  return 'â€”';
 }
 
 function getDegreeLabel(value?: string) {
-  if (!value) return '—';
+  if (!value) return 'â€”';
   return (DEGREE_LABELS as Record<string, string>)[value] || value;
 }
 
@@ -142,7 +142,7 @@ function TextInputCell({
 }: {
   value?: string;
   placeholder: string;
-  onSave: (value: string) => Promise<void>;
+  onSave: (value: string) => Promise<unknown>;
 }) {
   const [draft, setDraft] = useState(value || '');
   const [saving, setSaving] = useState(false);
@@ -162,7 +162,7 @@ function TextInputCell({
           setSaving(false);
         }
       }}
-      placeholder={saving ? 'Saving…' : placeholder}
+      placeholder={saving ? 'Savingâ€¦' : placeholder}
       style={{
         ...inputStyle,
         opacity: saving ? 0.65 : 1,
@@ -411,7 +411,7 @@ export default function WorkStationPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            placeholder="Search student, passport, app no, university…"
+            placeholder="Search student, passport, app no, universityâ€¦"
             style={searchInputStyle}
           />
 
@@ -438,7 +438,7 @@ export default function WorkStationPage() {
         )}
 
         <div style={recordsTextStyle}>
-          {allStudents.length} visible · {total} workstation records
+          {allStudents.length} visible Â· {total} workstation records
         </div>
       </div>
 
@@ -534,7 +534,7 @@ export default function WorkStationPage() {
                     </td>
 
                     <td style={centerTdStyle}>
-                      <span style={appNoStyle}>{student.application_number || '—'}</span>
+                      <span style={appNoStyle}>{student.application_number || 'â€”'}</span>
                     </td>
 
                     <td style={centerTdStyle}>
@@ -542,11 +542,11 @@ export default function WorkStationPage() {
                     </td>
 
                     <td style={centerTdStyle}>
-                      <div style={mutedTextStyle}>{student.passport_number || '—'}</div>
+                      <div style={mutedTextStyle}>{student.passport_number || 'â€”'}</div>
                     </td>
 
                     <td style={centerTdStyle}>
-                      <div style={mutedTextStyle}>{student.nationality || '—'}</div>
+                      <div style={mutedTextStyle}>{student.nationality || 'â€”'}</div>
                     </td>
 
                     <td style={centerTdStyle}>
@@ -556,17 +556,17 @@ export default function WorkStationPage() {
                     </td>
 
                     <td style={centerTdStyle}>
-                      <div style={mutedTextStyle}>{student.intended_major || '—'}</div>
+                      <div style={mutedTextStyle}>{student.intended_major || 'â€”'}</div>
                     </td>
 
                     <td style={centerTdStyle}>
-                      <div style={mutedTextStyle}>{student.scholarship_type || '—'}</div>
+                      <div style={mutedTextStyle}>{student.scholarship_type || 'â€”'}</div>
                     </td>
 
                     <td style={centerTdStyle}>
                       <TextInputCell
                         value={student.payment_of_application || ''}
-                        placeholder="Payment info…"
+                        placeholder="Payment infoâ€¦"
                         onSave={(value) =>
                           updateRecordMutation.mutateAsync({
                             studentId: student.id,
@@ -579,7 +579,7 @@ export default function WorkStationPage() {
                     <td style={centerTdStyle}>
                       <TextInputCell
                         value={student.application_incharge || ''}
-                        placeholder="Incharge name…"
+                        placeholder="Incharge nameâ€¦"
                         onSave={(value) =>
                           updateRecordMutation.mutateAsync({
                             studentId: student.id,
@@ -711,7 +711,7 @@ export default function WorkStationPage() {
       {/* Footer */}
       <div style={footerStyle}>
         <span style={{ fontSize: 12.5, color: '#64748b', fontWeight: 700 }}>
-          {allStudents.length} visible · {total} workstation records
+          {allStudents.length} visible Â· {total} workstation records
         </span>
 
         {totalPages > 1 && (
@@ -743,7 +743,7 @@ export default function WorkStationPage() {
   );
 }
 
-/* ───────────────────────── Styles ───────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const pageStyle: CSSProperties = {
   display: 'flex',
