@@ -2,8 +2,14 @@
 import { query } from '../config/database.js';
 
 const STATUS_LABELS = {
-  draft: 'Draft', pending: 'Pending Review', approved: 'Approved',
-  rejected: 'Rejected', on_hold: 'On Hold', documents_verified: 'Documents Verified',
+  draft: 'Draft',
+  pending: 'Pending Review',
+  approved: 'Approved',
+  revoked: 'Revoked',
+  processing: 'Processing',
+  pre_admission: 'Pre-Admission',
+  admitted: 'Admitted',
+  rejected: 'Rejected',
 };
 const DEGREE_LABELS = {
   language: 'Language Course', diploma: 'Diploma Degree',
@@ -85,8 +91,10 @@ export const exportStudentPDF = async (req, res) => {
   .status-approved { background: #d1fae5; color: #065f46; }
   .status-rejected { background: #fee2e2; color: #991b1b; }
   .status-draft { background: #f3f4f6; color: #374151; }
-  .status-on_hold { background: #dbeafe; color: #1e40af; }
-  .status-documents_verified { background: #ede9fe; color: #5b21b6; }
+  .status-revoked { background: #f3f4f6; color: #374151; }
+  .status-processing { background: #dbeafe; color: #1e40af; }
+  .status-pre_admission { background: #ede9fe; color: #5b21b6; }
+  .status-admitted { background: #d1fae5; color: #065f46; }
   .doc-table { width: 100%; border-collapse: collapse; }
   .doc-table th { background: #f9fafb; padding: 5px 8px; text-align: left; font-size: 9px; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb; }
   .doc-table td { padding: 5px 8px; border-bottom: 1px solid #f3f4f6; font-size: 10px; }
@@ -148,7 +156,7 @@ export const exportStudentPDF = async (req, res) => {
         <div class="field"><label>Scholarship Type</label><span>${fmt(s.scholarship_type)}</span></div>
         <div class="field"><label>Degree Level</label><span>${s.degree_level ? DEGREE_LABELS[s.degree_level] : '—'}</span></div>
         <div class="field"><label>Start Term</label><span>${fmt(s.intended_start_term)}</span></div>
-        <div class="field"><label>Application Status</label><span><span class="status-badge status-${s.application_status}">${STATUS_LABELS[s.application_status]}</span></span></div>
+        <div class="field"><label>Application Status</label><span><span class="status-badge status-${s.application_status}">${STATUS_LABELS[s.application_status] || s.application_status || "-"}</span></span></div>
         <div class="field"><label>Priority</label><span style="text-transform:capitalize;${s.priority==='high'?'color:#dc2626;font-weight:bold':''}">${fmt(s.priority)}</span></div>
       </div>
     </div>
@@ -273,8 +281,14 @@ export const exportAllStudents = async (req, res) => {
     `, params);
 
     const STATUS_LABELS_MAP = {
-      draft:'Draft',pending:'Pending Review',approved:'Approved',
-      rejected:'Rejected',on_hold:'On Hold',documents_verified:'Documents Verified'
+      draft: 'Draft',
+      pending: 'Pending Review',
+      approved: 'Approved',
+      revoked: 'Revoked',
+      processing: 'Processing',
+      pre_admission: 'Pre-Admission',
+      admitted: 'Admitted',
+      rejected: 'Rejected',
     };
 
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
