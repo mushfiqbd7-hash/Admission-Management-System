@@ -80,6 +80,120 @@ export const register = async (req, res) => {
 };
 
 // ── GET /api/users ──────────────────────────────────────────────────────────
+// -- POST /api/auth/resend-verification --------------------------------------
+// -- GET /api/auth/verify-email ------------------------------------------------
+export const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+
+    if (!token) {
+      return res.status(400).json({ error: 'Verification token is required' });
+    }
+
+    const {
+      rows: [user],
+    } = await query(
+      `
+      SELECT id, is_verified, verification_token_expires_at
+      FROM users
+      WHERE verification_token = $1
+      `,
+      [token]
+    );
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid verification token' });
+    }
+
+    if (user.is_verified) {
+      return res.json({ message: 'Account is already verified. You can log in.' });
+    }
+
+    if (
+      user.verification_token_expires_at &&
+      new Date(user.verification_token_expires_at).getTime() < Date.now()
+    ) {
+      return res.status(400).json({
+        error: 'Verification token has expired. Please request a new verification email.',
+      });
+    }
+
+    await query(
+      `
+      UPDATE users
+      SET is_verified = true,
+          verification_token = NULL,
+          verification_token_expires_at = NULL
+      WHERE id = $1
+      `,
+      [user.id]
+    );
+
+    res.json({ message: 'Email verified successfully. You can now log in.' });
+  } catch (err) {
+    console.error('Verify email error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const resendVerification = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const {
+      rows: [user],
+    } = await query(
+      `
+      SELECT id, email, is_verified
+      FROM users
+      WHERE email = $1
+      `,
+      [normalizedEmail]
+    );
+
+    // Do not reveal whether an email exists.
+    if (!user) {
+      return res.json({
+        message: 'If the account exists and is not verified, a verification email has been sent.',
+      });
+    }
+
+    if (user.is_verified) {
+      return res.json({
+        message: 'This account is already verified. You can log in.',
+      });
+    }
+
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await query(
+      `
+      UPDATE users
+      SET verification_token = $1,
+          verification_token_expires_at = $2
+      WHERE id = $3
+      `,
+      [verificationToken, tokenExpiresAt, user.id]
+    );
+
+    await sendVerificationEmail(normalizedEmail, verificationToken);
+
+    res.json({
+      message: 'Verification email sent. Please check your inbox.',
+    });
+  } catch (err) {
+    console.error('Resend verification error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 export const listUsers = async (req, res) => {
   try {
     if (req.user.role === 'admin') {
