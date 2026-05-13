@@ -1,4 +1,4 @@
-// src/api/client.ts
+﻿// src/api/client.ts
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
@@ -9,14 +9,12 @@ export const api = axios.create({
   withCredentials: true,
 });
 
-// ── Request interceptor – attach token ───────────────────────
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// ── Response interceptor – auto-refresh on 401 ──────────────
 let isRefreshing = false;
 let failedQueue: Array<{ resolve: (v: string) => void; reject: (e: unknown) => void }> = [];
 
@@ -32,7 +30,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const original = error.config;
-
     if (error.response?.status === 401 && !original._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -42,17 +39,14 @@ api.interceptors.response.use(
           return api(original);
         });
       }
-
       original._retry = true;
       isRefreshing = true;
-
       const refreshToken = localStorage.getItem('refreshToken');
       if (!refreshToken) {
         localStorage.clear();
         window.location.href = '/login';
         return Promise.reject(error);
       }
-
       try {
         const { data } = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
         localStorage.setItem('accessToken', data.accessToken);
@@ -68,22 +62,24 @@ api.interceptors.response.use(
         isRefreshing = false;
       }
     }
-
     return Promise.reject(error);
   }
 );
 
-// ── Typed API methods ────────────────────────────────────────
 export const authApi = {
-  login:          (data: { email: string; password: string }) => api.post('/auth/login', data),
-  register:       (data: { full_name: string; email: string; password: string; role: string }) =>
-                  api.post('/auth/register', data),
-  logout:         (refreshToken: string) => api.post('/auth/logout', { refreshToken }),
-  me:             () => api.get('/auth/me'),
-  changePassword: (data: { currentPassword: string; newPassword: string }) =>
-                  api.post('/auth/change-password', data),
-  changeEmail:    (data: { newEmail: string; currentPassword: string }) =>
-                  api.post('/auth/change-email', data),
+  login:                (data: { email: string; password: string }) =>
+                        api.post('/auth/login', data),
+  register:             (data: { full_name: string; email: string; password: string; role: string }) =>
+                        api.post('/auth/register', data),
+  logout:               (refreshToken: string) =>
+                        api.post('/auth/logout', { refreshToken }),
+  me:                   () => api.get('/auth/me'),
+  changePassword:       (data: { currentPassword: string; newPassword: string }) =>
+                        api.post('/auth/change-password', data),
+  verifyEmail:          (token: string) =>
+                        api.get(`/auth/verify-email?token=${token}`),
+  resendVerification:   (email: string) =>
+                        api.post('/auth/resend-verification', { email }),
 };
 
 export const studentsApi = {
@@ -119,14 +115,13 @@ export const messagesApi = {
   markAllNotifsRead: () => api.patch('/notifications/read-all'),
 };
 
-// ── Shared Documents API ────────────────────────────────────
 export const sharedDocsApi = {
-  list:     ()                 => api.get('/shared-documents'),
-  upload:   (data: FormData)   => api.post('/shared-documents', data, {
+  list:    () => api.get('/shared-documents'),
+  upload:  (data: FormData) => api.post('/shared-documents', data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  delete:   (id: string)       => api.delete(`/shared-documents/${id}`),
-  fileUrl:  (id: string)       => `/api/shared-documents/${id}/file`,
+  delete:  (id: string) => api.delete(`/shared-documents/${id}`),
+  fileUrl: (id: string) => `/api/shared-documents/${id}/file`,
 };
 
 export default api;
