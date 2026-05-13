@@ -144,8 +144,7 @@ app.use(generalLimiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-/* Static uploads */
-app.use('/uploads', express.static(uploadDir));
+/* Sensitive uploads are not served publicly. Use authenticated download routes instead. */
 
 /* Health check */
 app.get('/api/health', async (_req, res) => {
