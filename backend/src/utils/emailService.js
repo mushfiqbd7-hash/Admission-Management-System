@@ -2,15 +2,12 @@
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp-mail.outlook.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: false,
+  host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
+  port: parseInt(process.env.SMTP_PORT || '465'),
+  secure: true,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
   },
 });
 
@@ -24,7 +21,6 @@ export async function sendVerificationEmail(email, token) {
   console.log('SMTP_USER:', process.env.SMTP_USER);
   console.log('SMTP_PASS set:', !!process.env.SMTP_PASS);
   console.log('Sending to:', email);
-  console.log('Verify link:', link);
 
   try {
     const info = await transporter.sendMail({
@@ -48,7 +44,6 @@ export async function sendVerificationEmail(email, token) {
     console.error('=== EMAIL SEND FAILED ===');
     console.error('Error code:', err.code);
     console.error('Error message:', err.message);
-    console.error('Full error:', JSON.stringify(err, null, 2));
     throw err;
   }
 }
