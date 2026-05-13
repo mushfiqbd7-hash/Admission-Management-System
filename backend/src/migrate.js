@@ -1,4 +1,5 @@
-// src/migrate.js  – run with: node src/migrate.js
+// src/migrate.js - run with: node src/migrate.js
+
 import { readFileSync, readdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -11,10 +12,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 async function runMigrations() {
   const client = await pool.connect();
-  try {
-    console.log('🔄  Running database migrations...\n');
 
-    // Ensure migration tracking table exists
+  try {
+    console.log('Running database migrations...\n');
+
     await client.query(`
       CREATE TABLE IF NOT EXISTS _migrations (
         filename   VARCHAR(255) PRIMARY KEY,
@@ -22,44 +23,48 @@ async function runMigrations() {
       )
     `);
 
-    // Get all SQL files in order
     const migrationsDir = join(__dirname, '../migrations');
     const files = readdirSync(migrationsDir)
-      .filter(f => f.endsWith('.sql'))
+      .filter((file) => file.endsWith('.sql'))
       .sort();
 
     for (const file of files) {
-      // Skip already-applied migrations
       const { rows } = await client.query(
-        'SELECT filename FROM _migrations WHERE filename = $1', [file]
+        'SELECT filename FROM _migrations WHERE filename = $1',
+        [file]
       );
+
       if (rows.length > 0) {
-        console.log(`  ⏭️   Already applied: ${file}`);
+        console.log(`  SKIP Already applied: ${file}`);
         continue;
       }
 
-      console.log(`  ▶️   Applying: ${file} ...`);
+      console.log(`  APPLY ${file} ...`);
+
       const sql = readFileSync(join(migrationsDir, file), 'utf8');
 
       try {
         await client.query('BEGIN');
         await client.query(sql);
-        await client.query(
-          'INSERT INTO _migrations (filename) VALUES ($1)', [file]
-        );
+        await client.query('INSERT INTO _migrations (filename) VALUES ($1)', [
+          file,
+        ]);
         await client.query('COMMIT');
-        console.log(`  ✅  Done: ${file}`);
+
+        console.log(`  DONE ${file}`);
       } catch (err) {
         await client.query('ROLLBACK');
-        console.error(`  ❌  Failed: ${file}`);
-        console.error(`      ${err.message}`);
-        // Continue with other migrations instead of stopping
+
+        console.error(`  FAILED ${file}`);
+        console.error(`  ${err.message}`);
+
+        throw err;
       }
     }
 
-    console.log('\n✅  Migration run complete.');
+    console.log('\nMigration run complete.');
   } catch (err) {
-    console.error('❌  Fatal migration error:', err.message);
+    console.error('Fatal migration error:', err.message);
     process.exit(1);
   } finally {
     client.release();
