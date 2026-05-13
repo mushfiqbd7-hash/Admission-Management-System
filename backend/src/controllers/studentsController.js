@@ -311,6 +311,7 @@ export const createStudent = async (req, res) => {
       'passport_number',
       'priority',
       'application_status',
+      'application_number',
       'created_by',
     ];
 
@@ -332,6 +333,7 @@ export const createStudent = async (req, res) => {
       n(passport_number),
       priority || 'normal',
       submitStatus,
+      appNum,
       req.user.id,
     ];
 
