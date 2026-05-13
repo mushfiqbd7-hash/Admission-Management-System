@@ -273,6 +273,26 @@ export const createStudent = async (req, res) => {
 
     const hasScholarshipCol = colCheck.length > 0;
 
+    const today = new Date().toISOString().slice(0, 10);
+    const dateStr = today.replace(/-/g, '');
+
+    const {
+      rows: [seqRow],
+    } = await client.query(
+      `
+      INSERT INTO application_number_daily_seq (app_date, last_seq)
+      VALUES ($1, 1)
+      ON CONFLICT (app_date)
+      DO UPDATE SET
+        last_seq = application_number_daily_seq.last_seq + 1,
+        updated_at = NOW()
+      RETURNING last_seq
+      `,
+      [today]
+    );
+
+    const appNum = `${dateStr}-${String(seqRow.last_seq).padStart(4, '0')}`;
+
     const cols = [
       'family_name',
       'given_name',
@@ -291,6 +311,7 @@ export const createStudent = async (req, res) => {
       'passport_number',
       'priority',
       'application_status',
+      'application_number',
       'created_by',
     ];
 
@@ -312,6 +333,7 @@ export const createStudent = async (req, res) => {
       n(passport_number),
       priority || 'normal',
       submitStatus,
+      appNum,
       req.user.id,
     ];
 
@@ -458,35 +480,6 @@ export const createStudent = async (req, res) => {
     );
 
     await client.query('COMMIT');
-
-    try {
-      const today = new Date().toISOString().slice(0, 10);
-      const dateStr = today.replace(/-/g, '');
-
-      const { rows: [cr] } = await query(
-        `SELECT COUNT(*) FROM students WHERE DATE(created_at AT TIME ZONE 'UTC') = $1`,
-        [today]
-      );
-
-      const appNum = `${dateStr}-${String(parseInt(cr.count) || 1).padStart(4, '0')}`;
-
-      await query(
-        `
-        UPDATE students
-        SET application_number = $1
-        WHERE id = $2
-        AND EXISTS (
-          SELECT 1
-          FROM information_schema.columns
-          WHERE table_name='students'
-          AND column_name='application_number'
-        )
-        `,
-        [appNum, sid]
-      ).catch(() => {});
-
-      student.application_number = appNum;
-    } catch (_) {}
 
     res.status(201).json({ message: 'Student created', student });
   } catch (err) {
