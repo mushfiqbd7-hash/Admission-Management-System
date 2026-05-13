@@ -1,4 +1,4 @@
-﻿-- Migration 015: Add email verification fields to users
+-- Migration 015: Add email verification fields to users
 -- Existing users are marked verified so old admin/staff accounts are not locked out.
 
 ALTER TABLE users
