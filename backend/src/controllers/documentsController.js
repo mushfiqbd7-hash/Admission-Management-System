@@ -35,6 +35,25 @@ export const upload = multer({
   limits: { fileSize: (parseInt(process.env.MAX_FILE_SIZE_MB || '10')) * 1024 * 1024 },
 });
 
+const canManageAllDocuments = (role) => ['admin', 'staff'].includes(role);
+
+const canAccessStudentDocuments = async (user, studentId) => {
+  if (canManageAllDocuments(user.role)) return true;
+
+  const { rows } = await query(
+    'SELECT id FROM students WHERE id = $1 AND created_by = $2',
+    [studentId, user.id]
+  );
+
+  return rows.length > 0;
+};
+
+const removeUploadedFileIfNeeded = (file) => {
+  try {
+    if (file?.path) unlinkSync(file.path);
+  } catch (_) {}
+};
+
 export const uploadDocument = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
@@ -42,7 +61,16 @@ export const uploadDocument = async (req, res) => {
     const { id } = req.params;
     const { doc_key, doc_label, is_required } = req.body;
 
-    if (!doc_key) return res.status(400).json({ error: 'doc_key is required' });
+    const hasAccess = await canAccessStudentDocuments(req.user, id);
+    if (!hasAccess) {
+      removeUploadedFileIfNeeded(req.file);
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    if (!doc_key) {
+      removeUploadedFileIfNeeded(req.file);
+      return res.status(400).json({ error: 'doc_key is required' });
+    }
 
     const { rows } = await query(`
       INSERT INTO student_documents
@@ -61,6 +89,7 @@ export const uploadDocument = async (req, res) => {
 
     res.json({ document: rows[0] });
   } catch (err) {
+    removeUploadedFileIfNeeded(req.file);
     console.error('uploadDocument error:', err);
     res.status(500).json({ error: 'Upload failed' });
   }
@@ -69,12 +98,23 @@ export const uploadDocument = async (req, res) => {
 export const deleteDocument = async (req, res) => {
   try {
     const { id, docId } = req.params;
+
+    const hasAccess = await canAccessStudentDocuments(req.user, id);
+    if (!hasAccess) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
     const { rows } = await query(
       'DELETE FROM student_documents WHERE id=$1 AND student_id=$2 RETURNING *',
       [docId, id]
     );
+
     if (!rows[0]) return res.status(404).json({ error: 'Document not found' });
-    try { if (rows[0].file_path) unlinkSync(rows[0].file_path); } catch {}
+
+    try {
+      if (rows[0].file_path) unlinkSync(rows[0].file_path);
+    } catch (_) {}
+
     res.json({ message: 'Document deleted' });
   } catch (err) {
     console.error('deleteDocument error:', err);
@@ -85,12 +125,20 @@ export const deleteDocument = async (req, res) => {
 export const getDocuments = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const hasAccess = await canAccessStudentDocuments(req.user, id);
+    if (!hasAccess) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
     const { rows } = await query(
       'SELECT * FROM student_documents WHERE student_id=$1 ORDER BY doc_key',
       [id]
     );
+
     res.json({ documents: rows });
   } catch (err) {
+    console.error('getDocuments error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
