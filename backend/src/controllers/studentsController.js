@@ -561,7 +561,6 @@ export const updateStudent = async (req, res) => {
       'intended_start_term',
       'passport_number',
       'priority',
-      'application_status',
       'payment_of_application',
       'application_incharge',
       'university_applied',
@@ -591,6 +590,45 @@ export const updateStudent = async (req, res) => {
 
     const updates = [];
     const params = [];
+
+    if (req.body.application_status !== undefined) {
+      const requestedStatus = req.body.application_status;
+
+      const validStatuses = [
+        'draft',
+        'pending',
+        'approved',
+        'revoked',
+        'processing',
+        'pre_admission',
+        'admitted',
+        'rejected',
+      ];
+
+      if (!validStatuses.includes(requestedStatus)) {
+        await client.query('ROLLBACK');
+        return res.status(400).json({ error: 'Invalid status' });
+      }
+
+      if (canSeeAll(req.user.role)) {
+        params.push(requestedStatus);
+        updates.push(`application_status = $${params.length}`);
+      } else {
+        const canSubmitDraft =
+          existing.application_status === 'draft' && requestedStatus === 'pending';
+
+        if (!canSubmitDraft) {
+          await client.query('ROLLBACK');
+          return res.status(403).json({
+            error: 'Students and agents can only submit draft applications for review',
+          });
+        }
+
+        params.push('pending');
+        updates.push(`application_status = $${params.length}`);
+      }
+    }
+
 
     for (const f of fields) {
       if (!dbCols.has(f)) continue;
@@ -832,17 +870,35 @@ export const updateStatus = async (req, res) => {
       return res.status(400).json({ error: 'Invalid status' });
     }
 
-    if (!canSeeAll(req.user.role)) {
-      const { rows: [r] } = await query(
-        'SELECT created_by FROM students WHERE id = $1',
-        [id]
-      );
+    const {
+      rows: [existing],
+    } = await query(
+      'SELECT id, created_by, application_status FROM students WHERE id = $1',
+      [id]
+    );
 
-      if (!r) return res.status(404).json({ error: 'Student not found' });
-      if (r.created_by !== req.user.id) return res.status(403).json({ error: 'Access denied' });
+    if (!existing) {
+      return res.status(404).json({ error: 'Student not found' });
     }
 
-    const { rows: [r] } = await query(
+    if (!canSeeAll(req.user.role)) {
+      if (existing.created_by !== req.user.id) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+
+      const canSubmitDraft =
+        existing.application_status === 'draft' && status === 'pending';
+
+      if (!canSubmitDraft) {
+        return res.status(403).json({
+          error: 'Students and agents can only submit draft applications for review',
+        });
+      }
+    }
+
+    const {
+      rows: [r],
+    } = await query(
       `
       UPDATE students
       SET application_status = $1
@@ -851,8 +907,6 @@ export const updateStatus = async (req, res) => {
       `,
       [status, id]
     );
-
-    if (!r) return res.status(404).json({ error: 'Student not found' });
 
     await query(
       `
@@ -870,6 +924,19 @@ export const updateStatus = async (req, res) => {
         applicationId: id,
         type: 'info',
         message: `Your application status has been updated to "${statusLabel(status)}"`,
+        link: `/students/${id}`,
+      }).catch(() => {});
+    }
+
+    if (
+      existing.application_status === 'draft' &&
+      status === 'pending' &&
+      r.created_by === req.user.id
+    ) {
+      notifyAdminsAndStaff({
+        applicationId: id,
+        type: 'info',
+        message: `New application submitted by ${r.given_name} ${r.family_name}`.trim(),
         link: `/students/${id}`,
       }).catch(() => {});
     }

@@ -107,7 +107,7 @@ export const messagesApi = {
                      api.post('/messages', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
   markRead:          (id: string) => api.patch(`/messages/${id}/read`),
   deleteMessage:     (id: string) => api.delete(`/messages/${id}`),
-  attachmentUrl:     (attId: string) => `/api/messages/attachments/${attId}`,
+  attachmentUrl:     (attId: string) => `${API_URL}/messages/attachments/${attId}`,
   applications:      () => api.get('/messages/applications'),
   notifications:     () => api.get('/notifications'),
   unreadCount:       () => api.get('/notifications/unread-count'),
@@ -121,7 +121,7 @@ export const sharedDocsApi = {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
   delete:  (id: string) => api.delete(`/shared-documents/${id}`),
-  fileUrl: (id: string) => `/api/shared-documents/${id}/file`,
+  fileUrl: (id: string) => `${API_URL}/shared-documents/${id}/file`,
 };
 
 export default api;

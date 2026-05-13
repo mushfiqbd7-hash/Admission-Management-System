@@ -35,14 +35,33 @@ export const login = async (req, res) => {
     }
 
     let valid = false;
+
+    const usesLegacyPlaintext =
+      (!user.password_hash || user.password_hash === 'PLAINTEXT') && user.password;
+
     if (user.password_hash && user.password_hash !== 'PLAINTEXT') {
       valid = await bcrypt.compare(password, user.password_hash);
-    } else if (user.password) {
+    } else if (usesLegacyPlaintext) {
       valid = password === user.password;
     }
 
     if (!valid) {
       return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Auto-upgrade old plaintext accounts after successful login.
+    if (usesLegacyPlaintext) {
+      const upgradedHash = await bcrypt.hash(password, 12);
+
+      await query(
+        `
+        UPDATE users
+        SET password_hash = $1,
+            password = NULL
+        WHERE id = $2
+        `,
+        [upgradedHash, user.id]
+      );
     }
 
     await query('UPDATE users SET last_login = NOW() WHERE id = $1', [user.id]);
@@ -135,12 +154,17 @@ export const changePassword = async (req, res) => {
 
     if (!valid) return res.status(400).json({ error: 'Current password is incorrect' });
 
-    if (user.password_hash && user.password_hash !== 'PLAINTEXT') {
-      const newHash = await bcrypt.hash(newPassword, 12);
-      await query('UPDATE users SET password_hash = $1 WHERE id = $2', [newHash, req.user.id]);
-    } else {
-      await query('UPDATE users SET password = $1 WHERE id = $2', [newPassword, req.user.id]);
-    }
+    const newHash = await bcrypt.hash(newPassword, 12);
+
+    await query(
+      `
+      UPDATE users
+      SET password_hash = $1,
+          password = NULL
+      WHERE id = $2
+      `,
+      [newHash, req.user.id]
+    );
 
     await query('DELETE FROM refresh_tokens WHERE user_id = $1', [req.user.id]);
     res.json({ message: 'Password changed successfully' });
@@ -149,3 +173,5 @@ export const changePassword = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+

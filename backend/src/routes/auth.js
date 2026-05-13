@@ -21,7 +21,7 @@ import { validateRequest } from '../middleware/validate.js';
 
 const router = Router();
 
-// ── Public: login ────────────────────────────────────────────────────────────
+// Public: login
 router.post(
   '/login',
   [
@@ -32,23 +32,28 @@ router.post(
   login
 );
 
-// ── Public: self-registration ────────────────────────────────────────────────
+// Public: self-registration
+// Only student and agent accounts can self-register.
+// Admin/staff accounts must be created by an admin from User Management.
 router.post(
   '/register',
   [
     body('full_name').notEmpty().trim().withMessage('Full name is required'),
     body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
-    body('password').notEmpty().withMessage('Password is required'),
+    body('password')
+      .isLength({ min: 6 })
+      .withMessage('Password must be at least 6 characters'),
     body('role')
-      .isIn(['agent', 'staff', 'student'])
-      .withMessage('Role must be "agent", "staff", or "student"'),
+      .isIn(['agent', 'student'])
+      .withMessage('Role must be "agent" or "student"'),
   ],
   validateRequest,
   register
 );
 
-// ── Public: email verification ───────────────────────────────────────────────
+// Public: email verification
 router.get('/verify-email', verifyEmail);
+
 router.post(
   '/resend-verification',
   [body('email').isEmail().normalizeEmail().withMessage('Valid email is required')],
@@ -56,12 +61,12 @@ router.post(
   resendVerification
 );
 
-// ── Token management ─────────────────────────────────────────────────────────
+// Token management
 router.post('/refresh', refresh);
 router.post('/logout', logout);
 router.get('/me', authenticate, getMe);
 
-// ── Authenticated: change password ───────────────────────────────────────────
+// Authenticated: change password
 router.post(
   '/change-password',
   authenticate,

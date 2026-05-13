@@ -1,4 +1,4 @@
-// backend/src/seed.js
+﻿// backend/src/seed.js
 // Run with: node src/seed.js
 
 import bcrypt from 'bcryptjs';
@@ -27,32 +27,50 @@ async function seed() {
 
     await client.query(
       `
-      INSERT INTO users (email, password_hash, full_name, role, is_active)
-      VALUES ($1, $2, $3, 'admin', true)
+      INSERT INTO users (
+        email,
+        password_hash,
+        password,
+        full_name,
+        role,
+        is_active,
+        is_verified,
+        verification_token,
+        verification_token_expires_at
+      )
+      VALUES ($1, $2, NULL, $3, 'admin', true, true, NULL, NULL)
       ON CONFLICT (email)
       DO UPDATE SET
         password_hash = EXCLUDED.password_hash,
+        password = NULL,
         full_name = EXCLUDED.full_name,
         role = EXCLUDED.role,
-        is_active = true
+        is_active = true,
+        is_verified = true,
+        verification_token = NULL,
+        verification_token_expires_at = NULL
       `,
-      [ADMIN_EMAIL, adminHash, 'System Administrator']
+      [ADMIN_EMAIL.toLowerCase().trim(), adminHash, 'System Administrator']
     );
 
     const {
       rows: [admin],
-    } = await client.query('SELECT id FROM users WHERE email = $1', [
-      ADMIN_EMAIL,
+    } = await client.query('SELECT id, email, is_verified FROM users WHERE email = $1', [
+      ADMIN_EMAIL.toLowerCase().trim(),
     ]);
 
     if (!admin) {
       throw new Error('Admin user was not created correctly');
     }
 
+    if (!admin.is_verified) {
+      throw new Error('Admin user was created but not verified');
+    }
+
     await client.query('COMMIT');
 
     console.log('Seeding complete.');
-    console.log(`Admin account created/updated: ${ADMIN_EMAIL}`);
+    console.log(`Admin account created/updated: ${admin.email}`);
   } catch (err) {
     await client.query('ROLLBACK');
     console.error('Seed failed:', err.message);
