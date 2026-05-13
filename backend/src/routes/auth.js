@@ -1,4 +1,4 @@
-// src/routes/auth.js
+﻿// src/routes/auth.js
 import { Router } from 'express';
 import { body } from 'express-validator';
 
@@ -8,16 +8,20 @@ import {
   logout,
   getMe,
   changePassword,
-  changeEmail,
 } from '../controllers/authController.js';
 
-import { register } from '../controllers/usersController.js';
+import {
+  register,
+  verifyEmail,
+  resendVerification,
+} from '../controllers/usersController.js';
+
 import { authenticate } from '../middleware/auth.js';
 import { validateRequest } from '../middleware/validate.js';
 
 const router = Router();
 
-// ── Public: login ────────────────────────────────────────────
+// ── Public: login ────────────────────────────────────────────────────────────
 router.post(
   '/login',
   [
@@ -28,7 +32,7 @@ router.post(
   login
 );
 
-// ── Public: self-registration ────────────────────────────────
+// ── Public: self-registration ────────────────────────────────────────────────
 router.post(
   '/register',
   [
@@ -43,12 +47,21 @@ router.post(
   register
 );
 
-// ── Token management ─────────────────────────────────────────
+// ── Public: email verification ───────────────────────────────────────────────
+router.get('/verify-email', verifyEmail);
+router.post(
+  '/resend-verification',
+  [body('email').isEmail().normalizeEmail().withMessage('Valid email is required')],
+  validateRequest,
+  resendVerification
+);
+
+// ── Token management ─────────────────────────────────────────────────────────
 router.post('/refresh', refresh);
 router.post('/logout', logout);
 router.get('/me', authenticate, getMe);
 
-// ── Authenticated: change password ───────────────────────────
+// ── Authenticated: change password ───────────────────────────────────────────
 router.post(
   '/change-password',
   authenticate,
@@ -60,18 +73,6 @@ router.post(
   ],
   validateRequest,
   changePassword
-);
-
-// ── Authenticated: change email ───────────────────────────────
-router.post(
-  '/change-email',
-  authenticate,
-  [
-    body('newEmail').isEmail().normalizeEmail().withMessage('Valid email is required'),
-    body('currentPassword').notEmpty().withMessage('Current password is required'),
-  ],
-  validateRequest,
-  changeEmail
 );
 
 export default router;

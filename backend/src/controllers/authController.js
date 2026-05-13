@@ -1,4 +1,4 @@
-// src/controllers/authController.js
+﻿// src/controllers/authController.js
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
@@ -25,14 +25,19 @@ export const login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Support both bcrypt-hashed passwords (admin-seeded) and
-    // plaintext passwords (self-registered Agent / Staff users)
+    // Block login if email not verified
+    if (!user.is_verified) {
+      return res.status(403).json({
+        error: 'Please verify your email address before logging in.',
+        code: 'EMAIL_NOT_VERIFIED',
+        email: user.email,
+      });
+    }
+
     let valid = false;
     if (user.password_hash && user.password_hash !== 'PLAINTEXT') {
-      // Legacy / admin-created users with bcrypt hash
       valid = await bcrypt.compare(password, user.password_hash);
     } else if (user.password) {
-      // Self-registered users with plaintext password
       valid = password === user.password;
     }
 
@@ -40,7 +45,6 @@ export const login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Update last login
     await query('UPDATE users SET last_login = NOW() WHERE id = $1', [user.id]);
 
     const accessToken  = signAccessToken(user.id, user.role);
@@ -105,7 +109,7 @@ export const logout = async (req, res) => {
     res.json({ message: 'Logged out successfully' });
   } catch (err) {
     console.error('Logout error:', err);
-    res.status(500).json({ error: 'Internal server error' });;
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -131,7 +135,6 @@ export const changePassword = async (req, res) => {
 
     if (!valid) return res.status(400).json({ error: 'Current password is incorrect' });
 
-    // For self-registered users keep plaintext; for bcrypt users re-hash
     if (user.password_hash && user.password_hash !== 'PLAINTEXT') {
       const newHash = await bcrypt.hash(newPassword, 12);
       await query('UPDATE users SET password_hash = $1 WHERE id = $2', [newHash, req.user.id]);
@@ -139,63 +142,10 @@ export const changePassword = async (req, res) => {
       await query('UPDATE users SET password = $1 WHERE id = $2', [newPassword, req.user.id]);
     }
 
-    // Invalidate all refresh tokens
     await query('DELETE FROM refresh_tokens WHERE user_id = $1', [req.user.id]);
-
     res.json({ message: 'Password changed successfully' });
   } catch (err) {
     console.error('Change password error:', err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-// ── Change Email ───────────────────────────────────────────────────────────────
-export const changeEmail = async (req, res) => {
-  try {
-    const { newEmail, currentPassword } = req.body;
-
-    if (!newEmail || !currentPassword) {
-      return res.status(400).json({ error: 'Email and current password are required' });
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(newEmail.trim())) {
-      return res.status(400).json({ error: 'Invalid email format' });
-    }
-
-    // Check duplicate
-    const { rows: existing } = await query(
-      'SELECT id FROM users WHERE email = $1 AND id != $2',
-      [newEmail.trim().toLowerCase(), req.user.id]
-    );
-    if (existing.length > 0) {
-      return res.status(409).json({ error: 'This email is already in use by another account' });
-    }
-
-    // Verify current password
-    const { rows } = await query(
-      'SELECT password_hash, password FROM users WHERE id = $1',
-      [req.user.id]
-    );
-    const user = rows[0];
-    let valid = false;
-    if (user.password_hash && user.password_hash !== 'PLAINTEXT') {
-      valid = await bcrypt.compare(currentPassword, user.password_hash);
-    } else if (user.password) {
-      valid = currentPassword === user.password;
-    }
-    if (!valid) return res.status(400).json({ error: 'Current password is incorrect' });
-
-    // Update email
-    await query(
-      'UPDATE users SET email = $1 WHERE id = $2',
-      [newEmail.trim().toLowerCase(), req.user.id]
-    );
-
-    res.json({ message: 'Email updated successfully', email: newEmail.trim().toLowerCase() });
-  } catch (err) {
-    console.error('changeEmail error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
