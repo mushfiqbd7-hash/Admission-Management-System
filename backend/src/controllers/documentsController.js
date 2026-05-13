@@ -32,7 +32,7 @@ const fileFilter = (req, file, cb) => {
 export const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: (parseInt(process.env.MAX_FILE_SIZE_MB || '10')) * 1024 * 1024 },
+  limits: { fileSize: (parseFloat(process.env.MAX_FILE_SIZE_MB || '1.5')) * 1024 * 1024 },
 });
 
 const canManageAllDocuments = (role) => ['admin', 'staff'].includes(role);
