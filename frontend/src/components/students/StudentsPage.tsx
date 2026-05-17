@@ -267,7 +267,7 @@ export default function StudentsPage() {
   const total = data?.pagination?.total ?? 0;
   const totalPages = data?.pagination?.totalPages ?? 1;
   const students = data?.data ?? [];
-  const colCount = canSeeAll ? 10 : 9;
+  const colCount = canSeeAll ? 8 : 7;
 
   return (
     <div style={pageStyle}>
@@ -406,18 +406,19 @@ export default function StudentsPage() {
             <thead>
               <tr>
                 {[
-                  ['App No.', 145],
-                  ...(canSeeAll ? [['Submitted By', 190]] : []),
-                  ['Passport No.', 140],
-                  ['Student', 210],
-                  ['Nationality', 145],
-                  ['University', 180],
-                  ['Degree', 165],
-                  ['Status', 165],
-                  ['Priority', 125],
-                  ['Actions', 120],
+                  ['App No.', 118],
+                  ...(canSeeAll ? [['Submitted By', 158]] : []),
+                  ['Student', 195],
+                  ['Nationality', 100],
+                  ['University', 0],
+                  ['Degree', 128],
+                  ['Status', 128],
+                  ['Actions', 108],
                 ].map(([label, width]) => (
-                  <th key={label as string} style={{ ...thStyle, width: width as number }}>
+                  <th
+                    key={label as string}
+                    style={{ ...thStyle, ...(width ? { width: width as number } : {}) }}
+                  >
                     {label}
                   </th>
                 ))}
@@ -477,22 +478,24 @@ export default function StudentsPage() {
                       )}
 
                       <td style={bodyTdStyle}>
-                        <span style={monoTextStyle}>{student.passport_number || '—'}</span>
-                      </td>
-
-                      <td style={bodyTdStyle}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
                           <div style={studentAvatarStyle}>
                             <UserRound size={15} />
                           </div>
 
-                          <div style={{ minWidth: 0 }}>
+                          <div style={{ minWidth: 0, overflow: 'hidden' }}>
                             <div style={studentNameStyle}>
                               {student.given_name} {student.family_name}
                             </div>
 
                             {student.email && (
                               <div style={smallMutedStyle}>{student.email}</div>
+                            )}
+
+                            {student.passport_number && (
+                              <div style={{ ...smallMutedStyle, fontFamily: 'DM Mono, ui-monospace, monospace' }}>
+                                {student.passport_number}
+                              </div>
                             )}
                           </div>
                         </div>
@@ -518,14 +521,13 @@ export default function StudentsPage() {
                       </td>
 
                       <td style={bodyTdStyle}>
-                        <span style={statusStyle(student.application_status)}>
-                          <span style={statusDot(student.application_status)} />
-                          {statusLabel(student.application_status)}
-                        </span>
-                      </td>
-
-                      <td style={bodyTdStyle}>
-                        <PriorityBadge priority={student.priority} />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'flex-start' }}>
+                          <span style={statusStyle(student.application_status)}>
+                            <span style={statusDot(student.application_status)} />
+                            {statusLabel(student.application_status)}
+                          </span>
+                          <PriorityBadge priority={student.priority} />
+                        </div>
                       </td>
 
                       <td style={lastTdStyle}>
@@ -851,13 +853,14 @@ const filterChipStyle: CSSProperties = {
 const tableWrapStyle: CSSProperties = {
   flex: 1,
   minHeight: 0,
-  overflow: 'auto',
+  overflowY: 'auto',
+  overflowX: 'hidden',
   padding: '0 12px 12px',
 };
 
 const tableStyle: CSSProperties = {
   width: '100%',
-  minWidth: 1480,
+  tableLayout: 'fixed',
   borderCollapse: 'separate',
   borderSpacing: '0 10px',
   fontSize: 13,
@@ -976,7 +979,7 @@ const studentNameStyle: CSSProperties = {
 };
 
 const lineClampStyle: CSSProperties = {
-  maxWidth: 170,
+  maxWidth: '100%',
   fontSize: 12.5,
   fontWeight: 750,
   color: '#475569',
