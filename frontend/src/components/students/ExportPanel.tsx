@@ -82,17 +82,29 @@ function safeParseArray(value: any) {
 }
 
 function getUniversityText(r: any) {
-  const originalUniversity = String(r.target_university || r.university || '');
-  const workstationString = String(r.workstation_universities || '');
-
+  // Prefer the workstation universities array (most complete, de-duplicated)
   const workstationArray = safeParseArray(r.universities)
     .map((u: any) => u?.university_name || u?.name || '')
-    .filter(Boolean)
-    .join('; ');
+    .filter(Boolean);
 
-  return [workstationArray, workstationString, originalUniversity]
-    .filter(Boolean)
-    .join('; ');
+  if (workstationArray.length > 0) return workstationArray.join('; ');
+
+  // Fall back to string-agg version (same data, different shape)
+  if (r.workstation_universities) return String(r.workstation_universities);
+
+  // Last resort: original application field
+  return String(r.target_university || r.university || '');
+}
+
+// Check whether a student row has a given status in ANY of their universities
+function rowHasStatus(r: any, status: StatusKey): boolean {
+  if (status === 'all') return true;
+  const unis = safeParseArray(r.universities);
+  if (unis.length > 0) {
+    return unis.some((u: any) => u?.status === status);
+  }
+  // Fallback for rows without the universities array
+  return r.application_status === status;
 }
 
 function makeFilePart(value: string) {
@@ -182,7 +194,8 @@ function finalFilterRows(
     return baseRows;
   }
 
-  return baseRows.filter((r) => r.application_status === selectedStatus);
+  // Match students who have AT LEAST ONE university with the selected status
+  return baseRows.filter((r) => rowHasStatus(r, selectedStatus));
 }
 
 function doExcel(
@@ -237,7 +250,7 @@ function doExcel(
         esc(getYear(r.created_at)),
         esc(statusLabel(r.application_status)),
         esc(r.priority),
-        esc(r.submitted_by_role || r.submitted_by_name || ''),
+        esc(r.submitted_by_name || r.submitted_by_role || ''),
         esc(new Date(r.created_at).toLocaleDateString('en-CA')),
       ].join(',')
     ),
@@ -356,7 +369,7 @@ function doPDF(
       getYear(r.created_at) || '—',
       statusLabel(r.application_status || '—'),
       r.priority || '—',
-      r.submitted_by_role || r.submitted_by_name || '—',
+      r.submitted_by_name || r.submitted_by_role || '—',
       new Date(r.created_at).toLocaleDateString('en-CA'),
     ]),
     theme: 'striped',
@@ -432,8 +445,12 @@ export default function ExportPanel({ sourceRows = [] }: ExportPanelProps) {
   const apiRows = Array.isArray(exportData) ? exportData : [];
 
   const rows = useMemo(() => {
+    // apiRows (full export) takes priority over sourceRows (current page only).
+    // Process sourceRows first so apiRows overwrite them on conflict.
     const visibleRows = Array.isArray(sourceRows) ? sourceRows : [];
-    return mergeRows([visibleRows, apiRows]);
+    return apiRows.length > 0
+      ? mergeRows([visibleRows, apiRows])  // apiRows win (processed last)
+      : mergeRows([visibleRows]);          // fall back to page data if API not loaded yet
   }, [sourceRows, apiRows]);
 
   const loading = isLoading || isFetching;
@@ -467,9 +484,13 @@ export default function ExportPanel({ sourceRows = [] }: ExportPanelProps) {
 
     out.all = baseRows.length;
 
+    // Count each student under every status they have across all universities
     baseRows.forEach((r) => {
-      const st = r.application_status;
-      if (out[st] !== undefined) out[st] += 1;
+      Object.keys(out).forEach((st) => {
+        if (st !== 'all' && rowHasStatus(r, st as StatusKey)) {
+          out[st] += 1;
+        }
+      });
     });
 
     return out;

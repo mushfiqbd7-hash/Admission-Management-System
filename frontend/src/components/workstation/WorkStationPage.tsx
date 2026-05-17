@@ -381,6 +381,9 @@ export default function WorkStationPage() {
                     <div style={{ fontSize: 24, fontWeight: 950, color: stat.color, lineHeight: 1 }}>
                       {count}
                     </div>
+                    <div style={{ fontSize: 10, color: stat.color, opacity: 0.6, marginTop: 4, fontWeight: 700 }}>
+                      students
+                    </div>
                   </div>
 
                   {isFetching && active && (

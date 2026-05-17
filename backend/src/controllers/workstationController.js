@@ -81,7 +81,14 @@ export const listWorkstationStudents = async (req, res) => {
 
     if (status && WORKSTATION_STATUSES.includes(status)) {
       params.push(status);
-      wheres.push(`COALESCE(primary_wu.status, s.application_status) = $${params.length}`);
+      // Show students who have AT LEAST ONE university with this status
+      wheres.push(`
+        EXISTS (
+          SELECT 1 FROM workstation_universities wu_filter
+          WHERE wu_filter.student_id = s.id
+            AND wu_filter.status = $${params.length}
+        )
+      `);
     }
 
     if (search) {
@@ -221,28 +228,18 @@ export const listWorkstationStudents = async (req, res) => {
       dataParams
     );
 
+    // Count distinct students per status across ALL university rows.
+    // A student with Processing + Pre-Admission + Rejected is counted in all three cards.
     const { rows: statRows } = await query(
       `
       SELECT
-        COALESCE(primary_wu.status, s.application_status) AS application_status,
-        COUNT(DISTINCT s.id)::int AS count
-      FROM students s
-
-      LEFT JOIN LATERAL (
-        SELECT wu.status
-        FROM workstation_universities wu
-        WHERE wu.student_id = s.id
-        ORDER BY wu.position ASC, wu.created_at ASC
-        LIMIT 1
-      ) primary_wu ON true
-
+        wu.status AS application_status,
+        COUNT(DISTINCT wu.student_id)::int AS count
+      FROM workstation_universities wu
       WHERE EXISTS (
-        SELECT 1
-        FROM workstation_universities wu_exists
-        WHERE wu_exists.student_id = s.id
+        SELECT 1 FROM students s WHERE s.id = wu.student_id
       )
-
-      GROUP BY COALESCE(primary_wu.status, s.application_status)
+      GROUP BY wu.status
       `
     );
 
