@@ -146,11 +146,16 @@ export default function StudentDetailPage() {
         responseType: 'blob',
       });
 
-      const url = window.URL.createObjectURL(new Blob([res.data]));
+      // Use the filename from Content-Disposition header (e.g. A12345-John_Smith-CS.zip)
+      const disposition = res.headers['content-disposition'] || '';
+      const match = disposition.match(/filename="?([^";\r\n]+)"?/i);
+      const filename = match?.[1]?.trim() || `documents_${id}.zip`;
+
+      const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
       const link = document.createElement('a');
 
       link.href = url;
-      link.setAttribute('download', `documents_${id}.zip`);
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
       link.remove();

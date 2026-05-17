@@ -187,10 +187,26 @@ export const viewDocument = async (req, res) => {
 
 // ── Export all documents as ZIP (admin/staff only) ────────────────────────────
 // ZIP filename: PassportNumber-StudentName-IntendedMajor.zip
-// Files inside ZIP named by document type, e.g. Passport.jpg, Academic_Transcript.pdf
+// Files inside ZIP: 01_Passport.pdf, 02_Visa_Scan_Copy.jpg, etc.
+
+// Canonical document order (mirrors frontend DOCUMENTS_LIST in constants.ts)
+const DOCUMENTS_ORDER = [
+  { key: 'passport',          label: 'Passport' },
+  { key: 'visa-scan',         label: 'Visa_Scan_Copy' },
+  { key: 'highest-edu-cert',  label: 'Certificate_of_Highest_Education' },
+  { key: 'transcript',        label: 'Transcript_of_Highest_Education' },
+  { key: 'reference-letters', label: 'Two_Reference_Letters' },
+  { key: 'bank-statement',    label: 'Bank_Statement' },
+  { key: 'guarantor-id',      label: 'Valid_ID_or_Guarantor_Passport' },
+  { key: 'criminal-record',   label: 'Non_Criminal_Record_Certificate' },
+  { key: 'photo',             label: 'Photo' },
+  { key: 'study-plan',        label: 'Study_Research_Plan' },
+  { key: 'resume',            label: 'Resume' },
+  { key: 'language-prof',     label: 'Language_Proficiency' },
+  { key: 'extra-curricular',  label: 'Extra_Curricular_Certificate' },
+];
 
 function sanitizeFilename(str) {
-  // Replace unsafe chars with nothing, spaces with underscore
   return (str || '')
     .replace(/[/\\:*?"<>|]/g, '')
     .replace(/\s+/g, '_')
@@ -215,7 +231,7 @@ export const exportDocumentsZip = async (req, res) => {
 
     const student = studentRows[0];
 
-    // Build ZIP filename parts
+    // Build ZIP filename: PassportNo-FirstName_LastName-Major.zip
     const passport = sanitizeFilename(student.passport_number) || 'NoPassport';
     const name     = sanitizeFilename(`${student.given_name || ''} ${student.family_name || ''}`.trim());
     const major    = sanitizeFilename(student.intended_major) || 'NoMajor';
@@ -223,7 +239,7 @@ export const exportDocumentsZip = async (req, res) => {
 
     // Fetch uploaded documents
     const { rows: docs } = await query(
-      'SELECT * FROM student_documents WHERE student_id = $1 ORDER BY doc_key',
+      'SELECT * FROM student_documents WHERE student_id = $1',
       [id]
     );
 
@@ -234,6 +250,34 @@ export const exportDocumentsZip = async (req, res) => {
     const archiver = (await import('archiver')).default;
     const { createReadStream, existsSync } = await import('fs');
 
+    // Build a map of doc_key → db row for quick lookup
+    const docsMap = Object.fromEntries(docs.map(d => [d.doc_key, d]));
+
+    // Sort by canonical order, skip missing/not-uploaded docs
+    const orderedDocs = [];
+    DOCUMENTS_ORDER.forEach((entry, index) => {
+      const doc = docsMap[entry.key];
+      if (doc && doc.file_path && existsSync(doc.file_path)) {
+        const num = String(index + 1).padStart(2, '0');
+        const ext = path.extname(doc.file_name || doc.file_path);
+        orderedDocs.push({ doc, filename: `${num}_${entry.label}${ext}` });
+      }
+    });
+
+    // Also catch any docs with unknown keys (not in canonical list) — append at end
+    const knownKeys = new Set(DOCUMENTS_ORDER.map(e => e.key));
+    docs.forEach(doc => {
+      if (!knownKeys.has(doc.doc_key) && doc.file_path && existsSync(doc.file_path)) {
+        const ext = path.extname(doc.file_name || doc.file_path);
+        const label = sanitizeFilename(doc.doc_label || doc.doc_key || 'Document');
+        orderedDocs.push({ doc, filename: `${label}${ext}` });
+      }
+    });
+
+    if (!orderedDocs.length) {
+      return res.status(404).json({ error: 'No document files found on disk' });
+    }
+
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`);
 
@@ -241,18 +285,8 @@ export const exportDocumentsZip = async (req, res) => {
     archive.on('error', err => { throw err; });
     archive.pipe(res);
 
-    for (const doc of docs) {
-      if (doc.file_path && existsSync(doc.file_path)) {
-        // Name inside ZIP = doc type label (from doc_key), original extension preserved
-        const ext          = path.extname(doc.file_name || doc.file_path);
-        // Convert doc_key like "academic_transcript" → "Academic_Transcript"
-        const docLabel     = (doc.doc_label || doc.doc_key || 'Document')
-          .split(/[_\s]+/)
-          .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-          .join('_');
-        const safeDocName  = sanitizeFilename(docLabel) + ext;
-        archive.append(createReadStream(doc.file_path), { name: safeDocName });
-      }
+    for (const { doc, filename } of orderedDocs) {
+      archive.append(createReadStream(doc.file_path), { name: filename });
     }
 
     await archive.finalize();
