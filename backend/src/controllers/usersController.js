@@ -218,7 +218,7 @@ export const createUser = async (req, res) => {
   try {
     const { email, password, full_name, role } = req.body;
 
-    if (!['admin', 'staff', 'agent', 'student', 'viewer'].includes(role)) {
+    if (!['admin', 'staff', 'agent', 'student'].includes(role)) {
       return res.status(400).json({ error: 'Invalid role' });
     }
 
@@ -290,7 +290,7 @@ export const updateUser = async (req, res) => {
     // Only admin can change role, active status, or reset password
     if (isAdmin) {
       if (role !== undefined) {
-        if (!['admin', 'staff', 'agent', 'student', 'viewer'].includes(role)) {
+        if (!['admin', 'staff', 'agent', 'student'].includes(role)) {
           return res.status(400).json({ error: 'Invalid role' });
         }
 

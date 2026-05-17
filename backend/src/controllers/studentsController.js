@@ -33,11 +33,7 @@ export const listStudents = async (req, res) => {
     const params = [];
     const wheres = [];
 
-    // Admin/staff see submitted applications only.
-    // Draft applications are hidden from admin/staff.
-    if (canSeeAll(req.user.role)) {
-      wheres.push(`s.application_status != 'draft'`);
-    } else {
+    if (!canSeeAll(req.user.role)) {
       // Student/agent see only their own applications, including draft.
       params.push(req.user.id);
       wheres.push(`s.created_by = $${params.length}`);

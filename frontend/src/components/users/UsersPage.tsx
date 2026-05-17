@@ -4,7 +4,6 @@ import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Bot,
-  Eye,
   GraduationCap,
   Pencil,
   Plus,
@@ -85,7 +84,7 @@ function RoleIcon({ role }: { role?: string }) {
   if (role === 'student') return <GraduationCap size={14} style={{ color: theme.color }} />;
   if (role === 'staff') return <User size={14} style={{ color: theme.color }} />;
 
-  return <Eye size={14} style={{ color: theme.color }} />;
+  return <User size={14} style={{ color: theme.color }} />;
 }
 
 function RoleChip({ role }: { role?: string }) {
@@ -110,7 +109,7 @@ function RoleChip({ role }: { role?: string }) {
       }}
     >
       <RoleIcon role={role} />
-      {role || 'viewer'}
+      {role || 'unknown'}
     </span>
   );
 }

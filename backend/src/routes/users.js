@@ -22,7 +22,7 @@ router.use(authenticate);
 router.get('/', listUsers);
 
 // POST /api/users
-// Admin only. Admin may create admin, staff, agent, student, or viewer accounts.
+// Admin only. Admin may create admin, staff, agent, or student accounts.
 router.post(
   '/',
   requireAdmin,
@@ -32,7 +32,7 @@ router.post(
       .isLength({ min: 6 })
       .withMessage('Password must be at least 6 characters'),
     body('full_name').notEmpty().trim(),
-    body('role').isIn(['admin', 'staff', 'agent', 'student', 'viewer']),
+    body('role').isIn(['admin', 'staff', 'agent', 'student']),
   ],
   validateRequest,
   createUser
