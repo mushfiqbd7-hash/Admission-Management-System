@@ -1,7 +1,7 @@
 // src/components/students/StudentForm.tsx â€” Phase 3
 // ALL logic, mutations, buildPayload, handleSave, handleDocUpload, handleDeleteDoc,
 // handleAddNote, handleSubmitConfirmed are 100% identical to original.
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -207,11 +207,15 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
     onError: () => toast.error('Failed to update student'),
   });
 
-  // â”€â”€ buildPayload (identical to original) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  const buildPayload = () => ({
+  // ── buildPayload ──────────────────────────────────────────────────────────
+  // `statusOverride` lets callers (Save Draft, Next, auto-save on close)
+  // force application_status to 'draft' regardless of the role-default.
+  const buildPayload = (statusOverride?: ApplicationStatus) => ({
     ...personal,
     passport_number: passport.passport_number,
-    application_status: canManageStatus ? status : 'pending',
+    application_status: statusOverride
+      ? statusOverride
+      : canManageStatus ? status : 'pending',
     addresses: [
       { address_type: 'permanent', ...permAddress },
       ...(sameAddress ? [] : [{ address_type: 'current', ...currAddress }]),
@@ -222,20 +226,124 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
       .map(row => ({ ...row, gpa: row.gpa ? Number(row.gpa) : null })),
   });
 
+  // Submit path: uses role-default status (pending for applicants/agents).
   const handleSave = async () => {
     const payload = buildPayload();
     if (mode === 'create' && !savedId) await createMutation.mutateAsync(payload);
     else if (savedId) await updateMutation.mutateAsync({ id: savedId, data: payload });
   };
 
+  // Save Draft button: force application_status='draft' so the record shows
+  // up in Applications as Draft regardless of who is filling the form.
+  // Returns the saved id so callers can chain (e.g. document upload).
+  const submittedRef = useRef(false);
+  const handleSaveDraft = async (silent = false): Promise<string | null> => {
+    const payload = buildPayload('draft');
+    try {
+      if (mode === 'create' && !savedId) {
+        const res = await createMutation.mutateAsync(payload);
+        return (res as { data: { student: { id: string } } }).data.student.id;
+      } else if (savedId) {
+        await updateMutation.mutateAsync({ id: savedId, data: payload });
+        return savedId;
+      }
+    } catch (err) {
+      if (!silent) throw err;
+    }
+    return savedId;
+  };
+
+  // Next button: silently persist a draft before advancing. Failure here
+  // shouldn't block navigation — the user is mid-form and we don't want
+  // backend validation to trap them on the current step.
+  const handleNext = async () => {
+    try { await handleSaveDraft(true); } catch { /* swallow — advance anyway */ }
+    setStep(s => s + 1);
+  };
+
+  // ── Auto-save draft on tab close / unmount ────────────────────────────────
+  // Keep a ref to the latest "build draft payload" closure so the listener
+  // installed once below always sees current form state.
+  const draftSnapshotRef = useRef<() => unknown>(() => buildPayload('draft'));
+  useEffect(() => {
+    draftSnapshotRef.current = () => buildPayload('draft');
+  });
+
+  useEffect(() => {
+    const fireAutoSave = () => {
+      // Skip when the form is essentially empty and never saved before — no
+      // point creating an empty Draft record. Also skip after a successful
+      // submission so we don't overwrite a 'pending' record with 'draft'.
+      if (submittedRef.current) return;
+      const hasAnyData =
+        !!savedId ||
+        !!personal.family_name.trim() ||
+        !!personal.given_name.trim() ||
+        !!personal.email.trim();
+      if (!hasAnyData) return;
+
+      const token = localStorage.getItem('accessToken');
+      if (!token) return;
+      const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || '/api';
+      const url = savedId ? `${apiBase}/students/${savedId}` : `${apiBase}/students`;
+      const method = savedId ? 'PUT' : 'POST';
+      try {
+        // `keepalive` lets the request complete after the page unloads.
+        fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(draftSnapshotRef.current()),
+          keepalive: true,
+          credentials: 'include',
+        }).catch(() => { /* silent — best effort */ });
+      } catch { /* silent */ }
+    };
+
+    const onBeforeUnload = () => fireAutoSave();
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload);
+      // Also save when this component unmounts due to in-app navigation.
+      fireAutoSave();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Per-file cap for client-side rejection (also enforced by the backend).
+  const MAX_DOC_BYTES = Math.floor(1.5 * 1024 * 1024); // 1.5 MB
+
   const handleDocUpload = async (docKey: string, docLabel: string, isRequired: boolean, file: File) => {
-    if (!savedId) { toast.error('Save the student record first (click Save Draft)'); return; }
+    if (file.size > MAX_DOC_BYTES) {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+      toast.error(`File too large (${sizeMb} MB). Maximum allowed is 1.5 MB.`);
+      return;
+    }
+
+    // If the record hasn't been saved yet, silently save it as a Draft first
+    // so we have an id to attach the document to.
+    let targetId = savedId;
+    if (!targetId) {
+      try {
+        targetId = await handleSaveDraft(true);
+      } catch {
+        toast.error('Could not save draft before upload. Please try again.');
+        return;
+      }
+      if (!targetId) {
+        toast.error('Could not save draft before upload. Fill at least Name and Email, then retry.');
+        return;
+      }
+    }
+
     setUploadingKey(docKey);
     try {
       const fd = new FormData();
       fd.append('file', file); fd.append('doc_key', docKey);
       fd.append('doc_label', docLabel); fd.append('is_required', String(isRequired));
-      await api.post(`/students/${savedId}/documents`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await api.post(`/students/${targetId}/documents`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
       setUploadedDocs(prev => ({ ...prev, [docKey]: { file_name: file.name, uploaded_at: new Date().toISOString() } }));
       toast.success(`${docLabel} uploaded`);
     } catch { toast.error('Upload failed'); } finally { setUploadingKey(null); }
@@ -264,6 +372,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const handleSubmitConfirmed = async () => {
     setShowSubmitModal(false);
     await handleSave();
+    submittedRef.current = true; // prevent auto-save from overwriting on unmount
     navigate('/students');
   };
 
@@ -575,14 +684,12 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
       case 'documents': return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {!savedId && (
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: '#fef9ec', border: '1px solid #f5d98a', borderRadius: 'var(--radius-md)', padding: '12px 16px' }}>
-              <AlertCircle size={15} style={{ color: '#b45309', flexShrink: 0, marginTop: 1 }} />
-              <p style={{ margin: 0, fontSize: 12.5, color: '#92620a' }}>
-                <strong>Save the record first</strong> using the "Save Draft" button before uploading documents.
-              </p>
-            </div>
-          )}
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 'var(--radius-md)', padding: '12px 16px' }}>
+            <AlertCircle size={15} style={{ color: '#1d4ed8', flexShrink: 0, marginTop: 1 }} />
+            <p style={{ margin: 0, fontSize: 12.5, color: '#1e40af' }}>
+              <strong>Maximum file size:</strong> 1.5 MB per document. Accepted formats: PDF, JPG, PNG, DOC, DOCX.
+            </p>
+          </div>
           <FormSection title={`Documents Checklist â€” ${Object.keys(uploadedDocs).length}/${DOCUMENTS_LIST.length} uploaded`}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {DOCUMENTS_LIST.map((doc, idx) => {
@@ -756,12 +863,12 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
             <ChevronLeft size={14} /> Previous
           </button>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button onClick={handleSave} disabled={isMutating} className="btn-ghost" style={{ gap: 6 }}>
+            <button onClick={() => { handleSaveDraft().catch(() => {}); }} disabled={isMutating} className="btn-ghost" style={{ gap: 6 }}>
               <Save size={13} />
               {isMutating ? 'Savingâ€¦' : 'Save Draft'}
             </button>
             {step < SECTIONS.length - 1 ? (
-              <button onClick={() => setStep(s => s + 1)} className="btn-primary" style={{ gap: 6 }}>
+              <button onClick={handleNext} disabled={isMutating} className="btn-primary" style={{ gap: 6 }}>
                 Next <ChevronRight size={14} />
               </button>
             ) : (
