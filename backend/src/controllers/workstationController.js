@@ -166,7 +166,10 @@ export const listWorkstationStudents = async (req, res) => {
         s.intended_start_term,
         s.scholarship_type,
 
-        cb.full_name AS submitted_by_name,
+        CASE WHEN cb.role = 'admin' AND cb.full_name = 'System Administrator'
+             THEN 'Admin-Mushfiq'
+             ELSE cb.full_name
+        END AS submitted_by_name,
         cb.email AS submitted_by_email,
         cb.role AS submitted_by_role,
 
@@ -607,7 +610,10 @@ export const exportWorkstationStudents = async (req, res) => {
         s.intended_start_term,
         s.scholarship_type,
 
-        cb.full_name AS submitted_by_name,
+        CASE WHEN cb.role = 'admin' AND cb.full_name = 'System Administrator'
+             THEN 'Admin-Mushfiq'
+             ELSE cb.full_name
+        END AS submitted_by_name,
         cb.email AS submitted_by_email,
         cb.role AS submitted_by_role,
 

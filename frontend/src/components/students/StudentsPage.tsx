@@ -464,7 +464,7 @@ export default function StudentsPage() {
 
                           {sAny.submitted_by_role && (
                             <div style={smallMutedStyle}>
-                              {sAny.submitted_by_role}
+                              {sAny.submitted_by_role.charAt(0).toUpperCase() + sAny.submitted_by_role.slice(1)}
                             </div>
                           )}
 

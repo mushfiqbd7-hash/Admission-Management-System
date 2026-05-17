@@ -188,10 +188,12 @@ export const getInbox = async (req, res) => {
       // Admin/staff see messages addressed to admission_team OR directly to them
       ({ rows } = await query(`
         SELECT m.*,
-          s.full_name  AS sender_name,
+          CASE WHEN s.role = 'admin' AND s.full_name = 'System Administrator'
+               THEN 'Admin-Mushfiq' ELSE s.full_name END AS sender_name,
           s.email      AS sender_email,
           s.role       AS sender_role,
-          r.full_name  AS recipient_name,
+          CASE WHEN r.role = 'admin' AND r.full_name = 'System Administrator'
+               THEN 'Admin-Mushfiq' ELSE r.full_name END AS recipient_name,
           r.role       AS recipient_role,
           st.application_number, st.given_name, st.family_name, st.passport_number
         FROM messages m
@@ -206,10 +208,12 @@ export const getInbox = async (req, res) => {
       // Student/agent see messages sent directly to them
       ({ rows } = await query(`
         SELECT m.*,
-          s.full_name  AS sender_name,
+          CASE WHEN s.role = 'admin' AND s.full_name = 'System Administrator'
+               THEN 'Admin-Mushfiq' ELSE s.full_name END AS sender_name,
           s.email      AS sender_email,
           s.role       AS sender_role,
-          r.full_name  AS recipient_name,
+          CASE WHEN r.role = 'admin' AND r.full_name = 'System Administrator'
+               THEN 'Admin-Mushfiq' ELSE r.full_name END AS recipient_name,
           r.role       AS recipient_role,
           st.application_number, st.given_name, st.family_name, st.passport_number
         FROM messages m
@@ -243,9 +247,11 @@ export const getSent = async (req, res) => {
   try {
     const { rows } = await query(`
       SELECT m.*,
-        s.full_name  AS sender_name,
+        CASE WHEN s.role = 'admin' AND s.full_name = 'System Administrator'
+             THEN 'Admin-Mushfiq' ELSE s.full_name END AS sender_name,
         s.email      AS sender_email,
-        r.full_name  AS recipient_name,
+        CASE WHEN r.role = 'admin' AND r.full_name = 'System Administrator'
+             THEN 'Admin-Mushfiq' ELSE r.full_name END AS recipient_name,
         r.role       AS recipient_role,
         st.application_number, st.given_name, st.family_name, st.passport_number
       FROM messages m

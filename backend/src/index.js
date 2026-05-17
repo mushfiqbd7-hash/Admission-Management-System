@@ -219,7 +219,10 @@ app.get('/api/export/students/csv', authenticate, async (req, res) => {
       `
       SELECT
         s.application_number,
-        cb.full_name AS submitted_by,
+        CASE WHEN cb.role = 'admin' AND cb.full_name = 'System Administrator'
+             THEN 'Admin-Mushfiq'
+             ELSE cb.full_name
+        END AS submitted_by,
         cb.email AS submitted_by_email,
         s.passport_number,
         s.given_name || ' ' || s.family_name AS student_name,
@@ -312,7 +315,10 @@ app.get('/api/export/students/all', authenticate, async (req, res) => {
         s.application_status,
         s.priority,
         s.created_at,
-        cb.full_name AS submitted_by_name,
+        CASE WHEN cb.role = 'admin' AND cb.full_name = 'System Administrator'
+             THEN 'Admin-Mushfiq'
+             ELSE cb.full_name
+        END AS submitted_by_name,
         cb.role AS submitted_by_role,
         COALESCE(wr.payment_of_application, '') AS payment_of_application,
         COALESCE(wr.application_incharge, '') AS application_incharge,
