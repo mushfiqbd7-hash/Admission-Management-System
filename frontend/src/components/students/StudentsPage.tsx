@@ -475,6 +475,7 @@ export default function StudentsPage() {
                     canSeeAll ||
                     student.application_status === 'draft' ||
                     student.application_status === 'revoked';
+                  const canDeleteRow = canSeeAll || student.application_status === 'draft';
 
                   return (
                     <tr key={student.id} style={rowStyle}>
@@ -572,7 +573,7 @@ export default function StudentsPage() {
                             </ActionBtn>
                           )}
 
-                          {canSeeAll && (
+                          {canDeleteRow && (
                             <ActionBtn
                               onClick={() => setDeleteId(student.id)}
                               title="Delete"

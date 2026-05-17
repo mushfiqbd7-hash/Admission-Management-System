@@ -38,14 +38,14 @@ export const upload = multer({
 const canManageAllDocuments = (role) => ['admin', 'staff'].includes(role);
 
 const canAccessStudentDocuments = async (user, studentId) => {
-  if (canManageAllDocuments(user.role)) return true;
-
-  const { rows } = await query(
-    'SELECT id FROM students WHERE id = $1 AND created_by = $2',
-    [studentId, user.id]
+  const { rows: [student] } = await query(
+    'SELECT id, created_by, application_status FROM students WHERE id = $1',
+    [studentId]
   );
 
-  return rows.length > 0;
+  if (!student) return false;
+  if (student.created_by === user.id) return true;
+  return canManageAllDocuments(user.role) && student.application_status !== 'draft';
 };
 
 const removeUploadedFileIfNeeded = (file) => {
@@ -224,12 +224,15 @@ export const exportDocumentsZip = async (req, res) => {
 
     // Fetch student info for ZIP filename
     const { rows: studentRows } = await query(
-      'SELECT given_name, family_name, passport_number, intended_major FROM students WHERE id = $1',
+      'SELECT given_name, family_name, passport_number, intended_major, created_by, application_status FROM students WHERE id = $1',
       [id]
     );
     if (!studentRows[0]) return res.status(404).json({ error: 'Student not found' });
 
     const student = studentRows[0];
+    if (student.application_status === 'draft' && student.created_by !== req.user.id) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
 
     // Build ZIP filename: PassportNo-FirstName_LastName-Major.zip
     const passport = sanitizeFilename(student.passport_number) || 'NoPassport';

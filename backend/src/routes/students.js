@@ -71,6 +71,6 @@ router.post(
 // ── Single student / update / delete ──────────────────────────
 router.get('/:id', getStudent);
 router.put('/:id', updateStudent);
-router.delete('/:id', requireRole('admin', 'staff'), deleteStudent);
+router.delete('/:id', deleteStudent);
 
 export default router;

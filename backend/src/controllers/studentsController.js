@@ -33,6 +33,14 @@ const provisionWorkstationEntry = async (studentId, status) => {
 };
 
 const canSeeAll = (role) => ['admin', 'staff'].includes(role);
+const ownsApplication = (user, student) => student?.created_by === user?.id;
+const canAccessApplication = (user, student) =>
+  ownsApplication(user, student) ||
+  (canSeeAll(user?.role) && student?.application_status !== 'draft');
+const canDeleteApplication = (user, student) =>
+  student?.application_status === 'draft'
+    ? ownsApplication(user, student)
+    : canSeeAll(user?.role);
 
 // Empty string / undefined / null → null
 const n = (v) => {
@@ -61,7 +69,11 @@ export const listStudents = async (req, res) => {
     const params = [];
     const wheres = [];
 
-    if (!canSeeAll(req.user.role)) {
+    if (canSeeAll(req.user.role)) {
+      // Admin/staff see submitted applications plus their own private drafts.
+      params.push(req.user.id);
+      wheres.push(`(s.application_status != 'draft' OR s.created_by = $${params.length})`);
+    } else {
       // Student/agent see only their own applications, including draft.
       params.push(req.user.id);
       wheres.push(`s.created_by = $${params.length}`);
@@ -203,9 +215,7 @@ export const getStudent = async (req, res) => {
 
     if (!student) return res.status(404).json({ error: 'Student not found' });
 
-    // Admin/staff can open every application, including draft.
-    // Student/agent can open only their own.
-    if (!canSeeAll(req.user.role) && student.created_by !== req.user.id) {
+    if (!canAccessApplication(req.user, student)) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
@@ -580,7 +590,7 @@ export const updateStudent = async (req, res) => {
 
     if (!existing) return res.status(404).json({ error: 'Student not found' });
 
-    if (!canSeeAll(req.user.role) && existing.created_by !== req.user.id) {
+    if (!canAccessApplication(req.user, existing)) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
@@ -869,14 +879,14 @@ export const deleteStudent = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!canSeeAll(req.user.role)) {
-      const { rows: [r] } = await query(
-        'SELECT created_by FROM students WHERE id = $1',
-        [id]
-      );
+    const { rows: [existing] } = await query(
+      'SELECT id, created_by, application_status FROM students WHERE id = $1',
+      [id]
+    );
 
-      if (!r) return res.status(404).json({ error: 'Student not found' });
-      if (r.created_by !== req.user.id) return res.status(403).json({ error: 'Access denied' });
+    if (!existing) return res.status(404).json({ error: 'Student not found' });
+    if (!canDeleteApplication(req.user, existing)) {
+      return res.status(403).json({ error: 'Access denied' });
     }
 
     const { rows: [r] } = await query(
@@ -931,6 +941,10 @@ export const updateStatus = async (req, res) => {
 
     if (!existing) {
       return res.status(404).json({ error: 'Student not found' });
+    }
+
+    if (!canAccessApplication(req.user, existing)) {
+      return res.status(403).json({ error: 'Access denied' });
     }
 
     if (!canSeeAll(req.user.role)) {

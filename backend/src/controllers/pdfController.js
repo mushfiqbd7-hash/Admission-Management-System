@@ -21,13 +21,18 @@ export const exportStudentPDF = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Permission: admin/staff can export any; student/agent only their own
+    // Permission: drafts stay private to their creator until submitted.
     const isAdminOrStaff = ['admin', 'staff'].includes(req.user.role);
-    if (!isAdminOrStaff) {
-      const { rows: own } = await query('SELECT created_by FROM students WHERE id=$1', [id]);
-      if (!own[0] || own[0].created_by !== req.user.id) {
-        return res.status(403).json({ error: 'Access denied' });
-      }
+    const { rows: accessRows } = await query(
+      'SELECT created_by, application_status FROM students WHERE id=$1',
+      [id]
+    );
+    const accessStudent = accessRows[0];
+    if (!accessStudent) return res.status(404).json({ error: 'Student not found' });
+
+    const ownsApplication = accessStudent.created_by === req.user.id;
+    if (!ownsApplication && (!isAdminOrStaff || accessStudent.application_status === 'draft')) {
+      return res.status(403).json({ error: 'Access denied' });
     }
 
     const [sRes, addrRes, passRes, finRes, docsRes] = await Promise.all([
