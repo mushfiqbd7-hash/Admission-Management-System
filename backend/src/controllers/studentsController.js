@@ -671,17 +671,19 @@ export const updateStudent = async (req, res) => {
         params.push(requestedStatus);
         updates.push(`application_status = $${params.length}`);
       } else {
+        const canUpdateOwnDraft =
+          existing.application_status === 'draft' && requestedStatus === 'draft';
         const canSubmitDraft =
           existing.application_status === 'draft' && requestedStatus === 'pending';
 
-        if (!canSubmitDraft) {
+        if (!canUpdateOwnDraft && !canSubmitDraft) {
           await client.query('ROLLBACK');
           return res.status(403).json({
             error: 'Students and agents can only submit draft applications for review',
           });
         }
 
-        params.push('pending');
+        params.push(requestedStatus);
         updates.push(`application_status = $${params.length}`);
       }
     }
