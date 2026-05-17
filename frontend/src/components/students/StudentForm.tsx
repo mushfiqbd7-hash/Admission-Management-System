@@ -8,7 +8,7 @@ import {
   User, MapPin, FileText, BookOpen, Globe, Wallet,
   Languages, Briefcase, FolderCheck, ClipboardCheck,
   ChevronRight, ChevronLeft, Save, CheckCircle,
-  Upload, Trash2, AlertCircle, Send, ShieldAlert,
+  Upload, Trash2, AlertCircle, Send, ShieldAlert, Eye,
 } from 'lucide-react';
 import { studentsApi, api } from '@/api/client';
 import { toast } from 'sonner';
@@ -173,8 +173,8 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
       : [{ employer:'', position:'', start_date:'', end_date:'', description:'' }]
   );
 
-  const [uploadedDocs, setUploadedDocs] = useState<Record<string,{ file_name:string; uploaded_at:string }>>(
-    Object.fromEntries((initialData?.documents||[]).map(d => [d.doc_key, { file_name: d.file_name||'', uploaded_at: d.uploaded_at||'' }]))
+  const [uploadedDocs, setUploadedDocs] = useState<Record<string,{ id?: string; file_name:string; uploaded_at:string }>>(
+    Object.fromEntries((initialData?.documents||[]).map(d => [d.doc_key, { id: d.id, file_name: d.file_name||'', uploaded_at: d.uploaded_at||'' }]))
   );
   const [uploadingKey, setUploadingKey] = useState<string|null>(null);
   const fileRefs = useRef<Record<string, HTMLInputElement|null>>({});
@@ -343,10 +343,40 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
       const fd = new FormData();
       fd.append('file', file); fd.append('doc_key', docKey);
       fd.append('doc_label', docLabel); fd.append('is_required', String(isRequired));
-      await api.post(`/students/${targetId}/documents`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-      setUploadedDocs(prev => ({ ...prev, [docKey]: { file_name: file.name, uploaded_at: new Date().toISOString() } }));
+      const res = await api.post(`/students/${targetId}/documents`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const uploaded = res.data.document;
+      setUploadedDocs(prev => ({ ...prev, [docKey]: { id: uploaded.id, file_name: uploaded.file_name || file.name, uploaded_at: uploaded.uploaded_at || new Date().toISOString() } }));
       toast.success(`${docLabel} uploaded`);
     } catch { toast.error('Upload failed'); } finally { setUploadingKey(null); }
+  };
+
+  const handleViewDoc = async (docKey: string) => {
+    if (!savedId) return;
+
+    try {
+      let docId = uploadedDocs[docKey]?.id;
+
+      if (!docId) {
+        const docsRes = await api.get(`/students/${savedId}/documents`);
+        const doc = docsRes.data.documents.find((d: { doc_key: string; id: string }) => d.doc_key === docKey);
+        docId = doc?.id;
+        if (doc) {
+          setUploadedDocs(prev => ({ ...prev, [docKey]: { ...prev[docKey], id: doc.id } }));
+        }
+      }
+
+      if (!docId) {
+        toast.error('Document is not available to view yet');
+        return;
+      }
+
+      const res = await api.get(`/students/${savedId}/documents/${docId}/file`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(res.data);
+      window.open(url, '_blank', 'noopener,noreferrer');
+      window.setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
+    } catch {
+      toast.error('Could not open document');
+    }
   };
 
   const handleDeleteDoc = async (docKey: string) => {
@@ -720,6 +750,13 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                       {isUp ? <span style={{ width: 11, height: 11, border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.7s linear infinite', display: 'inline-block' }} /> : <Upload size={11} />}
                       {uploaded ? 'Replace' : 'Upload'}
                     </button>
+                    {uploaded && (
+                      <button type="button" onClick={() => handleViewDoc(doc.key)}
+                        style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, border: '1px solid #bfdbfe', background: '#eff6ff', color: '#1d4ed8', fontSize: 11.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', flexShrink: 0 }}>
+                        <Eye size={11} />
+                        View
+                      </button>
+                    )}
                     {uploaded && (
                       <button onClick={() => handleDeleteDoc(doc.key)}
                         style={{ width: 26, height: 26, borderRadius: 6, border: '1px solid #fecdd3', background: '#fff1f2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>

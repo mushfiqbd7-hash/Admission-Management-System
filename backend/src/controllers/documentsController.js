@@ -156,6 +156,34 @@ export const getDocuments = async (req, res) => {
   }
 };
 
+export const viewDocument = async (req, res) => {
+  try {
+    const { id, docId } = req.params;
+
+    const hasAccess = await canAccessStudentDocuments(req.user, id);
+    if (!hasAccess) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const { rows } = await query(
+      'SELECT file_name, file_path, mime_type FROM student_documents WHERE id=$1 AND student_id=$2',
+      [docId, id]
+    );
+
+    const doc = rows[0];
+    if (!doc || !doc.file_path || !existsSync(doc.file_path)) {
+      return res.status(404).json({ error: 'Document not found' });
+    }
+
+    res.setHeader('Content-Type', doc.mime_type || 'application/octet-stream');
+    res.setHeader('Content-Disposition', `inline; filename="${path.basename(doc.file_name || 'document')}"`);
+    return res.sendFile(path.resolve(doc.file_path));
+  } catch (err) {
+    console.error('viewDocument error:', err);
+    res.status(500).json({ error: 'Failed to open document' });
+  }
+};
+
 // ── Export all documents as ZIP (admin/staff only) ────────────────────────────
 // ZIP filename: PassportNumber-StudentName-IntendedMajor.zip
 // Files inside ZIP named by document type, e.g. Passport.jpg, Academic_Transcript.pdf
