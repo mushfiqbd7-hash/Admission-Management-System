@@ -50,7 +50,7 @@ async function seed() {
         verification_token = NULL,
         verification_token_expires_at = NULL
       `,
-      [ADMIN_EMAIL.toLowerCase().trim(), adminHash, 'System Administrator']
+      [ADMIN_EMAIL.toLowerCase().trim(), adminHash, 'Admin-Mushfiq']
     );
 
     const {

@@ -27,7 +27,11 @@ router.post(
   '/',
   requireAdmin,
   [
-    body('email').isEmail().normalizeEmail(),
+    body('email')
+      .trim()
+      .isEmail()
+      .withMessage('Enter a valid email address. Any email domain is allowed.')
+      .normalizeEmail(),
     body('password')
       .isLength({ min: 6 })
       .withMessage('Password must be at least 6 characters'),

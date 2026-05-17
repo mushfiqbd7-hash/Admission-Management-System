@@ -235,6 +235,10 @@ export const createUser = async (req, res) => {
     }
 
     const normalizedEmail = email.toLowerCase().trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      return res.status(400).json({ error: 'Enter a valid email address. Any email domain is allowed.' });
+    }
+
     const passwordHash = await bcrypt.hash(password, 12);
 
     const { rows } = await query(

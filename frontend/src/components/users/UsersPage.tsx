@@ -372,7 +372,12 @@ export default function UsersPage() {
       return;
     }
 
-    createMutation.mutate(form);
+    createMutation.mutate({
+      ...form,
+      email: form.email.trim(),
+      full_name: form.full_name.trim(),
+      password: form.password.trim(),
+    });
   };
 
   const submitEdit = () => {
