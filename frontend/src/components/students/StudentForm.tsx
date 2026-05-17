@@ -173,8 +173,8 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
       : [{ employer:'', position:'', start_date:'', end_date:'', description:'' }]
   );
 
-  const [uploadedDocs, setUploadedDocs] = useState<Record<string,{ id?: string; file_name:string; uploaded_at:string }>>(
-    Object.fromEntries((initialData?.documents||[]).map(d => [d.doc_key, { id: d.id, file_name: d.file_name||'', uploaded_at: d.uploaded_at||'' }]))
+  const [uploadedDocs, setUploadedDocs] = useState<Record<string,{ id?: string; student_id?: string; file_name:string; uploaded_at:string }>>(
+    Object.fromEntries((initialData?.documents||[]).map(d => [d.doc_key, { id: d.id, student_id: d.student_id, file_name: d.file_name||'', uploaded_at: d.uploaded_at||'' }]))
   );
   const [uploadingKey, setUploadingKey] = useState<string|null>(null);
   const fileRefs = useRef<Record<string, HTMLInputElement|null>>({});
@@ -345,13 +345,15 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
       fd.append('doc_label', docLabel); fd.append('is_required', String(isRequired));
       const res = await api.post(`/students/${targetId}/documents`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
       const uploaded = res.data.document;
-      setUploadedDocs(prev => ({ ...prev, [docKey]: { id: uploaded.id, file_name: uploaded.file_name || file.name, uploaded_at: uploaded.uploaded_at || new Date().toISOString() } }));
+      setUploadedDocs(prev => ({ ...prev, [docKey]: { id: uploaded.id, student_id: uploaded.student_id || targetId || undefined, file_name: uploaded.file_name || file.name, uploaded_at: uploaded.uploaded_at || new Date().toISOString() } }));
       toast.success(`${docLabel} uploaded`);
     } catch { toast.error('Upload failed'); } finally { setUploadingKey(null); }
   };
 
   const handleViewDoc = async (docKey: string) => {
-    if (!savedId) return;
+    const uploaded = uploadedDocs[docKey];
+    const viewStudentId = savedId || uploaded?.student_id;
+    if (!viewStudentId) return;
 
     const viewer = window.open('', '_blank');
     if (viewer) {
@@ -360,10 +362,10 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
     }
 
     try {
-      let docId = uploadedDocs[docKey]?.id;
+      let docId = uploaded?.id;
 
       if (!docId) {
-        const docsRes = await api.get(`/students/${savedId}/documents`);
+        const docsRes = await api.get(`/students/${viewStudentId}/documents`);
         const doc = docsRes.data.documents.find((d: { doc_key: string; id: string }) => d.doc_key === docKey);
         docId = doc?.id;
         if (doc) {
@@ -376,14 +378,17 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
         return;
       }
 
-      const res = await api.get(`/students/${savedId}/documents/${docId}/file`, { responseType: 'blob' });
-      const url = window.URL.createObjectURL(res.data);
-      if (viewer) {
-        viewer.location.href = url;
-      } else {
-        window.open(url, '_blank');
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        if (viewer) viewer.close();
+        toast.error('Please log in again to view this document');
+        return;
       }
-      window.setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
+
+      const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || '/api';
+      const url = `${apiBase}/students/${viewStudentId}/documents/${docId}/file?token=${encodeURIComponent(token)}`;
+      if (viewer) viewer.location.href = url;
+      else window.open(url, '_blank');
     } catch {
       if (viewer) viewer.close();
       toast.error('Could not open document');

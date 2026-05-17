@@ -166,28 +166,22 @@ export default function StudentDetailPage() {
   const handleViewDoc = async (docId: string) => {
     if (!id || !docId) return;
 
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      toast.error('Please log in again to view this document');
+      return;
+    }
+
     const viewer = window.open('', '_blank');
     if (viewer) {
       viewer.document.title = 'Loading document...';
       viewer.document.body.innerHTML = '<p style="font-family: system-ui, sans-serif; padding: 24px;">Loading document...</p>';
     }
 
-    try {
-      const res = await api.get(`/students/${id}/documents/${docId}/file`, {
-        responseType: 'blob',
-      });
-
-      const url = window.URL.createObjectURL(res.data);
-      if (viewer) {
-        viewer.location.href = url;
-      } else {
-        window.open(url, '_blank');
-      }
-      window.setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
-    } catch {
-      if (viewer) viewer.close();
-      toast.error('Could not open document');
-    }
+    const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || '/api';
+    const url = `${apiBase}/students/${id}/documents/${docId}/file?token=${encodeURIComponent(token)}`;
+    if (viewer) viewer.location.href = url;
+    else window.open(url, '_blank');
   };
 
   const handlePrint = () => {
