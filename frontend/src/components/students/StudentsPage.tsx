@@ -17,6 +17,8 @@ import {
   UserRound,
   GraduationCap,
   Filter,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 
 import { studentsApi } from '@/api/client';
@@ -211,6 +213,15 @@ export default function StudentsPage() {
   const [priority, setPriority] = useState(params.get('priority') || '');
   const [page, setPage] = useState(1);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsFullScreen(false);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, []);
 
   useEffect(() => {
     setSearch(params.get('search') || '');
@@ -272,7 +283,7 @@ export default function StudentsPage() {
   const colCount = canSeeAll ? 10 : 9;
 
   return (
-    <div style={pageStyle}>
+    <div style={isFullScreen ? fullScreenStyle : pageStyle}>
       {/* Header */}
       <div style={headerCardStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -297,10 +308,21 @@ export default function StudentsPage() {
           </div>
         </div>
 
-        <button style={addBtnStyle} onClick={() => navigate('/students/new')}>
-          <Plus size={16} />
-          {canSeeAll ? 'Add Student' : 'New Application'}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            style={fullScreenBtnStyle}
+            onClick={() => setIsFullScreen((v) => !v)}
+            title={isFullScreen ? 'Exit full screen (Esc)' : 'Full screen'}
+          >
+            {isFullScreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+            {isFullScreen ? 'Exit' : 'Full Screen'}
+          </button>
+
+          <button style={addBtnStyle} onClick={() => navigate('/students/new')}>
+            <Plus size={16} />
+            {canSeeAll ? 'Add Student' : 'New Application'}
+          </button>
+        </div>
       </div>
 
       {/* Main card */}
@@ -403,8 +425,8 @@ export default function StudentsPage() {
         )}
 
         {/* Table */}
-        <div style={tableWrapStyle}>
-          <table style={tableStyle}>
+        <div style={isFullScreen ? tableWrapFullStyle : tableWrapStyle}>
+          <table style={isFullScreen ? tableFullStyle : tableStyle}>
             <thead>
               <tr>
                 {[
@@ -861,6 +883,48 @@ const tableWrapStyle: CSSProperties = {
 const tableStyle: CSSProperties = {
   width: '100%',
   tableLayout: 'fixed',
+  borderCollapse: 'separate',
+  borderSpacing: '0 10px',
+  fontSize: 13,
+};
+
+const fullScreenStyle: CSSProperties = {
+  position: 'fixed',
+  inset: 0,
+  zIndex: 9999,
+  display: 'flex',
+  flexDirection: 'column',
+  padding: '18px 24px 22px',
+  background: 'radial-gradient(circle at top left, rgba(37,99,235,0.055), transparent 34%), linear-gradient(180deg, #f8fafc 0%, #eef3f9 100%)',
+};
+
+const fullScreenBtnStyle: CSSProperties = {
+  height: 44,
+  padding: '0 16px',
+  borderRadius: 14,
+  border: '1px solid #e2e8f0',
+  background: '#ffffff',
+  color: '#475569',
+  fontSize: 13.5,
+  fontWeight: 650,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 8,
+  boxShadow: '0 2px 8px rgba(15,23,42,0.08)',
+};
+
+const tableWrapFullStyle: CSSProperties = {
+  flex: 1,
+  minHeight: 0,
+  overflow: 'auto',
+  padding: '0 12px 12px',
+};
+
+const tableFullStyle: CSSProperties = {
+  width: '100%',
+  minWidth: 1480,
   borderCollapse: 'separate',
   borderSpacing: '0 10px',
   fontSize: 13,
