@@ -1,5 +1,5 @@
 // src/components/workstation/WorkStationPage.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { CSSProperties } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,8 @@ import {
   Users,
   Plus,
   Trash2,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 
 import { api } from '@/api/client';
@@ -219,6 +221,15 @@ export default function WorkStationPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | WSStatus>('all');
   const [page, setPage] = useState(1);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsFullScreen(false);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, []);
 
   const pageSize = 20;
 
@@ -336,7 +347,7 @@ export default function WorkStationPage() {
   }
 
   return (
-    <div style={pageStyle}>
+    <div style={isFullScreen ? fullScreenStyle : pageStyle}>
       {/* Status quick filters */}
       <div style={statusPanelStyle}>
         <div style={statusGridStyle}>
@@ -437,13 +448,23 @@ export default function WorkStationPage() {
           </div>
         )}
 
-        <div style={recordsTextStyle}>
-          {allStudents.length} visible · {total} workstation records
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={recordsTextStyle}>
+            {allStudents.length} visible · {total} workstation records
+          </span>
+          <button
+            style={fullScreenBtnStyle}
+            onClick={() => setIsFullScreen((v) => !v)}
+            title={isFullScreen ? 'Exit full screen (Esc)' : 'Full screen'}
+          >
+            {isFullScreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
+            {isFullScreen ? 'Exit' : 'Full Screen'}
+          </button>
         </div>
       </div>
 
       {/* Table */}
-      <div style={tableWrapStyle}>
+      <div style={isFullScreen ? tableWrapFullStyle : tableWrapStyle}>
         <table style={tableStyle}>
           <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
             <tr>
@@ -877,7 +898,6 @@ const activeFilterClearBtnStyle: CSSProperties = {
 };
 
 const recordsTextStyle: CSSProperties = {
-  marginLeft: 'auto',
   fontSize: 12,
   color: '#64748b',
   fontWeight: 700,
@@ -896,6 +916,42 @@ const tableStyle: CSSProperties = {
   fontSize: 12.5,
   minWidth: 2770,
   width: '100%',
+};
+
+const fullScreenStyle: CSSProperties = {
+  position: 'fixed',
+  inset: 0,
+  zIndex: 9999,
+  display: 'flex',
+  flexDirection: 'column',
+  padding: '14px 24px',
+  background:
+    'radial-gradient(circle at top left, rgba(37,99,235,0.06), transparent 32%), linear-gradient(180deg, #f7f9fc 0%, #eef3f9 100%)',
+};
+
+const tableWrapFullStyle: CSSProperties = {
+  flex: 1,
+  minHeight: 0,
+  overflow: 'auto',
+  padding: '14px 0 0',
+};
+
+const fullScreenBtnStyle: CSSProperties = {
+  height: 38,
+  padding: '0 14px',
+  borderRadius: 12,
+  border: '1px solid #e2e8f0',
+  background: '#ffffff',
+  color: '#475569',
+  fontSize: 12.5,
+  fontWeight: 700,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 7,
+  boxShadow: '0 2px 8px rgba(15,23,42,0.07)',
+  flexShrink: 0,
 };
 
 const thStyle: CSSProperties = {
