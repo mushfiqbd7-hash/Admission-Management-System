@@ -175,8 +175,9 @@ export const viewDocument = async (req, res) => {
       return res.status(404).json({ error: 'Document not found' });
     }
 
+    const safeName = path.basename(doc.file_name || 'document').replace(/["\r\n]/g, '_');
     res.setHeader('Content-Type', doc.mime_type || 'application/octet-stream');
-    res.setHeader('Content-Disposition', `inline; filename="${path.basename(doc.file_name || 'document')}"`);
+    res.setHeader('Content-Disposition', `inline; filename="${safeName}"`);
     return res.sendFile(path.resolve(doc.file_path));
   } catch (err) {
     console.error('viewDocument error:', err);

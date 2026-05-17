@@ -353,7 +353,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const handleViewDoc = async (docKey: string) => {
     if (!savedId) return;
 
-    const viewer = window.open('', '_blank', 'noopener,noreferrer');
+    const viewer = window.open('', '_blank');
     if (viewer) {
       viewer.document.title = 'Loading document...';
       viewer.document.body.innerHTML = '<p style="font-family: system-ui, sans-serif; padding: 24px;">Loading document...</p>';
@@ -381,7 +381,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
       if (viewer) {
         viewer.location.href = url;
       } else {
-        window.open(url, '_blank', 'noopener,noreferrer');
+        window.open(url, '_blank');
       }
       window.setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
     } catch {
