@@ -7,6 +7,7 @@ import {
   Pencil,
   Printer,
   Download,
+  Eye,
   CheckCircle,
   AlertCircle,
   FileText,
@@ -159,6 +160,33 @@ export default function StudentDetailPage() {
       const status = (err as { response?: { status?: number } })?.response?.status;
       if (status === 404) toast.info('No documents uploaded yet');
       else toast.error('Export failed');
+    }
+  };
+
+  const handleViewDoc = async (docId: string) => {
+    if (!id || !docId) return;
+
+    const viewer = window.open('', '_blank', 'noopener,noreferrer');
+    if (viewer) {
+      viewer.document.title = 'Loading document...';
+      viewer.document.body.innerHTML = '<p style="font-family: system-ui, sans-serif; padding: 24px;">Loading document...</p>';
+    }
+
+    try {
+      const res = await api.get(`/students/${id}/documents/${docId}/file`, {
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(res.data);
+      if (viewer) {
+        viewer.location.href = url;
+      } else {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
+      window.setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
+    } catch {
+      if (viewer) viewer.close();
+      toast.error('Could not open document');
     }
   };
 
@@ -543,9 +571,20 @@ export default function StudentDetailPage() {
                       )}
                     </div>
 
-                    <div className="text-[12px] font-semibold text-slate-500">
+                    <div className="min-w-0 max-w-[280px] truncate text-right text-[12px] font-semibold text-slate-500">
                       {uploaded ? uploaded.file_name : 'Not uploaded'}
                     </div>
+
+                    {uploaded && (
+                      <button
+                        type="button"
+                        onClick={() => handleViewDoc(uploaded.id!)}
+                        className="flex h-9 shrink-0 items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 text-[12px] font-black text-blue-700"
+                      >
+                        <Eye size={14} />
+                        View
+                      </button>
+                    )}
                   </div>
                 );
               })}
