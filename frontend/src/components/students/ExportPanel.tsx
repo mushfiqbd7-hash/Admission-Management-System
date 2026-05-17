@@ -96,6 +96,26 @@ function getUniversityText(r: any) {
   return String(r.target_university || r.university || '');
 }
 
+// When a university filter is active, return ONLY the matching university name(s)
+// so the exported file shows just the relevant university, not all of them.
+function getExportUniversityText(r: any, universityFilter: string): string {
+  const query = normalize(universityFilter);
+  if (!query) return getUniversityText(r);
+
+  const workstationArray = safeParseArray(r.universities)
+    .map((u: any) => u?.university_name || u?.name || '')
+    .filter(Boolean);
+
+  if (workstationArray.length > 0) {
+    const matched = workstationArray.filter((name: string) =>
+      normalize(name).includes(query)
+    );
+    return matched.length > 0 ? matched.join('; ') : getUniversityText(r);
+  }
+
+  return getUniversityText(r);
+}
+
 // Check whether a student row has a given status in ANY of their universities
 function rowHasStatus(r: any, status: StatusKey): boolean {
   if (status === 'all') return true;
@@ -243,7 +263,7 @@ function doExcel(
         esc(`${r.given_name || ''} ${r.family_name || ''}`.trim()),
         esc(r.passport_number),
         esc(r.nationality),
-        esc(getUniversityText(r)),
+        esc(getExportUniversityText(r, university)),
         esc(r.intended_major),
         esc(r.degree_level),
         esc(r.intended_start_term),
@@ -362,7 +382,7 @@ function doPDF(
       `${r.given_name || ''} ${r.family_name || ''}`.trim() || '—',
       r.passport_number || '—',
       r.nationality || '—',
-      getUniversityText(r) || '—',
+      getExportUniversityText(r, university) || '—',
       r.intended_major || '—',
       r.degree_level || '—',
       r.intended_start_term || '—',
