@@ -116,7 +116,11 @@ export default function AppShell() {
     navigate('/login', { replace: true });
   };
 
-  const displayName = user?.full_name || (user as any)?.name || 'User';
+  const rawDisplayName = user?.full_name || (user as any)?.name || 'User';
+  const displayName =
+    user?.role === 'admin' && rawDisplayName === 'System Administrator'
+      ? 'Admin-Mushfiq'
+      : rawDisplayName;
 
   return (
     <div className="sams-app-font flex h-screen w-screen overflow-hidden bg-[#f4f7fb]">

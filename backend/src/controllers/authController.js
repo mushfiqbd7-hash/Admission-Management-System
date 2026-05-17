@@ -11,6 +11,11 @@ const signAccessToken  = (userId, role) =>
 
 const signRefreshToken = () => crypto.randomBytes(64).toString('hex');
 
+const displayNameFor = (user) =>
+  user?.role === 'admin' && user?.full_name === 'System Administrator'
+    ? 'Admin-Mushfiq'
+    : user?.full_name;
+
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -82,7 +87,7 @@ export const login = async (req, res) => {
       user: {
         id:        user.id,
         email:     user.email,
-        full_name: user.full_name,
+        full_name: displayNameFor(user),
         role:      user.role,
       },
     });

@@ -61,6 +61,14 @@ function formatDate(value?: string) {
   return date.toLocaleDateString('en-CA');
 }
 
+function displayUserName(user?: Pick<ExtUser, 'full_name' | 'role'>) {
+  if (user?.role === 'admin' && user.full_name === 'System Administrator') {
+    return 'Admin-Mushfiq';
+  }
+
+  return user?.full_name || 'Unnamed User';
+}
+
 function roleTheme(role?: string) {
   switch (role) {
     case 'admin':
@@ -292,10 +300,9 @@ export default function UsersPage() {
       setForm({ email: '', password: '', full_name: '', role: 'staff' });
     },
     onError: (err: unknown) => {
-      toast.error(
-        (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
-          'Failed to create user'
-      );
+      const data = (err as { response?: { data?: { error?: string; details?: Array<{ message?: string }> } } })?.response?.data;
+      const detail = data?.details?.map((d) => d.message).filter(Boolean).join(', ');
+      toast.error(detail || data?.error || 'Failed to create user');
     },
   });
 
@@ -519,10 +526,10 @@ export default function UsersPage() {
                     <tr key={u.id} style={rowStyle}>
                       <td style={firstTdStyle}>
                         <div style={nameCellStyle}>
-                          <div style={avatarStyle}>{getInitials(u.full_name)}</div>
+                          <div style={avatarStyle}>{getInitials(displayUserName(u))}</div>
 
                           <div style={{ minWidth: 0 }}>
-                            <div style={nameTextStyle}>{u.full_name || 'Unnamed User'}</div>
+                            <div style={nameTextStyle}>{displayUserName(u)}</div>
                             <div style={idTextStyle}>ID: {u.id?.slice(0, 8) || '—'}</div>
                           </div>
                         </div>

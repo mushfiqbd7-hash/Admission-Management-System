@@ -4,6 +4,20 @@ import bcrypt from 'bcryptjs';
 import { query } from '../config/database.js';
 import { sendVerificationEmail } from '../utils/emailService.js';
 
+const userSelectFields = `
+  id,
+  email,
+  CASE
+    WHEN role = 'admin' AND full_name = 'System Administrator'
+    THEN 'Admin-Mushfiq'
+    ELSE full_name
+  END AS full_name,
+  role,
+  is_active,
+  last_login,
+  created_at
+`;
+
 // ── POST /api/auth/register  (public) ──────────────────────────────────────
 // Public sign-up is reserved for applicants. The role is hardcoded server-side
 // to 'student' — any role value supplied by the client is ignored.
@@ -196,13 +210,13 @@ export const listUsers = async (req, res) => {
   try {
     if (req.user.role === 'admin') {
       const { rows } = await query(
-        `SELECT id, email, full_name, role, is_active, last_login, created_at
+        `SELECT ${userSelectFields}
          FROM users ORDER BY created_at DESC`
       );
       return res.json({ users: rows });
     }
     const { rows } = await query(
-      `SELECT id, email, full_name, role, is_active, last_login, created_at
+      `SELECT ${userSelectFields}
        FROM users WHERE id = $1`,
       [req.user.id]
     );
