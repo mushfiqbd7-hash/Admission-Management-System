@@ -1,16 +1,13 @@
-﻿// src/components/auth/RegisterPage.tsx
+// src/components/auth/RegisterPage.tsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, AlertCircle, MailCheck } from 'lucide-react';
 import { authApi } from '@/api/client';
 
-type Role = 'agent' | 'student';
-
 interface RegisterForm {
   full_name: string;
   email: string;
   password: string;
-  role: Role;
 }
 
 export default function RegisterPage() {
@@ -24,11 +21,10 @@ export default function RegisterPage() {
     full_name: '',
     email: '',
     password: '',
-    role: 'agent',
   });
 
   const set = (field: keyof RegisterForm) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
       setForm((f) => ({ ...f, [field]: e.target.value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,7 +36,10 @@ export default function RegisterPage() {
     setLoading(true);
     setError('');
     try {
-      await authApi.register(form);
+      // Public registration is always for applicants (student role).
+      // Agent / staff / admin accounts are provisioned by an admin
+      // from the User Management screen.
+      await authApi.register({ ...form, role: 'student' });
       setRegisteredEmail(form.email.trim());
       setRegistered(true);
     } catch (err: unknown) {
@@ -203,14 +202,6 @@ export default function RegisterPage() {
                         {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
                       </button>
                     </div>
-                  </div>
-
-                  <div className="rp-field-wrap">
-                    <label className="rp-label">Role</label>
-                    <select value={form.role} onChange={set('role')} className="rp-input rp-select">
-                      <option value="agent">Agent</option>
-                      <option value="student">Student</option>
-                    </select>
                   </div>
 
                   <button type="submit" disabled={loading} className="rp-btn">

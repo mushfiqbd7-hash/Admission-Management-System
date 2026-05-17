@@ -1,20 +1,18 @@
-﻿// src/controllers/usersController.js
+// src/controllers/usersController.js
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import { query } from '../config/database.js';
 import { sendVerificationEmail } from '../utils/emailService.js';
 
 // ── POST /api/auth/register  (public) ──────────────────────────────────────
+// Public sign-up is reserved for applicants. The role is hardcoded server-side
+// to 'student' — any role value supplied by the client is ignored.
+// Agent / staff / admin accounts must be provisioned by an admin via
+// User Management (POST /api/users) or by editing an existing user's role.
 export const register = async (req, res) => {
   try {
-    const { full_name, email, password, role } = req.body;
-
-    // Public registration must NOT allow staff/admin accounts.
-    if (!['agent', 'student'].includes(role)) {
-      return res.status(400).json({
-        error: 'Public registration is only allowed for agent or student accounts',
-      });
-    }
+    const { full_name, email, password } = req.body;
+    const role = 'student';
 
     if (!full_name || !email || !password) {
       return res.status(400).json({

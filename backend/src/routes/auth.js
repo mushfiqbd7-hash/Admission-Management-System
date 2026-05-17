@@ -1,4 +1,4 @@
-﻿// src/routes/auth.js
+// src/routes/auth.js
 import { Router } from 'express';
 import { body } from 'express-validator';
 
@@ -33,8 +33,9 @@ router.post(
 );
 
 // Public: self-registration
-// Only student and agent accounts can self-register.
-// Admin/staff accounts must be created by an admin from User Management.
+// Public sign-up is only for applicants (student role).
+// Agent / staff / admin accounts must be created by an admin from User Management.
+// The `role` field on the request body is intentionally ignored by the controller.
 router.post(
   '/register',
   [
@@ -43,9 +44,6 @@ router.post(
     body('password')
       .isLength({ min: 6 })
       .withMessage('Password must be at least 6 characters'),
-    body('role')
-      .isIn(['agent', 'student'])
-      .withMessage('Role must be "agent" or "student"'),
   ],
   validateRequest,
   register
