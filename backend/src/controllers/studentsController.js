@@ -4,6 +4,34 @@
 import { query, getClient } from '../config/database.js';
 import { createNotification, notifyAdminsAndStaff, statusLabel } from '../utils/notifications.js';
 
+const WORKSTATION_STATUSES = [
+  'approved', 'processing', 'pre_admission', 'admitted', 'rejected', 'revoked',
+];
+
+// When a student enters a workstation status, immediately provision their rows
+// so the Workstation page is up-to-date without needing a page reload.
+const provisionWorkstationEntry = async (studentId, status) => {
+  if (!WORKSTATION_STATUSES.includes(status)) return;
+  try {
+    const { rows: existing } = await query(
+      'SELECT 1 FROM workstation_universities WHERE student_id = $1 LIMIT 1',
+      [studentId]
+    );
+    if (!existing.length) {
+      await query(
+        'INSERT INTO workstation_universities (student_id, status, position) VALUES ($1, $2, 0)',
+        [studentId, status]
+      );
+    }
+    await query(
+      'INSERT INTO workstation_records (student_id) VALUES ($1) ON CONFLICT (student_id) DO NOTHING',
+      [studentId]
+    );
+  } catch (_) {
+    // Non-fatal — workstation will self-heal on next page load
+  }
+};
+
 const canSeeAll = (role) => ['admin', 'staff'].includes(role);
 
 // Empty string / undefined / null → null
@@ -665,6 +693,11 @@ export const updateStudent = async (req, res) => {
         `UPDATE students SET ${updates.join(', ')} WHERE id = $${params.length}`,
         params
       );
+
+      // Provision Workstation entry if status changed to a workstation status
+      if (req.body.application_status && WORKSTATION_STATUSES.includes(req.body.application_status)) {
+        provisionWorkstationEntry(id, req.body.application_status).catch(() => {});
+      }
     }
 
     const { addresses, passport, education, financial } = req.body;
@@ -934,6 +967,9 @@ export const updateStatus = async (req, res) => {
       `,
       [req.user.id, id, JSON.stringify({ new_status: status }), req.ip]
     );
+
+    // Provision Workstation entry immediately when entering a workstation status
+    provisionWorkstationEntry(id, status).catch(() => {});
 
     res.json({ message: 'Status updated', student: r });
 

@@ -266,10 +266,10 @@ export default function WorkStationPage() {
   });
 
   const createUniversityMutation = useMutation({
-    mutationFn: ({ studentId }: { studentId: string }) =>
+    mutationFn: ({ studentId, primaryStatus }: { studentId: string; primaryStatus: WSStatus }) =>
       api.post(`/workstation/${studentId}/universities`, {
         university_name: '',
-        status: 'approved',
+        status: primaryStatus,
       }),
     onSuccess: () => {
       toast.success('University row added');
@@ -646,7 +646,10 @@ export default function WorkStationPage() {
                         ))}
 
                         <button
-                          onClick={() => createUniversityMutation.mutate({ studentId: student.id })}
+                          onClick={() => createUniversityMutation.mutate({
+                            studentId: student.id,
+                            primaryStatus: normalizeStatus(universities[0]?.status),
+                          })}
                           style={addUniversityBtnStyle}
                         >
                           <Plus size={13} />

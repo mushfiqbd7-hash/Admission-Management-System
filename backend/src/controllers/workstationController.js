@@ -21,30 +21,31 @@ const normalizeText = (value) => {
 };
 
 const ensureDefaultUniversities = async () => {
+  // Only admit students with a real workstation status (never draft/pending)
   await query(
     `
     INSERT INTO workstation_universities (student_id, status, position)
-    SELECT
-      s.id,
-      CASE
-        WHEN s.application_status = ANY($1::text[])
-        THEN s.application_status
-        ELSE 'approved'
-      END,
-      0
+    SELECT s.id, s.application_status, 0
     FROM students s
-    WHERE
-      (
-        s.application_status = ANY($1::text[])
-        OR s.application_status = 'pending'
-      )
+    WHERE s.application_status = ANY($1::text[])
       AND NOT EXISTS (
-        SELECT 1
-        FROM workstation_universities wu
-        WHERE wu.student_id = s.id
+        SELECT 1 FROM workstation_universities wu WHERE wu.student_id = s.id
       )
     `,
     [WORKSTATION_STATUSES]
+  );
+
+  // Auto-create a workstation_records row for every student now in workstation
+  await query(
+    `
+    INSERT INTO workstation_records (student_id)
+    SELECT DISTINCT wu.student_id
+    FROM workstation_universities wu
+    WHERE NOT EXISTS (
+      SELECT 1 FROM workstation_records wr WHERE wr.student_id = wu.student_id
+    )
+    ON CONFLICT (student_id) DO NOTHING
+    `
   );
 };
 
@@ -377,6 +378,7 @@ export const createWorkstationUniversity = async (req, res) => {
       ? req.body.status
       : 'approved';
 
+    // Use next available position (never re-use existing positions)
     const {
       rows: [positionRow],
     } = await query(
@@ -388,6 +390,8 @@ export const createWorkstationUniversity = async (req, res) => {
       [studentId]
     );
 
+    const nextPosition = positionRow.next_position;
+
     const {
       rows: [university],
     } = await query(
@@ -397,8 +401,11 @@ export const createWorkstationUniversity = async (req, res) => {
       VALUES ($1, $2, $3, $4)
       RETURNING *
       `,
-      [studentId, universityName, status, positionRow.next_position]
+      [studentId, universityName, status, nextPosition]
     );
+
+    // Do NOT update students.application_status when adding a non-primary university row.
+    // The primary (position 0) row always governs the student's status.
 
     res.status(201).json({ university });
   } catch (err) {
@@ -479,6 +486,23 @@ export const updateWorkstationUniversity = async (req, res) => {
     let updatedStudent = null;
 
     if (newStatus) {
+      // Always sync students.application_status with the PRIMARY university row
+      // (position 0 / earliest created), NOT necessarily the row just changed.
+      // This prevents a non-primary university change from clobbering the student's status.
+      const {
+        rows: [primaryRow],
+      } = await client.query(
+        `
+        SELECT status FROM workstation_universities
+        WHERE student_id = $1
+        ORDER BY position ASC, created_at ASC
+        LIMIT 1
+        `,
+        [studentId]
+      );
+
+      const primaryStatus = primaryRow?.status || newStatus;
+
       const {
         rows: [student],
       } = await client.query(
@@ -488,7 +512,7 @@ export const updateWorkstationUniversity = async (req, res) => {
         WHERE id = $2
         RETURNING id, application_status
         `,
-        [newStatus, studentId]
+        [primaryStatus, studentId]
       );
 
       if (!student) {
