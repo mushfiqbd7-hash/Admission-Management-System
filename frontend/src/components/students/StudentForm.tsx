@@ -353,6 +353,12 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const handleViewDoc = async (docKey: string) => {
     if (!savedId) return;
 
+    const viewer = window.open('', '_blank', 'noopener,noreferrer');
+    if (viewer) {
+      viewer.document.title = 'Loading document...';
+      viewer.document.body.innerHTML = '<p style="font-family: system-ui, sans-serif; padding: 24px;">Loading document...</p>';
+    }
+
     try {
       let docId = uploadedDocs[docKey]?.id;
 
@@ -372,9 +378,14 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
       const res = await api.get(`/students/${savedId}/documents/${docId}/file`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(res.data);
-      window.open(url, '_blank', 'noopener,noreferrer');
+      if (viewer) {
+        viewer.location.href = url;
+      } else {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
       window.setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
     } catch {
+      if (viewer) viewer.close();
       toast.error('Could not open document');
     }
   };
