@@ -48,6 +48,8 @@ function statusStyle(status?: string): CSSProperties {
     fontWeight: 900,
     whiteSpace: 'nowrap',
     textTransform: 'capitalize',
+    maxWidth: '100%',
+    overflow: 'hidden',
   };
 
   switch (status) {
@@ -406,16 +408,16 @@ export default function StudentsPage() {
             <thead>
               <tr>
                 {[
-                  ['App No.', 145],
-                  ...(canSeeAll ? [['Submitted By', 190]] : []),
-                  ['Passport No.', 140],
-                  ['Student', 210],
-                  ['Nationality', 145],
-                  ['University', 180],
-                  ['Degree', 165],
-                  ['Status', 165],
-                  ['Priority', 125],
-                  ['Actions', 120],
+                  ['App No.', 150],
+                  ...(canSeeAll ? [['Submitted By', 185]] : []),
+                  ['Passport No.', 130],
+                  ['Student', 200],
+                  ['Nationality', 125],
+                  ['University', 190],
+                  ['Degree', 150],
+                  ['Status', 150],
+                  ['Priority', 110],
+                  ['Actions', 190],
                 ].map(([label, width]) => (
                   <th key={label as string} style={{ ...thStyle, width: width as number }}>
                     {label}
@@ -481,12 +483,12 @@ export default function StudentsPage() {
                       </td>
 
                       <td style={bodyTdStyle}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, overflow: 'hidden' }}>
                           <div style={studentAvatarStyle}>
                             <UserRound size={15} />
                           </div>
 
-                          <div style={{ minWidth: 0 }}>
+                          <div style={{ minWidth: 0, overflow: 'hidden', flex: 1 }}>
                             <div style={studentNameStyle}>
                               {student.given_name} {student.family_name}
                             </div>
@@ -851,13 +853,14 @@ const filterChipStyle: CSSProperties = {
 const tableWrapStyle: CSSProperties = {
   flex: 1,
   minHeight: 0,
-  overflow: 'auto',
+  overflowY: 'auto',
+  overflowX: 'hidden',
   padding: '0 12px 12px',
 };
 
 const tableStyle: CSSProperties = {
   width: '100%',
-  minWidth: 1480,
+  tableLayout: 'fixed',
   borderCollapse: 'separate',
   borderSpacing: '0 10px',
   fontSize: 13,
@@ -911,6 +914,7 @@ const appNoStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   maxWidth: '100%',
+  overflow: 'hidden',
   padding: '5px 9px',
   borderRadius: 999,
   border: '1px solid #bfdbfe',
@@ -920,6 +924,7 @@ const appNoStyle: CSSProperties = {
   fontWeight: 950,
   fontFamily: 'DM Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
   whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
 };
 
 const strongTextStyle: CSSProperties = {
@@ -927,17 +932,21 @@ const strongTextStyle: CSSProperties = {
   fontWeight: 900,
   color: '#0f172a',
   lineHeight: 1.35,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
 };
 
 const smallMutedStyle: CSSProperties = {
   marginTop: 2,
-  fontSize: 11.5,
+  fontSize: 11,
   fontWeight: 700,
   color: '#94a3b8',
   lineHeight: 1.35,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
+  maxWidth: '100%',
 };
 
 const monoTextStyle: CSSProperties = {
@@ -953,6 +962,10 @@ const normalTextStyle: CSSProperties = {
   fontWeight: 750,
   color: '#475569',
   lineHeight: 1.45,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  maxWidth: '100%',
 };
 
 const studentAvatarStyle: CSSProperties = {
@@ -973,10 +986,12 @@ const studentNameStyle: CSSProperties = {
   fontWeight: 950,
   color: '#0f172a',
   whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
 };
 
 const lineClampStyle: CSSProperties = {
-  maxWidth: 170,
+  maxWidth: '100%',
   fontSize: 12.5,
   fontWeight: 750,
   color: '#475569',
@@ -998,6 +1013,8 @@ const priorityHighStyle: CSSProperties = {
   fontSize: 12,
   fontWeight: 950,
   whiteSpace: 'nowrap',
+  maxWidth: '100%',
+  overflow: 'hidden',
 };
 
 const priorityNormalStyle: CSSProperties = {
@@ -1012,13 +1029,15 @@ const priorityNormalStyle: CSSProperties = {
   fontSize: 12,
   fontWeight: 850,
   whiteSpace: 'nowrap',
+  maxWidth: '100%',
+  overflow: 'hidden',
 };
 
 const actionsWrapStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-start',
-  gap: 7,
+  gap: 5,
 };
 
 const emptyStateStyle: CSSProperties = {
