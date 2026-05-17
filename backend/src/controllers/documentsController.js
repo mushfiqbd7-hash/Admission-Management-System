@@ -258,9 +258,9 @@ export const exportDocumentsZip = async (req, res) => {
     DOCUMENTS_ORDER.forEach((entry, index) => {
       const doc = docsMap[entry.key];
       if (doc && doc.file_path && existsSync(doc.file_path)) {
-        const num = String(index + 1).padStart(2, '0');
+        const num = index + 1;
         const ext = path.extname(doc.file_name || doc.file_path);
-        orderedDocs.push({ doc, filename: `${num}_${entry.label}${ext}` });
+        orderedDocs.push({ doc, filename: `${num}. ${entry.label}${ext}` });
       }
     });
 
