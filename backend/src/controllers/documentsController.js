@@ -54,6 +54,19 @@ const removeUploadedFileIfNeeded = (file) => {
   } catch (_) {}
 };
 
+const publicDocumentFields = `
+  id,
+  student_id,
+  doc_key,
+  doc_label,
+  is_required,
+  file_name,
+  file_size,
+  mime_type,
+  uploaded_at,
+  uploaded_by
+`;
+
 export const uploadDocument = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
@@ -79,7 +92,7 @@ export const uploadDocument = async (req, res) => {
       ON CONFLICT (student_id, doc_key) DO UPDATE SET
         doc_label=$3, is_required=$4, file_name=$5, file_path=$6,
         file_size=$7, mime_type=$8, uploaded_at=NOW(), uploaded_by=$9
-      RETURNING *
+      RETURNING ${publicDocumentFields}
     `, [
       id, doc_key, doc_label || doc_key,
       is_required === 'true' || is_required === true,
@@ -132,7 +145,7 @@ export const getDocuments = async (req, res) => {
     }
 
     const { rows } = await query(
-      'SELECT * FROM student_documents WHERE student_id=$1 ORDER BY doc_key',
+      `SELECT ${publicDocumentFields} FROM student_documents WHERE student_id=$1 ORDER BY doc_key`,
       [id]
     );
 

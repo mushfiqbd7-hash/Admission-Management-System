@@ -186,7 +186,22 @@ export const getStudent = async (req, res) => {
       query('SELECT * FROM student_financial WHERE student_id = $1', [id]),
       query('SELECT * FROM student_language WHERE student_id = $1', [id]),
       query('SELECT * FROM student_work_experience WHERE student_id = $1 ORDER BY start_date DESC', [id]),
-      query('SELECT * FROM student_documents WHERE student_id = $1 ORDER BY doc_key', [id]),
+      query(`
+        SELECT
+          id,
+          student_id,
+          doc_key,
+          doc_label,
+          is_required,
+          file_name,
+          file_size,
+          mime_type,
+          uploaded_at,
+          uploaded_by
+        FROM student_documents
+        WHERE student_id = $1
+        ORDER BY doc_key
+      `, [id]),
       query(
         `
         SELECT n.*, u.full_name AS author
