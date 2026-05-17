@@ -1093,7 +1093,11 @@ export const getStats = async (req, res) => {
           s.application_status,
           s.priority,
           s.created_at,
-          cb.full_name AS submitted_by_name,
+          CASE
+            WHEN cb.role = 'admin' AND cb.full_name IN ('System Administrator', 'Sytem Administrator')
+            THEN 'Admin-Mushfiq'
+            ELSE cb.full_name
+          END AS submitted_by_name,
           cb.email AS submitted_by_email,
           cb.role AS submitted_by_role
         FROM students s

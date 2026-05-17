@@ -122,17 +122,16 @@ const statusStyle = (
 
 const getSubmitter = (s: Student) => {
   const r = s as Student & {
-    submitted_by_role?: string;
-    submitted_by_name?: string;
+    submitted_by_name?: string | null;
   };
+  const name = r.submitted_by_name?.trim();
 
-  if (r.submitted_by_name) return r.submitted_by_name;
-
-  if (r.submitted_by_role) {
-    return r.submitted_by_role.charAt(0).toUpperCase() + r.submitted_by_role.slice(1);
+  if (!name) return '-';
+  if (name === 'System Administrator' || name === 'Sytem Administrator') {
+    return 'Admin-Mushfiq';
   }
 
-  return '—';
+  return name;
 };
 
 function StatCard({
