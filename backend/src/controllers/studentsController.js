@@ -276,6 +276,18 @@ export const createStudent = async (req, res) => {
     const today = new Date().toISOString().slice(0, 10);
     const dateStr = today.replace(/-/g, '');
 
+    // Self-heal: ensure the daily-sequence table exists even if migration 017
+    // wasn't applied to this database (common when the Supabase project was
+    // created before the migration was added). Cheap idempotent DDL.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS application_number_daily_seq (
+        app_date DATE PRIMARY KEY,
+        last_seq INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+
     const {
       rows: [seqRow],
     } = await client.query(

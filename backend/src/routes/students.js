@@ -25,11 +25,18 @@ router.get('/stats', getStats);
 router.get('/', listStudents);
 
 // ── Create student/application ────────────────────────────────
+// Validation rules are conditional on application_status:
+//   - status='draft'  → no required fields (Save Draft / auto-save)
+//   - anything else   → family_name and given_name are required (submit)
 router.post(
   '/',
   [
-    body('family_name').notEmpty().trim(),
-    body('given_name').notEmpty().trim(),
+    body('family_name')
+      .if(body('application_status').not().equals('draft'))
+      .notEmpty().trim().withMessage('Family name is required to submit'),
+    body('given_name')
+      .if(body('application_status').not().equals('draft'))
+      .notEmpty().trim().withMessage('Given name is required to submit'),
   ],
   validateRequest,
   createStudent

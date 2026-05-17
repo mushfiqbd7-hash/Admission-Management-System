@@ -127,11 +127,11 @@ function getSubmitter(s: WorkStudent) {
     return s.submitted_by_role.charAt(0).toUpperCase() + s.submitted_by_role.slice(1);
   }
 
-  return 'â€”';
+  return '—';
 }
 
 function getDegreeLabel(value?: string) {
-  if (!value) return 'â€”';
+  if (!value) return '—';
   return (DEGREE_LABELS as Record<string, string>)[value] || value;
 }
 
@@ -162,7 +162,7 @@ function TextInputCell({
           setSaving(false);
         }
       }}
-      placeholder={saving ? 'Savingâ€¦' : placeholder}
+      placeholder={saving ? 'Saving…' : placeholder}
       style={{
         ...inputStyle,
         opacity: saving ? 0.65 : 1,
@@ -411,7 +411,7 @@ export default function WorkStationPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            placeholder="Search student, passport, app no, universityâ€¦"
+            placeholder="Search student, passport, app no, university…"
             style={searchInputStyle}
           />
 
@@ -438,7 +438,7 @@ export default function WorkStationPage() {
         )}
 
         <div style={recordsTextStyle}>
-          {allStudents.length} visible Â· {total} workstation records
+          {allStudents.length} visible · {total} workstation records
         </div>
       </div>
 
@@ -534,7 +534,7 @@ export default function WorkStationPage() {
                     </td>
 
                     <td style={centerTdStyle}>
-                      <span style={appNoStyle}>{student.application_number || 'â€”'}</span>
+                      <span style={appNoStyle}>{student.application_number || '—'}</span>
                     </td>
 
                     <td style={centerTdStyle}>
@@ -542,11 +542,11 @@ export default function WorkStationPage() {
                     </td>
 
                     <td style={centerTdStyle}>
-                      <div style={mutedTextStyle}>{student.passport_number || 'â€”'}</div>
+                      <div style={mutedTextStyle}>{student.passport_number || '—'}</div>
                     </td>
 
                     <td style={centerTdStyle}>
-                      <div style={mutedTextStyle}>{student.nationality || 'â€”'}</div>
+                      <div style={mutedTextStyle}>{student.nationality || '—'}</div>
                     </td>
 
                     <td style={centerTdStyle}>
@@ -556,17 +556,17 @@ export default function WorkStationPage() {
                     </td>
 
                     <td style={centerTdStyle}>
-                      <div style={mutedTextStyle}>{student.intended_major || 'â€”'}</div>
+                      <div style={mutedTextStyle}>{student.intended_major || '—'}</div>
                     </td>
 
                     <td style={centerTdStyle}>
-                      <div style={mutedTextStyle}>{student.scholarship_type || 'â€”'}</div>
+                      <div style={mutedTextStyle}>{student.scholarship_type || '—'}</div>
                     </td>
 
                     <td style={centerTdStyle}>
                       <TextInputCell
                         value={student.payment_of_application || ''}
-                        placeholder="Payment infoâ€¦"
+                        placeholder="Payment info…"
                         onSave={(value) =>
                           updateRecordMutation.mutateAsync({
                             studentId: student.id,
@@ -579,7 +579,7 @@ export default function WorkStationPage() {
                     <td style={centerTdStyle}>
                       <TextInputCell
                         value={student.application_incharge || ''}
-                        placeholder="Incharge nameâ€¦"
+                        placeholder="Incharge name…"
                         onSave={(value) =>
                           updateRecordMutation.mutateAsync({
                             studentId: student.id,
@@ -711,7 +711,7 @@ export default function WorkStationPage() {
       {/* Footer */}
       <div style={footerStyle}>
         <span style={{ fontSize: 12.5, color: '#64748b', fontWeight: 700 }}>
-          {allStudents.length} visible Â· {total} workstation records
+          {allStudents.length} visible · {total} workstation records
         </span>
 
         {totalPages > 1 && (
@@ -743,7 +743,7 @@ export default function WorkStationPage() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ───────────────────────── Styles ───────────────────────── */
 
 const pageStyle: CSSProperties = {
   display: 'flex',

@@ -1,4 +1,4 @@
-// src/components/students/StudentForm.tsx â€” Phase 3
+// src/components/students/StudentForm.tsx — Phase 3
 // ALL logic, mutations, buildPayload, handleSave, handleDocUpload, handleDeleteDoc,
 // handleAddNote, handleSubmitConfirmed are 100% identical to original.
 import { useState, useRef, useEffect } from 'react';
@@ -43,7 +43,7 @@ const emptyEducationRow = (isHighest = false): EducationRow => ({
 
 interface Props { mode: 'create' | 'edit'; initialData?: StudentDetail; studentId?: string; }
 
-// â”€â”€ Shared radio pill component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Shared radio pill component ──────────────────────────────
 function RadioPill({ name, value, checked, label, onChange }: {
   name: string; value: string | boolean; checked: boolean; label: string; onChange: () => void;
 }) {
@@ -64,7 +64,7 @@ function RadioPill({ name, value, checked, label, onChange }: {
   );
 }
 
-// â”€â”€ Repeatable row card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Repeatable row card ──────────────────────────────────────
 function RowCard({ title, onRemove, children }: { title: string; onRemove?: () => void; children: React.ReactNode }) {
   return (
     <div style={{ background: 'var(--surface-sunken)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '16px' }}>
@@ -82,7 +82,7 @@ function RowCard({ title, onRemove, children }: { title: string; onRemove?: () =
   );
 }
 
-// â”€â”€ Add row button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Add row button ────────────────────────────────────────────
 function AddRowBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button type="button" onClick={onClick}
@@ -101,7 +101,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const [step, setStep] = useState(0);
   const [savedId, setSavedId] = useState<string | null>(studentId || null);
 
-  // â”€â”€ Form state (identical to original) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Form state (identical to original) ───────────────────
   const s = initialData?.student;
   const p = initialData?.passport;
   const f = initialData?.financial;
@@ -182,7 +182,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [status, setStatus] = useState<ApplicationStatus>(s?.application_status || 'pending');
 
-  // â”€â”€ Mutations (identical to original) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Mutations (identical to original) ────────────────────
   const createMutation = useMutation({
     mutationFn: (data: unknown) => studentsApi.create(data),
     onSuccess: (res) => {
@@ -384,7 +384,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
   const isMutating = createMutation.isPending || updateMutation.isPending;
 
-  // â”€â”€ Section rendering â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Section rendering ─────────────────────────────────────
   const renderSection = () => {
     switch (SECTIONS[step].id) {
 
@@ -394,7 +394,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
             <Grid2>
               <FormField label="Family Name" required><Input placeholder="Family / Last name" {...P('family_name')} /></FormField>
               <FormField label="Given Name" required><Input placeholder="Given / First name" {...P('given_name')} /></FormField>
-              <FormField label="Chinese Name"><Input placeholder="ä¸­æ–‡å§“å" {...P('chinese_name')} /></FormField>
+              <FormField label="Chinese Name"><Input placeholder="中文姓名" {...P('chinese_name')} /></FormField>
               <FormField label="Date of Birth" required><Input type="date" {...P('date_of_birth')} /></FormField>
               <FormField label="Gender" required>
                 <div style={{ display: 'flex', gap: 20, paddingTop: 6 }}>
@@ -525,10 +525,10 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                     <FormField label="Visa Type" required>
                       <Select value={passport.visa_type} onChange={e => setPassport(p => ({...p, visa_type: e.target.value}))}>
                         <option value="">Select type</option>
-                        <option value="X1">X1 â€“ Long-term Study</option>
-                        <option value="X2">X2 â€“ Short-term Study</option>
-                        <option value="F">F â€“ Non-commercial Visit</option>
-                        <option value="M">M â€“ Business</option>
+                        <option value="X1">X1 – Long-term Study</option>
+                        <option value="X2">X2 – Short-term Study</option>
+                        <option value="F">F – Non-commercial Visit</option>
+                        <option value="M">M – Business</option>
                         <option value="Tourist">Tourist</option>
                       </Select>
                     </FormField>
@@ -622,7 +622,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               <FormField label="Annual Income" required>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <Select style={{ width: 130 }} value={financial.annual_income_currency} onChange={e => setFinancial(p=>({...p,annual_income_currency:e.target.value}))}>
-                    {ALL_CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} â€“ {c.name}</option>)}
+                    {ALL_CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} – {c.name}</option>)}
                   </Select>
                   <Input type="number" placeholder="Amount" value={String(financial.annual_income_amount)} onChange={e => setFinancial(p=>({...p,annual_income_amount:e.target.value}))} />
                 </div>
@@ -690,7 +690,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               <strong>Maximum file size:</strong> 1.5 MB per document. Accepted formats: PDF, JPG, PNG, DOC, DOCX.
             </p>
           </div>
-          <FormSection title={`Documents Checklist â€” ${Object.keys(uploadedDocs).length}/${DOCUMENTS_LIST.length} uploaded`}>
+          <FormSection title={`Documents Checklist — ${Object.keys(uploadedDocs).length}/${DOCUMENTS_LIST.length} uploaded`}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {DOCUMENTS_LIST.map((doc, idx) => {
                 const uploaded = uploadedDocs[doc.key];
@@ -714,9 +714,9 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                     <input type="file" style={{ display: 'none' }} ref={el => { fileRefs.current[doc.key] = el; }}
                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                       onChange={e => { const file = e.target.files?.[0]; if (file) handleDocUpload(doc.key, doc.label, doc.required, file); e.target.value = ''; }} />
-                    <button disabled={isUp || !savedId}
+                    <button disabled={isUp}
                       onClick={() => fileRefs.current[doc.key]?.click()}
-                      style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, fontSize: 11.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', border: '1px solid', opacity: (!savedId) ? 0.5 : 1, transition: 'all 0.15s', background: uploaded ? '#dcfce7' : 'var(--navy-600)', color: uploaded ? '#15803d' : '#fff', borderColor: uploaded ? '#86efac' : 'var(--navy-600)' }}>
+                      style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, fontSize: 11.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', border: '1px solid', opacity: isUp ? 0.5 : 1, transition: 'all 0.15s', background: uploaded ? '#dcfce7' : 'var(--navy-600)', color: uploaded ? '#15803d' : '#fff', borderColor: uploaded ? '#86efac' : 'var(--navy-600)' }}>
                       {isUp ? <span style={{ width: 11, height: 11, border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.7s linear infinite', display: 'inline-block' }} /> : <Upload size={11} />}
                       {uploaded ? 'Replace' : 'Upload'}
                     </button>
@@ -739,9 +739,9 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
           <FormSection title="Application Summary">
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 18 }}>
               {[
-                { label: 'Passport No.', value: passport.passport_number || 'â€”', mono: true },
-                { label: 'Student Name', value: `${personal.given_name} ${personal.family_name}`.trim() || 'â€”' },
-                { label: 'University',   value: personal.target_university || 'â€”' },
+                { label: 'Passport No.', value: passport.passport_number || '—', mono: true },
+                { label: 'Student Name', value: `${personal.given_name} ${personal.family_name}`.trim() || '—' },
+                { label: 'University',   value: personal.target_university || '—' },
               ].map(({ label, value, mono }) => (
                 <div key={label} style={{ background: 'var(--surface-sunken)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '12px 14px' }}>
                   <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 5, fontWeight: 500 }}>{label}</div>
@@ -758,7 +758,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               ].map(([l, v]) => (
                 <div key={l} style={{ display: 'flex', gap: 8, fontSize: 13 }}>
                   <span style={{ width: 140, color: 'var(--text-tertiary)', flexShrink: 0, fontWeight: 500 }}>{l}:</span>
-                  <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{v || 'â€”'}</span>
+                  <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{v || '—'}</span>
                 </div>
               ))}
             </div>
@@ -786,7 +786,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
           {canManageStatus && (
             <FormSection title="Application Notes">
-              <Textarea rows={4} placeholder="Add a note (visible to all roles)â€¦" value={notes} onChange={e => setNotes(e.target.value)} />
+              <Textarea rows={4} placeholder="Add a note (visible to all roles)…" value={notes} onChange={e => setNotes(e.target.value)} />
               {savedId && (
                 <button onClick={handleAddNote} className="btn-ghost" style={{ marginTop: 10, fontSize: 12.5 }}>
                   Add Note
@@ -804,7 +804,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   return (
     <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
 
-      {/* â”€â”€ Step sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Step sidebar ──────────────────────────────────── */}
       <div style={{ width: 196, background: 'var(--surface)', borderRight: '1px solid var(--border)', flexShrink: 0, overflowY: 'auto', padding: '14px 10px' }}>
         <p style={{ fontSize: 10.5, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10, padding: '0 6px' }}>
           Sections
@@ -836,7 +836,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
         })}
       </div>
 
-      {/* â”€â”€ Main area â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Main area ─────────────────────────────────────── */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
         {/* Section header */}
@@ -865,7 +865,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <button onClick={() => { handleSaveDraft().catch(() => {}); }} disabled={isMutating} className="btn-ghost" style={{ gap: 6 }}>
               <Save size={13} />
-              {isMutating ? 'Savingâ€¦' : 'Save Draft'}
+              {isMutating ? 'Saving…' : 'Save Draft'}
             </button>
             {step < SECTIONS.length - 1 ? (
               <button onClick={handleNext} disabled={isMutating} className="btn-primary" style={{ gap: 6 }}>
@@ -877,14 +877,14 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#15803d'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#16a34a'; }}>
                 <Send size={13} />
-                {isMutating ? 'Submittingâ€¦' : 'Submit Application'}
+                {isMutating ? 'Submitting…' : 'Submit Application'}
               </button>
             )}
           </div>
         </div>
       </div>
 
-      {/* â”€â”€ Submit modal (identical logic) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Submit modal (identical logic) ────────────────── */}
       {showSubmitModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, backdropFilter: 'blur(4px)' }}>
           <div className="card" style={{ width: 440, padding: '28px 28px 24px', boxShadow: 'var(--shadow-xl)' }}>
@@ -920,7 +920,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               <button onClick={handleSubmitConfirmed} disabled={isMutating}
                 style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 14px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 'var(--radius-md)', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-ui)', opacity: isMutating ? 0.6 : 1 }}>
                 <Send size={13} />
-                {isMutating ? 'Submittingâ€¦' : 'Confirm & Submit'}
+                {isMutating ? 'Submitting…' : 'Confirm & Submit'}
               </button>
             </div>
           </div>
