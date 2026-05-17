@@ -96,7 +96,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { user } = useAuthStore();
-  const canManageStatus = user?.role === 'admin' || user?.role === 'staff';
+  const canManageNotes = user?.role === 'admin' || user?.role === 'staff';
 
   const [step, setStep] = useState(0);
   const [savedId, setSavedId] = useState<string | null>(studentId || null);
@@ -213,9 +213,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const buildPayload = (statusOverride?: ApplicationStatus) => ({
     ...personal,
     passport_number: passport.passport_number,
-    application_status: statusOverride
-      ? statusOverride
-      : canManageStatus ? status : 'pending',
+    application_status: statusOverride || status,
     addresses: [
       { address_type: 'permanent', ...permAddress },
       ...(sameAddress ? [] : [{ address_type: 'current', ...currAddress }]),
@@ -228,9 +226,12 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
   // Submit path: uses role-default status (pending for applicants/agents).
   const handleSave = async () => {
-    const payload = buildPayload();
+    const nextStatus: ApplicationStatus =
+      mode === 'create' || status === 'draft' ? 'pending' : status;
+    const payload = buildPayload(nextStatus);
     if (mode === 'create' && !savedId) await createMutation.mutateAsync(payload);
     else if (savedId) await updateMutation.mutateAsync({ id: savedId, data: payload });
+    setStatus(nextStatus);
   };
 
   // Save Draft button: force application_status='draft' so the record shows
@@ -242,9 +243,11 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
     try {
       if (mode === 'create' && !savedId) {
         const res = await createMutation.mutateAsync(payload);
+        setStatus('draft');
         return (res as { data: { student: { id: string } } }).data.student.id;
       } else if (savedId) {
         await updateMutation.mutateAsync({ id: savedId, data: payload });
+        setStatus('draft');
         return savedId;
       }
     } catch (err) {
@@ -818,26 +821,15 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
           </FormSection>
 
           <FormSection title="Application Status">
-            {canManageStatus ? (
-              <FormField label="Set Status" required>
-                <Select value={status} onChange={e => setStatus(e.target.value as ApplicationStatus)}>
-                  <option value="draft">Draft</option><option value="pending">Pending</option>
-                  <option value="approved">Approved</option><option value="revoked">Revoked</option>
-                  <option value="processing">Processing</option><option value="pre_admission">Pre Admission</option>
-                  <option value="admitted">Admitted</option><option value="rejected">Rejected</option>
-                </Select>
-              </FormField>
-            ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
-                <span style={{ fontSize: 12.5, color: 'var(--text-tertiary)', width: 120, flexShrink: 0 }}>Current Status:</span>
-                <span className={STATUS_COLORS[status as keyof typeof STATUS_COLORS] || 'badge badge-draft'}>
-                  {STATUS_LABELS[status as keyof typeof STATUS_LABELS] || status}
-                </span>
-              </div>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
+              <span style={{ fontSize: 12.5, color: 'var(--text-tertiary)', width: 120, flexShrink: 0 }}>Current Status:</span>
+              <span className={STATUS_COLORS[status as keyof typeof STATUS_COLORS] || 'badge badge-draft'}>
+                {STATUS_LABELS[status as keyof typeof STATUS_LABELS] || status}
+              </span>
+            </div>
           </FormSection>
 
-          {canManageStatus && (
+          {canManageNotes && (
             <FormSection title="Application Notes">
               <Textarea rows={4} placeholder="Add a note (visible to all roles)…" value={notes} onChange={e => setNotes(e.target.value)} />
               {savedId && (
