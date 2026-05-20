@@ -120,35 +120,35 @@ export default function App() {
             position: fixed;
             inset: 0;
             z-index: 0;
-            background: rgba(15, 23, 42, 0.42);
-            backdrop-filter: blur(7px);
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(5px);
             pointer-events: none;
           }
 
           .sams-toast-center [data-sonner-toast] {
             position: relative;
             z-index: 1;
-            width: min(410px, calc(100vw - 44px));
-            min-height: 138px;
-            padding: 26px 28px;
+            width: min(410px, calc(100vw - 32px));
+            min-height: 118px;
+            padding: 24px;
             align-items: flex-start;
             gap: 14px;
           }
 
           .sams-toast-center [data-title] {
-            font-size: 18px;
-            font-weight: 900;
-            line-height: 1.2;
-            letter-spacing: -0.02em;
+            font-size: 17px;
+            font-weight: 950;
+            line-height: 1.25;
+            letter-spacing: 0;
             color: #0f172a;
           }
 
           .sams-toast-center [data-description] {
-            margin-top: 7px;
-            font-size: 13.5px;
-            font-weight: 700;
-            line-height: 1.6;
-            color: #64748b;
+            margin-top: 3px;
+            font-size: 12.5px;
+            font-weight: 750;
+            line-height: 1.55;
+            color: #94a3b8;
           }
 
           .sams-toast-center [data-icon] {
@@ -179,8 +179,8 @@ export default function App() {
 
           .sams-toast-center [data-button] {
             height: 42px;
-            min-width: 120px;
-            border-radius: 13px;
+            min-width: 128px;
+            border-radius: 14px;
             font-size: 13px;
             font-weight: 900;
           }
@@ -198,10 +198,10 @@ export default function App() {
             style: {
               fontFamily: 'var(--font-ui)',
               fontSize: 13,
-              borderRadius: 22,
-              border: '1px solid rgba(255,255,255,0.92)',
+              borderRadius: 24,
+              border: '1px solid #e2e8f0',
               background: '#ffffff',
-              boxShadow: '0 38px 90px rgba(15,23,42,0.36), 0 16px 36px rgba(15,23,42,0.18)',
+              boxShadow: '0 24px 60px rgba(15,23,42,0.22)',
               transform: 'translateY(-50%)',
             },
           }}
