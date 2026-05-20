@@ -16,8 +16,6 @@ import {
   Menu,
   X,
   ClipboardList,
-  PanelLeftClose,
-  PanelLeftOpen,
 } from 'lucide-react';
 
 import HeaderRealtimeActions from '@/components/layout/HeaderRealtimeActions';
@@ -29,7 +27,7 @@ export default function AppShell() {
   const location = useLocation();
   const [topSearch, setTopSearch] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarHover, setSidebarHover] = useState(false);
 
   const isAdmin = user?.role === 'admin';
   const isAdminOrStaff = user?.role === 'admin' || user?.role === 'staff';
@@ -172,13 +170,15 @@ export default function AppShell() {
         />
       )}
 
-      {/* SIDEBAR — collapsible desktop rail, mobile drawer */}
+      {/* SIDEBAR — hover-expand desktop rail, mobile drawer */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[260px] min-w-[260px] flex-col overflow-hidden bg-[#061a33] text-white transition-all duration-300 lg:relative lg:translate-x-0 ${
-          sidebarCollapsed ? 'lg:w-[84px] lg:min-w-[84px]' : 'lg:w-[260px] lg:min-w-[260px]'
+          sidebarHover ? 'lg:w-[260px] lg:min-w-[260px]' : 'lg:w-[84px] lg:min-w-[84px]'
         } ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
+        onMouseEnter={() => setSidebarHover(true)}
+        onMouseLeave={() => setSidebarHover(false)}
       >
         {/* Close button mobile only */}
         <button
@@ -188,7 +188,7 @@ export default function AppShell() {
           <X size={20} />
         </button>
 
-        <SidebarContent collapsed={sidebarCollapsed} />
+        <SidebarContent collapsed={!sidebarHover} />
       </aside>
 
       {/* MAIN */}
@@ -203,13 +203,6 @@ export default function AppShell() {
               title="Open sidebar"
             >
               <Menu size={22} />
-            </button>
-            <button
-              onClick={() => setSidebarCollapsed((v) => !v)}
-              className="hidden shrink-0 rounded-xl p-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 lg:inline-flex"
-              title={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
-            >
-              {sidebarCollapsed ? <PanelLeftOpen size={22} /> : <PanelLeftClose size={22} />}
             </button>
 
             {/* Title */}
