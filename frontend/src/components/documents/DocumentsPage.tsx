@@ -93,7 +93,11 @@ function formatSize(bytes: number): string {
 
 function formatDate(value: string): string {
   if (!value) return '—';
-  return new Date(value).toLocaleDateString('en-CA');
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+
+  return date.toLocaleDateString('en-CA');
 }
 
 function getMimeLabel(mime: string): string {
@@ -106,48 +110,40 @@ function getMimeLabel(mime: string): string {
   return mime.split('/')[1]?.toUpperCase() || mime;
 }
 
+function safeFileName(name: string): string {
+  return name?.trim() || 'document';
+}
+
 function FileIcon({ mime }: { mime: string }) {
   if (mime?.startsWith('image/')) {
-    return <FileImage size={18} style={{ color: '#7c3aed' }} />;
+    return <FileImage size={18} className="docs-file-icon docs-file-icon-image" />;
   }
 
   if (mime === 'application/pdf') {
-    return <FileText size={18} style={{ color: '#dc2626' }} />;
+    return <FileText size={18} className="docs-file-icon docs-file-icon-pdf" />;
   }
 
-  return <File size={18} style={{ color: '#2563eb' }} />;
+  return <File size={18} className="docs-file-icon docs-file-icon-default" />;
 }
 
 function CategoryBadge({ category }: { category: string }) {
   const c = CAT_COLORS[category] || CAT_COLORS.Others;
 
+  const style: CSSProperties = {
+    borderColor: c.border,
+    background: c.bg,
+    color: c.color,
+  };
+
   return (
-    <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        height: 26,
-        padding: '0 9px',
-        borderRadius: 999,
-        border: `1px solid ${c.border}`,
-        background: c.bg,
-        color: c.color,
-        fontSize: 11.5,
-        fontWeight: 900,
-        whiteSpace: 'nowrap',
-        maxWidth: '100%',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-      }}
-      title={category || 'Others'}
-    >
+    <span className="docs-category-badge" style={style} title={category || 'Others'}>
       {category || 'Others'}
     </span>
   );
 }
 
 function TypeBadge({ mime }: { mime: string }) {
-  return <span style={typeBadgeStyle}>{getMimeLabel(mime)}</span>;
+  return <span className="docs-type-badge">{getMimeLabel(mime)}</span>;
 }
 
 function UploadModal({
@@ -169,11 +165,16 @@ function UploadModal({
   const uploadMutation = useMutation({
     mutationFn: (fd: FormData) => sharedDocsApi.upload(fd),
     onSuccess: () => {
-      toast.success('Document uploaded successfully');
+      toast.success('Document uploaded', {
+        description: 'The file has been added to the document library.',
+      });
       onSuccess();
       onClose();
     },
-    onError: () => toast.error('Upload failed. Please try again.'),
+    onError: () =>
+      toast.error('Upload failed', {
+        description: 'Please check the file and try again.',
+      }),
   });
 
   const validate = () => {
@@ -191,7 +192,6 @@ function UploadModal({
     if (!validate()) return;
 
     const fd = new FormData();
-
     fd.append('title', title.trim());
     fd.append('category', category);
     fd.append('description', description.trim());
@@ -213,31 +213,31 @@ function UploadModal({
   }, []);
 
   return (
-    <div style={modalOverlayStyle}>
-      <div style={uploadModalStyle}>
-        <div style={uploadModalHeaderStyle}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={uploadModalIconStyle}>
+    <div className="docs-modal-overlay">
+      <div className="docs-upload-modal">
+        <div className="docs-modal-header">
+          <div className="docs-modal-title-wrap">
+            <div className="docs-modal-icon">
               <Upload size={18} />
             </div>
 
             <div>
-              <div style={uploadModalTitleStyle}>Upload Document</div>
-              <div style={uploadModalSubtitleStyle}>
+              <div className="docs-modal-title">Upload Document</div>
+              <div className="docs-modal-subtitle">
                 Add a shared admission document to the library.
               </div>
             </div>
           </div>
 
-          <button onClick={onClose} style={modalCloseBtnStyle}>
+          <button onClick={onClose} className="docs-modal-close" type="button">
             <X size={16} />
           </button>
         </div>
 
-        <div style={uploadModalBodyStyle}>
-          <div style={fieldGroupStyle}>
-            <label style={labelStyle}>
-              Document Title <span style={requiredStyle}>*</span>
+        <div className="docs-modal-body">
+          <div className="docs-field">
+            <label className="docs-label">
+              Document Title <span className="docs-required">*</span>
             </label>
 
             <input
@@ -247,32 +247,27 @@ function UploadModal({
                 setErrors((prev) => ({ ...prev, title: '' }));
               }}
               placeholder="e.g. Physical Exam Form"
-              style={{
-                ...inputStyle,
-                borderColor: errors.title ? '#fca5a5' : '#dbe3ef',
-              }}
+              className={`docs-input ${errors.title ? 'docs-input-error' : ''}`}
             />
 
-            {errors.title && <div style={errorTextStyle}>{errors.title}</div>}
+            {errors.title && <div className="docs-error-text">{errors.title}</div>}
           </div>
 
-          <div style={fieldGroupStyle}>
-            <label style={labelStyle}>
-              Category <span style={requiredStyle}>*</span>
+          <div className="docs-field">
+            <label className="docs-label">
+              Category <span className="docs-required">*</span>
             </label>
 
-            <div style={{ position: 'relative' }}>
+            <div className="docs-select-wrap">
               <select
                 value={category}
                 onChange={(e) => {
                   setCategory(e.target.value);
                   setErrors((prev) => ({ ...prev, category: '' }));
                 }}
-                style={{
-                  ...selectInputStyle,
-                  borderColor: errors.category ? '#fca5a5' : '#dbe3ef',
-                  color: category ? '#334155' : '#94a3b8',
-                }}
+                className={`docs-input docs-select ${errors.category ? 'docs-input-error' : ''} ${
+                  category ? '' : 'docs-select-placeholder'
+                }`}
               >
                 <option value="">Select category...</option>
                 {CATEGORIES.map((c) => (
@@ -282,15 +277,15 @@ function UploadModal({
                 ))}
               </select>
 
-              <ChevronDown size={15} style={selectChevronStyle} />
+              <ChevronDown size={15} className="docs-select-chevron" />
             </div>
 
-            {errors.category && <div style={errorTextStyle}>{errors.category}</div>}
+            {errors.category && <div className="docs-error-text">{errors.category}</div>}
           </div>
 
-          <div style={fieldGroupStyle}>
-            <label style={labelStyle}>
-              Description <span style={optionalStyle}>optional</span>
+          <div className="docs-field">
+            <label className="docs-label">
+              Description <span className="docs-optional">optional</span>
             </label>
 
             <textarea
@@ -298,13 +293,13 @@ function UploadModal({
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               placeholder="Brief description of this document..."
-              style={textareaStyle}
+              className="docs-input docs-textarea"
             />
           </div>
 
-          <div style={fieldGroupStyle}>
-            <label style={labelStyle}>
-              File <span style={requiredStyle}>*</span>
+          <div className="docs-field">
+            <label className="docs-label">
+              File <span className="docs-required">*</span>
             </label>
 
             <div
@@ -315,22 +310,14 @@ function UploadModal({
               }}
               onDragLeave={() => setDragging(false)}
               onDrop={handleDrop}
-              style={{
-                ...dropZoneStyle,
-                borderColor: errors.file
-                  ? '#fca5a5'
-                  : dragging
-                  ? '#2563eb'
-                  : file
-                  ? '#86efac'
-                  : '#cbd5e1',
-                background: dragging ? '#eff6ff' : file ? '#f0fdf4' : '#f8fafc',
-              }}
+              className={`docs-dropzone ${dragging ? 'docs-dropzone-dragging' : ''} ${
+                file ? 'docs-dropzone-selected' : ''
+              } ${errors.file ? 'docs-dropzone-error' : ''}`}
             >
               <input
                 ref={fileRef}
                 type="file"
-                style={{ display: 'none' }}
+                className="docs-hidden-input"
                 accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.txt"
                 onChange={(e) => {
                   const selectedFile = e.target.files?.[0];
@@ -343,14 +330,14 @@ function UploadModal({
               />
 
               {file ? (
-                <div style={selectedFileStyle}>
-                  <div style={filePreviewIconStyle}>
+                <div className="docs-selected-file">
+                  <div className="docs-selected-file-icon">
                     <FileIcon mime={file.type} />
                   </div>
 
-                  <div style={{ minWidth: 0, flex: 1, textAlign: 'left' }}>
-                    <div style={selectedFileNameStyle}>{file.name}</div>
-                    <div style={selectedFileMetaStyle}>{formatSize(file.size)}</div>
+                  <div className="docs-selected-file-info">
+                    <div className="docs-selected-file-name">{file.name}</div>
+                    <div className="docs-selected-file-size">{formatSize(file.size)}</div>
                   </div>
 
                   <button
@@ -358,49 +345,47 @@ function UploadModal({
                       e.stopPropagation();
                       setFile(null);
                     }}
-                    style={removeFileBtnStyle}
+                    className="docs-remove-file-btn"
+                    type="button"
                   >
                     Remove
                   </button>
                 </div>
               ) : (
-                <div style={{ textAlign: 'center' }}>
-                  <div style={dropIconStyle}>
+                <div className="docs-drop-empty">
+                  <div className="docs-drop-icon">
                     <Upload size={24} />
                   </div>
 
-                  <div style={dropTitleStyle}>
-                    Drop file here or <span style={{ color: '#2563eb' }}>browse</span>
+                  <div className="docs-drop-title">
+                    Drop file here or <span>browse</span>
                   </div>
 
-                  <div style={dropSubtitleStyle}>
+                  <div className="docs-drop-subtitle">
                     PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, TXT
                   </div>
                 </div>
               )}
             </div>
 
-            {errors.file && <div style={errorTextStyle}>{errors.file}</div>}
+            {errors.file && <div className="docs-error-text">{errors.file}</div>}
           </div>
         </div>
 
-        <div style={uploadModalFooterStyle}>
-          <button onClick={onClose} style={secondaryBtnStyle}>
+        <div className="docs-modal-footer">
+          <button onClick={onClose} className="docs-secondary-btn" type="button">
             Cancel
           </button>
 
           <button
             onClick={handleSubmit}
             disabled={uploadMutation.isPending}
-            style={{
-              ...primaryBtnStyle,
-              opacity: uploadMutation.isPending ? 0.7 : 1,
-              cursor: uploadMutation.isPending ? 'not-allowed' : 'pointer',
-            }}
+            className="docs-primary-btn"
+            type="button"
           >
             {uploadMutation.isPending ? (
               <>
-                <span style={spinnerStyle} />
+                <span className="docs-spinner" />
                 Uploading...
               </>
             ) : (
@@ -440,12 +425,17 @@ export default function DocumentsPage() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => sharedDocsApi.delete(id),
     onSuccess: () => {
-      toast.success('Document deleted');
+      toast.success('Document deleted', {
+        description: 'The file has been removed from the document library.',
+      });
       qc.invalidateQueries({ queryKey: ['shared-documents'] });
       setDeleteId(null);
       setDeleteName('');
     },
-    onError: () => toast.error('Failed to delete document'),
+    onError: () =>
+      toast.error('Failed to delete document', {
+        description: 'Please try again.',
+      }),
   });
 
   const docs: SharedDocument[] = data || [];
@@ -472,30 +462,44 @@ export default function DocumentsPage() {
         responseType: 'blob',
       });
 
-      const url = URL.createObjectURL(
-        new Blob([res.data], {
-          type: String(doc.mime_type || res.headers['content-type'] || 'application/octet-stream'),
-        })
-      );
+      const blob = new Blob([res.data], {
+        type: String(doc.mime_type || res.headers['content-type'] || 'application/octet-stream'),
+      });
+
+      const url = URL.createObjectURL(blob);
 
       const a = document.createElement('a');
       a.href = url;
-      a.download = doc.file_name;
+      a.download = safeFileName(doc.file_name);
 
       document.body.appendChild(a);
       a.click();
       a.remove();
 
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
 
-      toast.success(`Downloading ${doc.file_name}`);
+      toast.success('Download started', {
+        description: doc.file_name,
+      });
     } catch {
-      toast.error('Download failed. Please try again.');
+      toast.error('Download failed', {
+        description: 'Please try again.',
+      });
     }
   };
 
   const handleView = async (doc: SharedDocument) => {
+    let viewer: Window | null = null;
+
     try {
+      viewer = window.open('', '_blank');
+
+      if (viewer) {
+        viewer.document.title = 'Loading document...';
+        viewer.document.body.innerHTML =
+          '<p style="font-family: system-ui, sans-serif; padding: 24px; color: #334155;">Loading document...</p>';
+      }
+
       const res = await api.get(`/shared-documents/${doc.id}/file`, {
         responseType: 'blob',
       });
@@ -506,11 +510,16 @@ export default function DocumentsPage() {
 
       const url = URL.createObjectURL(blob);
 
-      window.open(url, '_blank');
+      if (viewer) viewer.location.href = url;
+      else window.open(url, '_blank');
 
-      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
     } catch {
-      toast.error('Could not open file. Please try downloading instead.');
+      if (viewer) viewer.close();
+
+      toast.error('Could not open file', {
+        description: 'Please try downloading instead.',
+      });
     }
   };
 
@@ -522,35 +531,34 @@ export default function DocumentsPage() {
   const hasFilters = Boolean(search || catFilter);
 
   return (
-    <div style={pageStyle}>
-      <div style={toolbarCardStyle}>
-        <div style={searchBoxStyle}>
-          <Search size={15} style={searchIconStyle} />
+    <div className="docs-page">
+      <style>{documentsPageCss}</style>
+
+      <div className="docs-toolbar">
+        <div className="docs-search-box">
+          <Search size={15} className="docs-search-icon" />
 
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by title, category, uploader, or type..."
-            style={searchInputStyle}
+            className="docs-search-input"
           />
 
           {search && (
-            <button onClick={() => setSearch('')} style={clearSearchBtnStyle}>
+            <button onClick={() => setSearch('')} className="docs-clear-search" type="button">
               <X size={14} />
             </button>
           )}
         </div>
 
-        <div style={categoryBoxStyle}>
-          <Filter size={14} style={filterIconStyle} />
+        <div className="docs-category-box">
+          <Filter size={14} className="docs-filter-icon" />
 
           <select
             value={catFilter}
             onChange={(e) => setCatFilter(e.target.value)}
-            style={{
-              ...categorySelectStyle,
-              color: catFilter ? '#334155' : '#94a3b8',
-            }}
+            className={`docs-category-select ${catFilter ? '' : 'docs-select-placeholder'}`}
           >
             <option value="">All Categories</option>
             {CATEGORIES.map((c) => (
@@ -560,53 +568,53 @@ export default function DocumentsPage() {
             ))}
           </select>
 
-          <ChevronDown size={14} style={categoryChevronStyle} />
+          <ChevronDown size={14} className="docs-category-chevron" />
         </div>
 
         {hasFilters && (
-          <button onClick={clearFilters} style={clearFilterBtnStyle}>
+          <button onClick={clearFilters} className="docs-clear-filter-btn" type="button">
             <X size={14} />
             Clear
           </button>
         )}
 
-        <div style={countPillStyle}>
+        <div className="docs-count-pill">
           {filtered.length} {filtered.length === 1 ? 'Document' : 'Documents'}
           {hasFilters && docs.length !== filtered.length ? ` of ${docs.length}` : ''}
         </div>
 
         {canManage && (
-          <button onClick={() => setShowUpload(true)} style={uploadBtnStyle}>
+          <button onClick={() => setShowUpload(true)} className="docs-upload-btn" type="button">
             <Upload size={15} />
             Upload
           </button>
         )}
       </div>
 
-      <div style={contentCardStyle}>
+      <div className="docs-content-card">
         {isLoading ? (
-          <div style={skeletonWrapStyle}>
+          <div className="docs-skeleton-wrap">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} style={skeletonRowStyle}>
-                <div style={skeletonIconStyle} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ ...skeletonLineStyle, width: '28%' }} />
-                  <div style={{ ...skeletonLineStyle, width: '42%', marginTop: 8 }} />
+              <div key={i} className="docs-skeleton-row">
+                <div className="docs-skeleton-icon" />
+                <div className="docs-skeleton-content">
+                  <div className="docs-skeleton-line docs-skeleton-line-short" />
+                  <div className="docs-skeleton-line docs-skeleton-line-long" />
                 </div>
               </div>
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div style={emptyStateStyle}>
-            <div style={emptyIconStyle}>
-              <FolderOpen size={34} style={{ color: '#2563eb' }} />
+          <div className="docs-empty">
+            <div className="docs-empty-icon">
+              <FolderOpen size={34} />
             </div>
 
-            <div style={emptyTitleStyle}>
+            <div className="docs-empty-title">
               {hasFilters ? 'No documents match your filters' : 'No documents yet'}
             </div>
 
-            <div style={emptySubtitleStyle}>
+            <div className="docs-empty-subtitle">
               {hasFilters
                 ? 'Try adjusting your search or category filter.'
                 : canManage
@@ -614,15 +622,19 @@ export default function DocumentsPage() {
                 : 'No shared admission documents have been uploaded yet.'}
             </div>
 
-            <div style={{ marginTop: 18, display: 'flex', gap: 10 }}>
+            <div className="docs-empty-actions">
               {hasFilters && (
-                <button onClick={clearFilters} style={secondaryBtnStyle}>
+                <button onClick={clearFilters} className="docs-secondary-btn" type="button">
                   Clear filters
                 </button>
               )}
 
               {!hasFilters && canManage && (
-                <button onClick={() => setShowUpload(true)} style={primaryBtnStyle}>
+                <button
+                  onClick={() => setShowUpload(true)}
+                  className="docs-primary-btn"
+                  type="button"
+                >
                   <Upload size={15} />
                   Upload First Document
                 </button>
@@ -630,20 +642,20 @@ export default function DocumentsPage() {
             </div>
           </div>
         ) : (
-          <div style={tableWrapStyle}>
-            <table style={tableStyle}>
+          <div className="docs-table-wrap">
+            <table className="docs-table">
               <thead>
                 <tr>
                   {[
-                    ['Document', '27%'],
-                    ['Category', '14%'],
+                    ['Document', '31%'],
+                    ['Category', '15%'],
                     ['Type', '8%'],
                     ['Size', '9%'],
-                    ['Uploaded By', '15%'],
+                    ['Uploaded By', '16%'],
                     ['Date', '10%'],
-                    ['Actions', '17%'],
+                    ['Actions', '11%'],
                   ].map(([label, width]) => (
-                    <th key={label as string} style={{ ...thStyle, width: width as string }}>
+                    <th key={label} style={{ width }}>
                       {label}
                     </th>
                   ))}
@@ -652,59 +664,75 @@ export default function DocumentsPage() {
 
               <tbody>
                 {filtered.map((doc) => (
-                  <tr key={doc.id} style={rowStyle}>
-                    <td style={firstTdStyle}>
-                      <div style={documentCellStyle}>
-                        <div style={docIconBoxStyle}>
+                  <tr key={doc.id}>
+                    <td className="docs-first-td">
+                      <div className="docs-document-cell">
+                        <div className="docs-doc-icon-box">
                           <FileIcon mime={doc.mime_type} />
                         </div>
 
-                        <div style={{ minWidth: 0 }}>
-                          <div style={docTitleStyle}>{doc.title}</div>
+                        <div className="docs-doc-info">
+                          <div className="docs-doc-title" title={doc.title}>
+                            {doc.title}
+                          </div>
 
                           {doc.description && (
-                            <div style={docDescriptionStyle}>{doc.description}</div>
+                            <div className="docs-doc-description" title={doc.description}>
+                              {doc.description}
+                            </div>
                           )}
 
-                          <div style={docFileNameStyle}>{doc.file_name}</div>
+                          <div className="docs-doc-file-name" title={doc.file_name}>
+                            {doc.file_name}
+                          </div>
                         </div>
                       </div>
                     </td>
 
-                    <td style={bodyTdStyle}>
+                    <td>
                       <CategoryBadge category={doc.category} />
                     </td>
 
-                    <td style={bodyTdStyle}>
+                    <td>
                       <TypeBadge mime={doc.mime_type} />
                     </td>
 
-                    <td style={bodyTdStyle}>
-                      <span style={sizeTextStyle}>{formatSize(doc.file_size)}</span>
+                    <td>
+                      <span className="docs-size-text">{formatSize(doc.file_size)}</span>
                     </td>
 
-                    <td style={bodyTdStyle}>
-                      <div style={uploadedNameStyle}>{doc.uploaded_by_name || '—'}</div>
+                    <td>
+                      <div className="docs-uploaded-name" title={doc.uploaded_by_name || '—'}>
+                        {doc.uploaded_by_name || '—'}
+                      </div>
 
                       {doc.uploaded_by_role && (
-                        <div style={uploadedRoleStyle}>{doc.uploaded_by_role}</div>
+                        <div className="docs-uploaded-role">{doc.uploaded_by_role}</div>
                       )}
                     </td>
 
-                    <td style={bodyTdStyle}>
-                      <span style={dateTextStyle}>{formatDate(doc.created_at)}</span>
+                    <td>
+                      <span className="docs-date-text">{formatDate(doc.created_at)}</span>
                     </td>
 
-                    <td style={lastTdStyle}>
-                      <div style={actionsWrapStyle}>
-                        <button onClick={() => handleView(doc)} style={viewBtnStyle}>
-                          <Eye size={13} />
-                          View
+                    <td className="docs-last-td">
+                      <div className="docs-actions">
+                        <button
+                          onClick={() => handleView(doc)}
+                          className="docs-icon-btn docs-view-btn"
+                          title="View document"
+                          type="button"
+                        >
+                          <Eye size={14} />
                         </button>
 
-                        <button onClick={() => handleDownload(doc)} style={downloadBtnStyle}>
-                          <Download size={13} />
-                          Download
+                        <button
+                          onClick={() => handleDownload(doc)}
+                          className="docs-icon-btn docs-download-btn"
+                          title="Download document"
+                          type="button"
+                        >
+                          <Download size={14} />
                         </button>
 
                         {canManage && (
@@ -713,10 +741,11 @@ export default function DocumentsPage() {
                               setDeleteId(doc.id);
                               setDeleteName(doc.title);
                             }}
+                            className="docs-icon-btn docs-delete-btn"
                             title="Delete document"
-                            style={deleteIconBtnStyle}
+                            type="button"
                           >
-                            <Trash2 size={13} />
+                            <Trash2 size={14} />
                           </button>
                         )}
                       </div>
@@ -737,37 +766,41 @@ export default function DocumentsPage() {
       )}
 
       {deleteId && (
-        <div style={modalOverlayStyle}>
-          <div style={deleteModalStyle}>
-            <div style={deleteHeaderStyle}>
-              <div style={deleteModalIconStyle}>
+        <div className="docs-modal-overlay">
+          <div className="docs-delete-modal">
+            <div className="docs-delete-header">
+              <div className="docs-delete-icon">
                 <Trash2 size={20} />
               </div>
 
               <div>
-                <div style={deleteModalTitleStyle}>Delete Document</div>
-                <div style={deleteModalSubtitleStyle}>This action cannot be undone.</div>
+                <div className="docs-delete-title">Delete Document</div>
+                <div className="docs-delete-subtitle">This action cannot be undone.</div>
               </div>
             </div>
 
-            <p style={deleteModalTextStyle}>
+            <p className="docs-delete-text">
               Are you sure you want to delete <strong>"{deleteName}"</strong>? This will
               permanently remove the file from the document library.
             </p>
 
-            <div style={{ display: 'flex', gap: 10 }}>
-              <button onClick={() => setDeleteId(null)} style={secondaryBtnStyle}>
+            <div className="docs-delete-actions">
+              <button
+                onClick={() => {
+                  setDeleteId(null);
+                  setDeleteName('');
+                }}
+                className="docs-secondary-btn"
+                type="button"
+              >
                 Cancel
               </button>
 
               <button
                 onClick={() => deleteMutation.mutate(deleteId)}
                 disabled={deleteMutation.isPending}
-                style={{
-                  ...dangerBtnStyle,
-                  opacity: deleteMutation.isPending ? 0.65 : 1,
-                  cursor: deleteMutation.isPending ? 'not-allowed' : 'pointer',
-                }}
+                className="docs-danger-btn"
+                type="button"
               >
                 {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
               </button>
@@ -777,13 +810,13 @@ export default function DocumentsPage() {
       )}
 
       {canManage && docs.length === 0 && !isLoading && (
-        <div style={setupNoticeStyle}>
-          <AlertCircle size={16} style={{ color: '#b45309', flexShrink: 0, marginTop: 2 }} />
+        <div className="docs-setup-notice">
+          <AlertCircle size={16} className="docs-setup-icon" />
 
-          <div style={setupNoticeTextStyle}>
+          <div className="docs-setup-text">
             <strong>Backend setup required:</strong> Create the{' '}
-            <code>/api/shared-documents</code> endpoint to enable document storage. The
-            interface is ready.
+            <code>/api/shared-documents</code> endpoint to enable document storage. The interface
+            is ready.
           </div>
         </div>
       )}
@@ -791,806 +824,910 @@ export default function DocumentsPage() {
   );
 }
 
-/* ───────────────────────── Styles ───────────────────────── */
-
-const pageStyle: CSSProperties = {
-  height: '100%',
-  minHeight: 0,
-  overflow: 'hidden',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 14,
-  padding: '16px 22px 18px',
+const documentsPageCss = `
+.docs-page {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 22px 18px;
   background:
-    'radial-gradient(circle at top left, rgba(37,99,235,0.055), transparent 34%), linear-gradient(180deg, #f8fafc 0%, #eef3f9 100%)',
-};
-
-const toolbarCardStyle: CSSProperties = {
-  flexShrink: 0,
-  borderRadius: 22,
-  border: '1px solid #e2e8f0',
-  background: 'rgba(255,255,255,0.95)',
-  boxShadow: '0 18px 42px rgba(15,23,42,0.055)',
-  padding: 14,
-  display: 'grid',
-  gridTemplateColumns: 'minmax(260px, 1fr) 210px auto auto auto',
-  gap: 10,
-  alignItems: 'center',
-};
-
-const searchBoxStyle: CSSProperties = {
-  position: 'relative',
-  minWidth: 0,
-};
-
-const searchIconStyle: CSSProperties = {
-  position: 'absolute',
-  left: 13,
-  top: '50%',
-  transform: 'translateY(-50%)',
-  color: '#94a3b8',
-  pointerEvents: 'none',
-};
-
-const searchInputStyle: CSSProperties = {
-  width: '100%',
-  height: 42,
-  borderRadius: 14,
-  border: '1px solid #cbd5e1',
-  background: '#ffffff',
-  padding: '0 38px',
-  outline: 'none',
-  fontSize: 13,
-  fontWeight: 700,
-  color: '#334155',
-  fontFamily: 'inherit',
-  boxSizing: 'border-box',
-};
-
-const clearSearchBtnStyle: CSSProperties = {
-  position: 'absolute',
-  right: 11,
-  top: '50%',
-  transform: 'translateY(-50%)',
-  border: 'none',
-  background: 'transparent',
-  color: '#94a3b8',
-  cursor: 'pointer',
-  display: 'inline-flex',
-  padding: 0,
-};
-
-const categoryBoxStyle: CSSProperties = {
-  position: 'relative',
-};
-
-const filterIconStyle: CSSProperties = {
-  position: 'absolute',
-  left: 12,
-  top: '50%',
-  transform: 'translateY(-50%)',
-  color: '#94a3b8',
-  pointerEvents: 'none',
-};
-
-const categorySelectStyle: CSSProperties = {
-  width: '100%',
-  height: 42,
-  borderRadius: 14,
-  border: '1px solid #cbd5e1',
-  background: '#ffffff',
-  padding: '0 34px 0 34px',
-  outline: 'none',
-  appearance: 'none',
-  cursor: 'pointer',
-  fontSize: 13,
-  fontWeight: 800,
-  fontFamily: 'inherit',
-  boxSizing: 'border-box',
-};
-
-const categoryChevronStyle: CSSProperties = {
-  position: 'absolute',
-  right: 12,
-  top: '50%',
-  transform: 'translateY(-50%)',
-  color: '#94a3b8',
-  pointerEvents: 'none',
-};
-
-const clearFilterBtnStyle: CSSProperties = {
-  height: 42,
-  padding: '0 12px',
-  borderRadius: 14,
-  border: '1px solid #fecaca',
-  background: '#fef2f2',
-  color: '#dc2626',
-  fontSize: 12.5,
-  fontWeight: 900,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 6,
-  whiteSpace: 'nowrap',
-};
-
-const countPillStyle: CSSProperties = {
-  height: 42,
-  padding: '0 13px',
-  borderRadius: 14,
-  border: '1px solid #dbe3ef',
-  background: '#f8fafc',
-  color: '#475569',
-  fontSize: 12.5,
-  fontWeight: 900,
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  whiteSpace: 'nowrap',
-};
-
-const uploadBtnStyle: CSSProperties = {
-  height: 42,
-  padding: '0 14px',
-  borderRadius: 14,
-  border: 'none',
-  background: '#2563eb',
-  color: '#ffffff',
-  fontSize: 13,
-  fontWeight: 950,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 7,
-  whiteSpace: 'nowrap',
-  boxShadow: '0 14px 28px rgba(37,99,235,0.24)',
-};
-
-const contentCardStyle: CSSProperties = {
-  flex: 1,
-  minHeight: 0,
-  overflow: 'hidden',
-  borderRadius: 24,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
-  boxShadow: '0 18px 42px rgba(15,23,42,0.055)',
-  display: 'flex',
-  flexDirection: 'column',
-};
-
-const tableWrapStyle: CSSProperties = {
-  flex: 1,
-  minHeight: 0,
-  overflow: 'hidden',
-  padding: '0 12px 12px',
-};
-
-const tableStyle: CSSProperties = {
-  width: '100%',
-  tableLayout: 'fixed',
-  borderCollapse: 'separate',
-  borderSpacing: '0 10px',
-};
-
-const thStyle: CSSProperties = {
-  padding: '12px 12px',
-  borderTop: '1px solid #e2e8f0',
-  borderBottom: '1px solid #e2e8f0',
-  background: '#f8fafc',
-  textAlign: 'left',
-  fontSize: 10.5,
-  fontWeight: 950,
-  color: '#64748b',
-  textTransform: 'uppercase',
-  letterSpacing: '0.06em',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-};
-
-const rowStyle: CSSProperties = {
-  background: '#ffffff',
-  boxShadow: '0 8px 20px rgba(15,23,42,0.04)',
-};
-
-const bodyTdStyle: CSSProperties = {
-  padding: '13px 12px',
-  background: '#ffffff',
-  borderTop: '1px solid #e8edf4',
-  borderBottom: '1px solid #e8edf4',
-  verticalAlign: 'middle',
-  overflow: 'hidden',
-};
-
-const firstTdStyle: CSSProperties = {
-  ...bodyTdStyle,
-  borderTopLeftRadius: 18,
-  borderBottomLeftRadius: 18,
-  borderLeft: '1px solid #e8edf4',
-};
-
-const lastTdStyle: CSSProperties = {
-  ...bodyTdStyle,
-  borderTopRightRadius: 18,
-  borderBottomRightRadius: 18,
-  borderRight: '1px solid #e8edf4',
-};
-
-const documentCellStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 10,
-  minWidth: 0,
-};
-
-const docIconBoxStyle: CSSProperties = {
-  width: 38,
-  height: 38,
-  borderRadius: 13,
-  border: '1px solid #e2e8f0',
-  background: '#f8fafc',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexShrink: 0,
-};
-
-const docTitleStyle: CSSProperties = {
-  fontSize: 13,
-  fontWeight: 950,
-  color: '#0f172a',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-};
-
-const docDescriptionStyle: CSSProperties = {
-  marginTop: 1,
-  fontSize: 11.5,
-  fontWeight: 700,
-  color: '#94a3b8',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-};
-
-const docFileNameStyle: CSSProperties = {
-  marginTop: 1,
-  fontSize: 11,
-  fontWeight: 750,
-  color: '#94a3b8',
-  fontFamily: 'DM Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-};
-
-const typeBadgeStyle: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  height: 25,
-  padding: '0 8px',
-  borderRadius: 999,
-  border: '1px solid #e2e8f0',
-  background: '#f8fafc',
-  color: '#475569',
-  fontSize: 11.5,
-  fontWeight: 900,
-  whiteSpace: 'nowrap',
-};
-
-const sizeTextStyle: CSSProperties = {
-  fontSize: 12,
-  fontWeight: 800,
-  color: '#64748b',
-  whiteSpace: 'nowrap',
-};
-
-const uploadedNameStyle: CSSProperties = {
-  fontSize: 12,
-  fontWeight: 900,
-  color: '#334155',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-};
-
-const uploadedRoleStyle: CSSProperties = {
-  marginTop: 2,
-  fontSize: 11,
-  fontWeight: 700,
-  color: '#94a3b8',
-  textTransform: 'capitalize',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-};
-
-const dateTextStyle: CSSProperties = {
-  fontSize: 11.5,
-  fontWeight: 800,
-  color: '#64748b',
-  fontFamily: 'DM Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-  whiteSpace: 'nowrap',
-};
-
-const actionsWrapStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-start',
-  gap: 5,
-  flexWrap: 'nowrap',
-  transform: 'translateX(-8px)',
-};
-
-const viewBtnStyle: CSSProperties = {
-  height: 30,
-  padding: '0 8px',
-  borderRadius: 10,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
-  color: '#1d4ed8',
-  fontSize: 11.5,
-  fontWeight: 950,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 4,
-  whiteSpace: 'nowrap',
-};
-
-const downloadBtnStyle: CSSProperties = {
-  height: 30,
-  padding: '0 8px',
-  borderRadius: 10,
-  border: '1px solid #bbf7d0',
-  background: '#f0fdf4',
-  color: '#15803d',
-  fontSize: 11.5,
-  fontWeight: 950,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 4,
-  whiteSpace: 'nowrap',
-};
-
-const deleteIconBtnStyle: CSSProperties = {
-  width: 30,
-  height: 30,
-  borderRadius: 10,
-  border: '1px solid #fecaca',
-  background: '#fef2f2',
-  color: '#dc2626',
-  cursor: 'pointer',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexShrink: 0,
-};
-
-const skeletonWrapStyle: CSSProperties = {
-  padding: 14,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 10,
-};
-
-const skeletonRowStyle: CSSProperties = {
-  height: 66,
-  borderRadius: 18,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
-  display: 'flex',
-  alignItems: 'center',
-  gap: 12,
-  padding: '0 16px',
-};
-
-const skeletonIconStyle: CSSProperties = {
-  width: 38,
-  height: 38,
-  borderRadius: 13,
-  background: '#e2e8f0',
-};
-
-const skeletonLineStyle: CSSProperties = {
-  height: 12,
-  borderRadius: 999,
-  background: '#e2e8f0',
-};
-
-const emptyStateStyle: CSSProperties = {
-  height: '100%',
-  minHeight: 380,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: 30,
-  textAlign: 'center',
-};
-
-const emptyIconStyle: CSSProperties = {
-  width: 76,
-  height: 76,
-  borderRadius: 24,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginBottom: 16,
-};
-
-const emptyTitleStyle: CSSProperties = {
-  fontSize: 17,
-  fontWeight: 950,
-  color: '#0f172a',
-};
-
-const emptySubtitleStyle: CSSProperties = {
-  marginTop: 7,
-  maxWidth: 420,
-  fontSize: 13,
-  fontWeight: 700,
-  color: '#94a3b8',
-  lineHeight: 1.6,
-};
-
-const modalOverlayStyle: CSSProperties = {
-  position: 'fixed',
-  inset: 0,
-  zIndex: 200,
-  background: 'rgba(15,23,42,0.45)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: 20,
-  backdropFilter: 'blur(6px)',
-};
-
-const uploadModalStyle: CSSProperties = {
-  width: 560,
-  maxWidth: '100%',
-  maxHeight: '90vh',
-  overflowY: 'auto',
-  borderRadius: 24,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
-  boxShadow: '0 28px 80px rgba(15,23,42,0.24)',
-};
-
-const uploadModalHeaderStyle: CSSProperties = {
-  position: 'sticky',
-  top: 0,
-  zIndex: 2,
-  padding: '20px 22px',
-  borderBottom: '1px solid #e8edf4',
-  background: '#fbfdff',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: 16,
-};
-
-const uploadModalIconStyle: CSSProperties = {
-  width: 44,
-  height: 44,
-  borderRadius: 15,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
-  color: '#2563eb',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const uploadModalTitleStyle: CSSProperties = {
-  fontSize: 16,
-  fontWeight: 950,
-  color: '#0f172a',
-  letterSpacing: '-0.035em',
-};
-
-const uploadModalSubtitleStyle: CSSProperties = {
-  marginTop: 3,
-  fontSize: 12.5,
-  fontWeight: 700,
-  color: '#94a3b8',
-};
-
-const modalCloseBtnStyle: CSSProperties = {
-  width: 36,
-  height: 36,
-  borderRadius: 12,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
-  color: '#64748b',
-  cursor: 'pointer',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const uploadModalBodyStyle: CSSProperties = {
-  padding: 22,
-};
-
-const fieldGroupStyle: CSSProperties = {
-  marginBottom: 16,
-};
-
-const labelStyle: CSSProperties = {
-  display: 'block',
-  marginBottom: 7,
-  fontSize: 12.5,
-  fontWeight: 900,
-  color: '#475569',
-};
-
-const requiredStyle: CSSProperties = {
-  color: '#ef4444',
-};
-
-const optionalStyle: CSSProperties = {
-  marginLeft: 5,
-  color: '#94a3b8',
-  fontWeight: 650,
-};
-
-const inputStyle: CSSProperties = {
-  width: '100%',
-  height: 44,
-  borderRadius: 14,
-  border: '1px solid #dbe3ef',
-  background: '#ffffff',
-  padding: '0 14px',
-  outline: 'none',
-  fontSize: 13.5,
-  fontWeight: 700,
-  color: '#334155',
-  fontFamily: 'inherit',
-  boxSizing: 'border-box',
-};
-
-const selectInputStyle: CSSProperties = {
-  ...inputStyle,
-  appearance: 'none',
-  cursor: 'pointer',
-  paddingRight: 38,
-};
-
-const selectChevronStyle: CSSProperties = {
-  position: 'absolute',
-  right: 14,
-  top: '50%',
-  transform: 'translateY(-50%)',
-  color: '#94a3b8',
-  pointerEvents: 'none',
-};
-
-const textareaStyle: CSSProperties = {
-  ...inputStyle,
-  height: 84,
-  resize: 'none',
-  paddingTop: 12,
-  lineHeight: 1.55,
-};
-
-const errorTextStyle: CSSProperties = {
-  marginTop: 5,
-  fontSize: 12,
-  fontWeight: 800,
-  color: '#dc2626',
-};
-
-const dropZoneStyle: CSSProperties = {
-  border: '2px dashed #cbd5e1',
-  borderRadius: 18,
-  padding: '24px 16px',
-  cursor: 'pointer',
-  transition: 'all 0.15s ease',
-};
-
-const selectedFileStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 12,
-};
-
-const filePreviewIconStyle: CSSProperties = {
-  width: 42,
-  height: 42,
-  borderRadius: 14,
-  border: '1px solid #bbf7d0',
-  background: '#ffffff',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const selectedFileNameStyle: CSSProperties = {
-  fontSize: 13,
-  fontWeight: 950,
-  color: '#15803d',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-};
-
-const selectedFileMetaStyle: CSSProperties = {
-  marginTop: 3,
-  fontSize: 12,
-  fontWeight: 700,
-  color: '#64748b',
-};
-
-const removeFileBtnStyle: CSSProperties = {
-  height: 30,
-  padding: '0 10px',
-  borderRadius: 10,
-  border: '1px solid #fecaca',
-  background: '#fef2f2',
-  color: '#dc2626',
-  fontSize: 12,
-  fontWeight: 900,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-};
-
-const dropIconStyle: CSSProperties = {
-  width: 48,
-  height: 48,
-  margin: '0 auto 10px',
-  borderRadius: 16,
-  background: '#ffffff',
-  border: '1px solid #e2e8f0',
-  color: '#94a3b8',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const dropTitleStyle: CSSProperties = {
-  fontSize: 13.5,
-  fontWeight: 900,
-  color: '#475569',
-};
-
-const dropSubtitleStyle: CSSProperties = {
-  marginTop: 5,
-  fontSize: 12,
-  fontWeight: 700,
-  color: '#94a3b8',
-};
-
-const uploadModalFooterStyle: CSSProperties = {
-  padding: '16px 22px',
-  borderTop: '1px solid #e8edf4',
-  background: '#fbfdff',
-  display: 'flex',
-  gap: 10,
-};
-
-const secondaryBtnStyle: CSSProperties = {
-  height: 42,
-  flex: 1,
-  borderRadius: 14,
-  border: '1px solid #dbe3ef',
-  background: '#ffffff',
-  color: '#475569',
-  fontSize: 13,
-  fontWeight: 900,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const primaryBtnStyle: CSSProperties = {
-  height: 42,
-  flex: 1.4,
-  borderRadius: 14,
-  border: 'none',
-  background: '#2563eb',
-  color: '#ffffff',
-  fontSize: 13,
-  fontWeight: 950,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 8,
-  boxShadow: '0 12px 24px rgba(37,99,235,0.22)',
-};
-
-const dangerBtnStyle: CSSProperties = {
-  ...primaryBtnStyle,
-  background: '#dc2626',
-  boxShadow: '0 12px 24px rgba(220,38,38,0.22)',
-};
-
-const spinnerStyle: CSSProperties = {
-  width: 14,
-  height: 14,
-  border: '2px solid rgba(255,255,255,0.35)',
-  borderTopColor: '#ffffff',
-  borderRadius: '50%',
-  display: 'inline-block',
-  animation: 'spin 0.7s linear infinite',
-};
-
-const deleteModalStyle: CSSProperties = {
-  width: 420,
-  maxWidth: '100%',
-  borderRadius: 24,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
-  padding: 24,
-  boxShadow: '0 28px 80px rgba(15,23,42,0.24)',
-};
-
-const deleteHeaderStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 13,
-  marginBottom: 16,
-};
-
-const deleteModalIconStyle: CSSProperties = {
-  width: 46,
-  height: 46,
-  borderRadius: 16,
-  border: '1px solid #fecaca',
-  background: '#fef2f2',
-  color: '#dc2626',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const deleteModalTitleStyle: CSSProperties = {
-  fontSize: 17,
-  fontWeight: 950,
-  color: '#0f172a',
-};
-
-const deleteModalSubtitleStyle: CSSProperties = {
-  marginTop: 3,
-  fontSize: 12.5,
-  fontWeight: 750,
-  color: '#94a3b8',
-};
-
-const deleteModalTextStyle: CSSProperties = {
-  margin: '0 0 22px',
-  fontSize: 13.5,
-  fontWeight: 650,
-  color: '#475569',
-  lineHeight: 1.7,
-};
-
-const setupNoticeStyle: CSSProperties = {
-  flexShrink: 0,
-  padding: '13px 16px',
-  borderRadius: 16,
-  background: '#fffbeb',
-  border: '1px solid #fde68a',
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: 10,
-};
-
-const setupNoticeTextStyle: CSSProperties = {
-  fontSize: 12.5,
-  fontWeight: 700,
-  color: '#92400e',
-  lineHeight: 1.6,
-};
+    radial-gradient(circle at top left, rgba(37,99,235,0.055), transparent 34%),
+    linear-gradient(180deg, #f8fafc 0%, #eef3f9 100%);
+}
+
+.docs-toolbar {
+  flex-shrink: 0;
+  border-radius: 22px;
+  border: 1px solid #e2e8f0;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 18px 42px rgba(15,23,42,0.055);
+  padding: 14px;
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 210px auto auto auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.docs-search-box,
+.docs-category-box,
+.docs-select-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.docs-search-icon,
+.docs-filter-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.docs-filter-icon {
+  left: 12px;
+}
+
+.docs-search-input,
+.docs-category-select,
+.docs-input {
+  width: 100%;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  outline: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.docs-search-input {
+  padding: 0 38px;
+}
+
+.docs-category-select {
+  padding: 0 34px;
+  appearance: none;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.docs-select-placeholder {
+  color: #94a3b8;
+}
+
+.docs-category-chevron,
+.docs-select-chevron {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.docs-select-chevron {
+  right: 14px;
+}
+
+.docs-clear-search {
+  position: absolute;
+  right: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  display: inline-flex;
+  padding: 0;
+}
+
+.docs-clear-filter-btn,
+.docs-count-pill,
+.docs-upload-btn {
+  height: 42px;
+  border-radius: 14px;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.docs-clear-filter-btn {
+  padding: 0 12px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 12.5px;
+  font-weight: 900;
+  cursor: pointer;
+  gap: 6px;
+}
+
+.docs-count-pill {
+  padding: 0 13px;
+  border: 1px solid #dbe3ef;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 12.5px;
+  font-weight: 900;
+}
+
+.docs-upload-btn {
+  padding: 0 14px;
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 950;
+  cursor: pointer;
+  gap: 7px;
+  box-shadow: 0 14px 28px rgba(37,99,235,0.24);
+}
+
+.docs-content-card {
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: calc(100vh - 220px);
+  overflow: auto;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 18px 42px rgba(15,23,42,0.055);
+}
+
+.docs-table-wrap {
+  overflow-x: auto;
+  overflow-y: auto;
+  padding: 0 12px 12px;
+}
+
+.docs-table {
+  width: 100%;
+  min-width: 1080px;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.docs-table th {
+  padding: 12px;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+  text-align: left;
+  font-size: 10.5px;
+  font-weight: 950;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.docs-table td {
+  padding: 13px 12px;
+  background: #ffffff;
+  border-top: 1px solid #e8edf4;
+  border-bottom: 1px solid #e8edf4;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+.docs-table tbody tr {
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(15,23,42,0.04);
+}
+
+.docs-first-td {
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
+  border-left: 1px solid #e8edf4;
+}
+
+.docs-last-td {
+  border-top-right-radius: 18px;
+  border-bottom-right-radius: 18px;
+  border-right: 1px solid #e8edf4;
+}
+
+.docs-document-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.docs-doc-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 13px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.docs-file-icon-image {
+  color: #7c3aed;
+}
+
+.docs-file-icon-pdf {
+  color: #dc2626;
+}
+
+.docs-file-icon-default {
+  color: #2563eb;
+}
+
+.docs-doc-info {
+  min-width: 0;
+}
+
+.docs-doc-title {
+  font-size: 13px;
+  font-weight: 950;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.docs-doc-description,
+.docs-doc-file-name {
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.docs-doc-description {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.docs-doc-file-name {
+  font-size: 11px;
+  font-weight: 750;
+  color: #94a3b8;
+  font-family: DM Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.docs-category-badge,
+.docs-type-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 9px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  font-size: 11.5px;
+  font-weight: 900;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.docs-type-badge {
+  height: 25px;
+  padding: 0 8px;
+  background: #f8fafc;
+  color: #475569;
+}
+
+.docs-size-text {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.docs-uploaded-name {
+  font-size: 12px;
+  font-weight: 900;
+  color: #334155;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.docs-uploaded-role {
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: capitalize;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.docs-date-text {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #64748b;
+  font-family: DM Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  white-space: nowrap;
+}
+
+.docs-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.docs-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.docs-icon-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(15,23,42,0.08);
+}
+
+.docs-view-btn {
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.docs-download-btn {
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.docs-delete-btn {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.docs-skeleton-wrap {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.docs-skeleton-row {
+  height: 66px;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+}
+
+.docs-skeleton-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 13px;
+  background: #e2e8f0;
+}
+
+.docs-skeleton-content {
+  flex: 1;
+}
+
+.docs-skeleton-line {
+  height: 12px;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.docs-skeleton-line-short {
+  width: 28%;
+}
+
+.docs-skeleton-line-long {
+  width: 42%;
+  margin-top: 8px;
+}
+
+.docs-empty {
+  height: 100%;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+}
+
+.docs-empty-icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 24px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.docs-empty-title {
+  font-size: 17px;
+  font-weight: 950;
+  color: #0f172a;
+}
+
+.docs-empty-subtitle {
+  margin-top: 7px;
+  max-width: 420px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.docs-empty-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+}
+
+.docs-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(15,23,42,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+}
+
+.docs-upload-modal {
+  width: 560px;
+  max-width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 28px 80px rgba(15,23,42,0.24);
+}
+
+.docs-modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 20px 22px;
+  border-bottom: 1px solid #e8edf4;
+  background: #fbfdff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.docs-modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.docs-modal-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 15px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.docs-modal-title {
+  font-size: 16px;
+  font-weight: 950;
+  color: #0f172a;
+  letter-spacing: -0.035em;
+}
+
+.docs-modal-subtitle {
+  margin-top: 3px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.docs-modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.docs-modal-body {
+  padding: 22px;
+}
+
+.docs-field {
+  margin-bottom: 16px;
+}
+
+.docs-label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12.5px;
+  font-weight: 900;
+  color: #475569;
+}
+
+.docs-required {
+  color: #ef4444;
+}
+
+.docs-optional {
+  margin-left: 5px;
+  color: #94a3b8;
+  font-weight: 650;
+}
+
+.docs-input {
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid #dbe3ef;
+  padding: 0 14px;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.docs-input-error {
+  border-color: #fca5a5;
+}
+
+.docs-select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 38px;
+}
+
+.docs-textarea {
+  height: 84px;
+  resize: none;
+  padding-top: 12px;
+  line-height: 1.55;
+}
+
+.docs-error-text {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #dc2626;
+}
+
+.docs-dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 18px;
+  padding: 24px 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: #f8fafc;
+}
+
+.docs-dropzone-dragging {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.docs-dropzone-selected {
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.docs-dropzone-error {
+  border-color: #fca5a5;
+}
+
+.docs-hidden-input {
+  display: none;
+}
+
+.docs-selected-file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.docs-selected-file-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid #bbf7d0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.docs-selected-file-info {
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.docs-selected-file-name {
+  font-size: 13px;
+  font-weight: 950;
+  color: #15803d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.docs-selected-file-size {
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.docs-remove-file-btn {
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.docs-drop-empty {
+  text-align: center;
+}
+
+.docs-drop-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 10px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.docs-drop-title {
+  font-size: 13.5px;
+  font-weight: 900;
+  color: #475569;
+}
+
+.docs-drop-title span {
+  color: #2563eb;
+}
+
+.docs-drop-subtitle {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.docs-modal-footer {
+  position: sticky;
+  bottom: 0;
+  padding: 16px 22px;
+  border-top: 1px solid #e8edf4;
+  background: #fbfdff;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.docs-secondary-btn,
+.docs-primary-btn,
+.docs-danger-btn {
+  height: 42px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+}
+
+.docs-secondary-btn {
+  border: 1px solid #dbe3ef;
+  background: #ffffff;
+  color: #475569;
+}
+
+.docs-primary-btn {
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 950;
+  box-shadow: 0 12px 24px rgba(37,99,235,0.22);
+}
+
+.docs-danger-btn {
+  border: none;
+  background: #dc2626;
+  color: #ffffff;
+  font-weight: 950;
+  box-shadow: 0 12px 24px rgba(220,38,38,0.22);
+}
+
+.docs-primary-btn:disabled,
+.docs-danger-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.docs-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.7s linear infinite;
+}
+
+.docs-delete-modal {
+  width: 420px;
+  max-width: 100%;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  padding: 24px;
+  box-shadow: 0 28px 80px rgba(15,23,42,0.24);
+}
+
+.docs-delete-header {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 16px;
+}
+
+.docs-delete-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.docs-delete-title {
+  font-size: 17px;
+  font-weight: 950;
+  color: #0f172a;
+}
+
+.docs-delete-subtitle {
+  margin-top: 3px;
+  font-size: 12.5px;
+  font-weight: 750;
+  color: #94a3b8;
+}
+
+.docs-delete-text {
+  margin: 0 0 22px;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.docs-delete-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.docs-setup-notice {
+  flex-shrink: 0;
+  padding: 13px 16px;
+  border-radius: 16px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.docs-setup-icon {
+  color: #b45309;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.docs-setup-text {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #92400e;
+  line-height: 1.6;
+}
+
+@media (max-width: 1100px) {
+  .docs-toolbar {
+    grid-template-columns: 1fr 200px auto;
+  }
+
+  .docs-count-pill,
+  .docs-clear-filter-btn,
+  .docs-upload-btn {
+    min-width: max-content;
+  }
+}
+
+@media (max-width: 760px) {
+  .docs-page {
+    padding: 12px;
+  }
+
+  .docs-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .docs-content-card {
+    max-height: calc(100vh - 260px);
+  }
+
+  .docs-modal-footer,
+  .docs-delete-actions {
+    flex-direction: column-reverse;
+  }
+
+  .docs-secondary-btn,
+  .docs-primary-btn,
+  .docs-danger-btn {
+    width: 100%;
+  }
+}
+`;
