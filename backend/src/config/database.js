@@ -1,4 +1,5 @@
-// src/config/database.js
+﻿// backend/src/config/database.js
+
 import pg from 'pg';
 import dotenv from 'dotenv';
 
@@ -6,26 +7,30 @@ dotenv.config();
 
 const { Pool } = pg;
 
-const isProduction = process.env.NODE_ENV === 'production';
+const useSsl =
+  process.env.DB_SSL === 'true' ||
+  process.env.NODE_ENV === 'production' ||
+  process.env.DATABASE_URL?.includes('sslmode=require');
 
-const poolConfig = process.env.DATABASE_URL
+const sslConfig = useSsl
+  ? { rejectUnauthorized: false }
+  : false;
+
+const poolConfig = process.env.DB_HOST
   ? {
-      connectionString: process.env.DATABASE_URL,
-      ssl: isProduction
-        ? {
-            rejectUnauthorized: false,
-          }
-        : false,
+      host: process.env.DB_HOST,
+      port: Number.parseInt(process.env.DB_PORT || '5432', 10),
+      database: process.env.DB_NAME || 'postgres',
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      ssl: sslConfig,
       max: 20,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
     }
   : {
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432', 10),
-      database: process.env.DB_NAME || 'sams_db',
-      user: process.env.DB_USER || 'sams_user',
-      password: process.env.DB_PASSWORD || '',
+      connectionString: process.env.DATABASE_URL,
+      ssl: sslConfig,
       max: 20,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
@@ -42,5 +47,7 @@ pool.on('error', (err) => {
 });
 
 export const query = (text, params) => pool.query(text, params);
+
 export const getClient = () => pool.connect();
+
 export default pool;
