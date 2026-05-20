@@ -221,7 +221,7 @@ export default function App() {
             pointer-events: auto !important;
             width: min(390px, calc(100vw - 32px)) !important;
             min-height: 86px !important;
-            padding: 18px 20px !important;
+            padding: 18px 22px !important;
             border-radius: 22px !important;
             border: 1px solid #e2e8f0 !important;
             background: rgba(255, 255, 255, 0.98) !important;
@@ -238,46 +238,24 @@ export default function App() {
           }
 
           .sams-toast-center [data-sonner-toast]::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 18px;
-            bottom: 18px;
-            width: 4px;
-            border-radius: 999px;
-            background: #2563eb;
+            display: none !important;
+            content: none !important;
           }
 
           .sams-toast-center [data-sonner-toast][data-type='success'] {
             border-color: #bbf7d0 !important;
           }
 
-          .sams-toast-center [data-sonner-toast][data-type='success']::before {
-            background: #16a34a;
-          }
-
           .sams-toast-center [data-sonner-toast][data-type='error'] {
             border-color: #fecaca !important;
-          }
-
-          .sams-toast-center [data-sonner-toast][data-type='error']::before {
-            background: #dc2626;
           }
 
           .sams-toast-center [data-sonner-toast][data-type='warning'] {
             border-color: #fde68a !important;
           }
 
-          .sams-toast-center [data-sonner-toast][data-type='warning']::before {
-            background: #d97706;
-          }
-
           .sams-toast-center [data-sonner-toast][data-type='info'] {
             border-color: #bfdbfe !important;
-          }
-
-          .sams-toast-center [data-sonner-toast][data-type='info']::before {
-            background: #2563eb;
           }
 
           .sams-toast-center [data-icon] {
@@ -348,20 +326,7 @@ export default function App() {
           }
 
           .sams-toast-center [data-close-button] {
-            width: 28px !important;
-            height: 28px !important;
-            right: 10px !important;
-            top: 10px !important;
-            border-radius: 10px !important;
-            border: 1px solid #e2e8f0 !important;
-            background: #ffffff !important;
-            color: #64748b !important;
-            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08) !important;
-          }
-
-          .sams-toast-center [data-close-button]:hover {
-            background: #f8fafc !important;
-            color: #0f172a !important;
+            display: none !important;
           }
 
           .sams-toast-center [data-button] {
@@ -385,7 +350,7 @@ export default function App() {
           className="sams-toast-center"
           position="top-center"
           richColors={false}
-          closeButton
+          closeButton={false}
           expand={false}
           visibleToasts={1}
           gap={10}
