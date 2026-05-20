@@ -33,6 +33,10 @@ export default function RegisterPage() {
       setError('Please fill in all required fields.');
       return;
     }
+    if (form.password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      return;
+    }
     setLoading(true);
     setError('');
     try {
@@ -43,9 +47,16 @@ export default function RegisterPage() {
       setRegisteredEmail(form.email.trim());
       setRegistered(true);
     } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
-        'Registration failed. Please try again.';
+      const resData = (err as {
+        response?: {
+          data?: {
+            error?: string;
+            details?: Array<{ field?: string; message?: string }>;
+          };
+        };
+      })?.response?.data;
+      const detail = resData?.details?.find((d) => d.message)?.message;
+      const msg = detail || resData?.error || 'Registration failed. Please try again.';
       setError(msg);
     } finally {
       setLoading(false);
@@ -193,7 +204,7 @@ export default function RegisterPage() {
                   </div>
 
                   <div className="rp-field-wrap">
-                    <label className="rp-label">Password</label>
+                    <label className="rp-label">Password <span className="rp-label-hint">minimum 8 characters</span></label>
                     <div className="rp-input-row">
                       <input type={showPw ? 'text' : 'password'} value={form.password}
                         onChange={set('password')} placeholder="••••••••••"
