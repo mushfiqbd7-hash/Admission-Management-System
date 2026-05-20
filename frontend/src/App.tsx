@@ -114,7 +114,20 @@ export default function App() {
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </BrowserRouter>
-        <style>{`
+                <style>{`
+          .sams-toast-center[data-sonner-toaster] {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            pointer-events: none !important;
+            transform: none !important;
+            z-index: 9999 !important;
+          }
+
           .sams-toast-center[data-sonner-toaster]:has([data-sonner-toast])::before {
             content: '';
             position: fixed;
@@ -128,11 +141,17 @@ export default function App() {
           .sams-toast-center [data-sonner-toast] {
             position: relative;
             z-index: 1;
+            pointer-events: auto;
             width: min(410px, calc(100vw - 32px));
             min-height: 118px;
             padding: 24px;
             align-items: flex-start;
             gap: 14px;
+            border-radius: 24px !important;
+            border: 1px solid #e2e8f0 !important;
+            background: #ffffff !important;
+            box-shadow: 0 24px 60px rgba(15,23,42,0.22) !important;
+            transform: none !important;
           }
 
           .sams-toast-center [data-title] {
@@ -189,20 +208,16 @@ export default function App() {
             padding-top: 2px;
           }
         `}</style>
+
         <Toaster
           className="sams-toast-center"
           position="top-center"
-          offset="50vh"
           visibleToasts={1}
           toastOptions={{
+            duration: 2500,
             style: {
               fontFamily: 'var(--font-ui)',
               fontSize: 13,
-              borderRadius: 24,
-              border: '1px solid #e2e8f0',
-              background: '#ffffff',
-              boxShadow: '0 24px 60px rgba(15,23,42,0.22)',
-              transform: 'translateY(-50%)',
             },
           }}
         />
