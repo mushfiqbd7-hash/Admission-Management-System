@@ -3,7 +3,6 @@ import { useCallback, useRef, useState } from 'react';
 import type { CSSProperties, DragEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  AlertCircle,
   ChevronDown,
   Download,
   Eye,
@@ -805,18 +804,6 @@ export default function DocumentsPage() {
                 {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
               </button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {canManage && docs.length === 0 && !isLoading && (
-        <div className="docs-setup-notice">
-          <AlertCircle size={16} className="docs-setup-icon" />
-
-          <div className="docs-setup-text">
-            <strong>Backend setup required:</strong> Create the{' '}
-            <code>/api/shared-documents</code> endpoint to enable document storage. The interface
-            is ready.
           </div>
         </div>
       )}
@@ -1668,30 +1655,6 @@ const documentsPageCss = `
   display: flex;
   gap: 10px;
   justify-content: flex-end;
-}
-
-.docs-setup-notice {
-  flex-shrink: 0;
-  padding: 13px 16px;
-  border-radius: 16px;
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.docs-setup-icon {
-  color: #b45309;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.docs-setup-text {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #92400e;
-  line-height: 1.6;
 }
 
 @media (max-width: 1100px) {

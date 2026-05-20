@@ -1,12 +1,11 @@
 ﻿// backend/src/index.js - SAMS Backend Entry Point
 
-import 'dotenv/config';
-
 import express from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { existsSync, mkdirSync, unlinkSync } from 'fs';
@@ -24,6 +23,8 @@ import pool from './config/database.js';
 import { authenticate } from './middleware/auth.js';
 import { initSocket } from './socket.js';
 
+dotenv.config();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -36,24 +37,14 @@ const app = express();
 app.set('trust proxy', 1);
 
 const httpServer = createServer(app);
-
-/*
-  Render provides process.env.PORT automatically.
-  Local PowerShell uses PORT=5000 from .env or fallback 5000.
-*/
 const PORT = process.env.PORT || 5000;
 
 /* Socket.IO */
 initSocket(httpServer);
 
-/* Helper: safe env parsers */
+/* Helper: safe env number parser */
 const parseEnvInt = (value, fallback) => {
   const parsed = Number.parseInt(value, 10);
-  return Number.isNaN(parsed) ? fallback : parsed;
-};
-
-const parseEnvFloat = (value, fallback) => {
-  const parsed = Number.parseFloat(value);
   return Number.isNaN(parsed) ? fallback : parsed;
 };
 
@@ -71,10 +62,6 @@ const ensureDir = (dirPath) => {
 ensureDir(uploadDir);
 ensureDir(msgUploadDir);
 ensureDir(sharedDocsDir);
-
-/* Upload size */
-const maxFileSizeMb = parseEnvFloat(process.env.MAX_FILE_SIZE_MB, 20);
-const maxUploadBytes = Math.round(maxFileSizeMb * 1024 * 1024);
 
 /* Shared document upload config */
 const sharedDocumentFileFilter = (_req, file, cb) => {
@@ -100,7 +87,7 @@ const multerUpload = multer({
   }),
   fileFilter: sharedDocumentFileFilter,
   limits: {
-    fileSize: maxUploadBytes,
+    fileSize: 20 * 1024 * 1024,
   },
 });
 
@@ -192,7 +179,6 @@ app.get('/api/health', async (_req, res) => {
     res.status(503).json({
       status: 'error',
       db: 'disconnected',
-      detail: err.message,
     });
   }
 });
@@ -521,9 +507,7 @@ app.use((req, res) => {
 /* Global error handler */
 app.use((err, _req, res, _next) => {
   if (err.code === 'LIMIT_FILE_SIZE') {
-    return res.status(400).json({
-      error: `File too large. Maximum allowed size is ${maxFileSizeMb} MB.`,
-    });
+    return res.status(400).json({ error: 'File too large' });
   }
 
   if (err.message?.startsWith('Not allowed by CORS')) {
@@ -538,11 +522,11 @@ app.use((err, _req, res, _next) => {
 });
 
 /* Start server */
-httpServer.listen(PORT, '0.0.0.0', () => {
-  console.log(`\nSAMS API running on port ${PORT}`);
-  console.log(`Local API: http://localhost:${PORT}/api`);
-  console.log(`Health check: http://localhost:${PORT}/api/health`);
-  console.log(`Socket.IO running on port ${PORT}\n`);
+httpServer.listen(PORT, () => {
+  console.log(`\nSAMS API running on http://localhost:${PORT}/api`);
+  console.log(`Socket.IO running on ws://localhost:${PORT}`);
+  console.log(`Health check: http://localhost:${PORT}/api/health\n`);
 });
 
 export default app;
+
