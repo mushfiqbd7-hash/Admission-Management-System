@@ -16,6 +16,8 @@ import {
   Menu,
   X,
   ClipboardList,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react';
 
 import HeaderRealtimeActions from '@/components/layout/HeaderRealtimeActions';
@@ -27,6 +29,7 @@ export default function AppShell() {
   const location = useLocation();
   const [topSearch, setTopSearch] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const isAdmin = user?.role === 'admin';
   const isAdminOrStaff = user?.role === 'admin' || user?.role === 'staff';
@@ -89,19 +92,19 @@ export default function AppShell() {
       ? 'Admin'
       : rawDisplayName;
 
-  const SidebarContent = () => (
+  const SidebarContent = ({ collapsed = false }: { collapsed?: boolean }) => (
     <>
-      <div className="flex shrink-0 items-center gap-3 px-6 py-6">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-blue-600">
+      <div className={`flex shrink-0 items-center ${collapsed ? 'justify-center px-3 py-5' : 'gap-3 px-6 py-6'}`}>
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-blue-600">
           <GraduationCap size={24} />
         </div>
-        <div>
+        <div className={collapsed ? 'hidden' : 'min-w-0'}>
           <div className="text-[20px] font-extrabold">Admission</div>
           <div className="text-[12px] text-slate-300">Management System</div>
         </div>
       </div>
 
-      <nav className="min-h-0 flex-1 space-y-1.5 overflow-y-auto px-4 pt-3">
+      <nav className={`min-h-0 flex-1 space-y-1.5 overflow-y-auto ${collapsed ? 'px-3 pt-3' : 'px-4 pt-3'}`}>
         {navItems
           .filter((item) => {
           if ((item as any).adminStaff && !isAdminOrStaff) return false;
@@ -116,8 +119,11 @@ export default function AppShell() {
                 to={item.path}
                 end={item.path === '/students'}
                 onClick={handleNavClick}
+                title={collapsed ? item.label : undefined}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-xl px-4 py-[14px] text-[14px] font-semibold transition ${
+                  `flex items-center rounded-xl py-[14px] text-[14px] font-semibold transition ${
+                    collapsed ? 'justify-center px-0' : 'gap-3 px-4'
+                  } ${
                     isActive
                       ? 'bg-[#0f5bff] text-white shadow-[0_10px_24px_rgba(15,91,255,0.28)]'
                       : 'text-slate-300 hover:bg-white/10 hover:text-white'
@@ -125,28 +131,31 @@ export default function AppShell() {
                 }
               >
                 <Icon size={20} />
-                <span>{item.label}</span>
+                <span className={collapsed ? 'hidden' : ''}>{item.label}</span>
               </NavLink>
             );
           })}
       </nav>
 
-      <div className="shrink-0 border-t border-white/10 px-5 py-5">
-        <div className="mb-4 flex items-center gap-3">
+      <div className={`shrink-0 border-t border-white/10 ${collapsed ? 'px-3 py-4' : 'px-5 py-5'}`}>
+        <div className={`mb-4 flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white font-extrabold text-slate-900">
             {displayName.charAt(0).toUpperCase()}
           </div>
-          <div className="min-w-0 flex-1">
+          <div className={collapsed ? 'hidden' : 'min-w-0 flex-1'}>
             <div className="truncate text-[15px] font-extrabold">{displayName}</div>
             <div className="text-[12px] capitalize text-slate-300">{user?.role}</div>
           </div>
         </div>
         <button
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-[14px] text-slate-300 transition hover:bg-white/10 hover:text-white"
+          title={collapsed ? 'Sign Out' : undefined}
+          className={`flex w-full items-center rounded-xl py-3 text-[14px] text-slate-300 transition hover:bg-white/10 hover:text-white ${
+            collapsed ? 'justify-center px-0' : 'gap-3 px-4'
+          }`}
         >
           <LogOut size={18} />
-          Sign Out
+          <span className={collapsed ? 'hidden' : ''}>Sign Out</span>
         </button>
       </div>
     </>
@@ -163,9 +172,11 @@ export default function AppShell() {
         />
       )}
 
-      {/* SIDEBAR — desktop always visible, mobile drawer */}
+      {/* SIDEBAR — collapsible desktop rail, mobile drawer */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[260px] min-w-[260px] flex-col overflow-hidden bg-[#061a33] text-white transition-transform duration-300 lg:relative lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[260px] min-w-[260px] flex-col overflow-hidden bg-[#061a33] text-white transition-all duration-300 lg:relative lg:translate-x-0 ${
+          sidebarCollapsed ? 'lg:w-[84px] lg:min-w-[84px]' : 'lg:w-[260px] lg:min-w-[260px]'
+        } ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -177,7 +188,7 @@ export default function AppShell() {
           <X size={20} />
         </button>
 
-        <SidebarContent />
+        <SidebarContent collapsed={sidebarCollapsed} />
       </aside>
 
       {/* MAIN */}
@@ -185,12 +196,20 @@ export default function AppShell() {
         <header className="shrink-0 px-3 pb-3 pt-3 sm:px-5 sm:pt-4">
           <div className="flex h-[72px] items-center justify-between gap-3 rounded-[20px] border border-white/70 bg-[rgba(255,255,255,0.82)] px-4 shadow-[0_12px_30px_rgba(15,23,42,0.06)] backdrop-blur-xl sm:h-[88px] sm:gap-6 sm:rounded-[24px] sm:px-6">
 
-            {/* Hamburger — mobile only */}
+            {/* Sidebar controls */}
             <button
               onClick={() => setSidebarOpen(true)}
               className="shrink-0 rounded-xl p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
+              title="Open sidebar"
             >
               <Menu size={22} />
+            </button>
+            <button
+              onClick={() => setSidebarCollapsed((v) => !v)}
+              className="hidden shrink-0 rounded-xl p-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 lg:inline-flex"
+              title={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
+            >
+              {sidebarCollapsed ? <PanelLeftOpen size={22} /> : <PanelLeftClose size={22} />}
             </button>
 
             {/* Title */}
