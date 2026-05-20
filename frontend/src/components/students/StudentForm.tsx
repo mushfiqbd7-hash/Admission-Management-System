@@ -182,7 +182,9 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
     mutationFn: (data: unknown) => studentsApi.create(data),
     onSuccess: (res) => {
       setSavedId(res.data.student.id);
-      toast.success('Student record created!');
+      toast.success('Student record created', {
+  description: 'You can continue filling out the application now.',
+});
       qc.invalidateQueries({ queryKey: ['students'] });
       qc.invalidateQueries({ queryKey: ['dashboard-stats'] });
     },
@@ -195,7 +197,9 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: unknown }) => studentsApi.update(id, data),
     onSuccess: () => {
-      toast.success('Student updated!');
+      toast.success('Application updated', {
+  description: 'Your latest changes have been saved successfully.',
+});
       qc.invalidateQueries({ queryKey: ['students'] });
       qc.invalidateQueries({ queryKey: ['student', savedId] });
     },
