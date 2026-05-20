@@ -1,0 +1,394 @@
+﻿// src/controllers/usersController.js
+import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
+import { query } from '../config/database.js';
+import { sendVerificationEmail } from '../utils/emailService.js';
+
+const userSelectFields = `
+  id,
+  email,
+  CASE
+    WHEN role = 'admin' AND full_name = 'System Administrator'
+    THEN 'Admin'
+    ELSE full_name
+  END AS full_name,
+  role,
+  is_active,
+  last_login,
+  created_at
+`;
+
+// â”€â”€ POST /api/auth/register  (public) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Public sign-up is reserved for applicants. The role is hardcoded server-side
+// to 'student' â€” any role value supplied by the client is ignored.
+// Agent / staff / admin accounts must be provisioned by an admin via
+// User Management (POST /api/users) or by editing an existing user's role.
+export const register = async (req, res) => {
+  try {
+    const { full_name, email, password } = req.body;
+    const role = 'student';
+
+    if (!full_name || !email || !password) {
+      return res.status(400).json({
+        error: 'full_name, email and password are required',
+      });
+    }
+
+    if (String(password).length < 6) {
+      return res.status(400).json({
+        error: 'Password must be at least 6 characters',
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const existing = await query('SELECT id FROM users WHERE email = $1', [
+      normalizedEmail,
+    ]);
+
+    if (existing.rows.length > 0) {
+      return res.status(409).json({
+        error: 'An account with this email already exists',
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    const { rows } = await query(
+      `
+      INSERT INTO users
+        (email, password_hash, full_name, role, is_active,
+         is_verified, verification_token, verification_token_expires_at)
+      VALUES
+        ($1, $2, $3, $4, true, false, $5, $6)
+      RETURNING id, email, full_name, role
+      `,
+      [
+        normalizedEmail,
+        passwordHash,
+        full_name.trim(),
+        role,
+        verificationToken,
+        tokenExpiresAt,
+      ]
+    );
+
+    sendVerificationEmail(normalizedEmail, verificationToken).catch((err) =>
+      console.error('Failed to send verification email:', err)
+    );
+
+    res.status(201).json({
+      message:
+        'Account created. Please check your email to verify your account before logging in.',
+      user: rows[0],
+    });
+  } catch (err) {
+    console.error('Register error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// â”€â”€ GET /api/users â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- POST /api/auth/resend-verification --------------------------------------
+// -- GET /api/auth/verify-email ------------------------------------------------
+export const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+
+    if (!token) {
+      return res.status(400).json({ error: 'Verification token is required' });
+    }
+
+    const {
+      rows: [user],
+    } = await query(
+      `
+      SELECT id, is_verified, verification_token_expires_at
+      FROM users
+      WHERE verification_token = $1
+      `,
+      [token]
+    );
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid verification token' });
+    }
+
+    if (user.is_verified) {
+      return res.json({ message: 'Account is already verified. You can log in.' });
+    }
+
+    if (
+      user.verification_token_expires_at &&
+      new Date(user.verification_token_expires_at).getTime() < Date.now()
+    ) {
+      return res.status(400).json({
+        error: 'Verification token has expired. Please request a new verification email.',
+      });
+    }
+
+    await query(
+      `
+      UPDATE users
+      SET is_verified = true,
+          verification_token = NULL,
+          verification_token_expires_at = NULL
+      WHERE id = $1
+      `,
+      [user.id]
+    );
+
+    res.json({ message: 'Email verified successfully. You can now log in.' });
+  } catch (err) {
+    console.error('Verify email error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const resendVerification = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const {
+      rows: [user],
+    } = await query(
+      `
+      SELECT id, email, is_verified
+      FROM users
+      WHERE email = $1
+      `,
+      [normalizedEmail]
+    );
+
+    // Do not reveal whether an email exists.
+    if (!user) {
+      return res.json({
+        message: 'If the account exists and is not verified, a verification email has been sent.',
+      });
+    }
+
+    if (user.is_verified) {
+      return res.json({
+        message: 'This account is already verified. You can log in.',
+      });
+    }
+
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const tokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await query(
+      `
+      UPDATE users
+      SET verification_token = $1,
+          verification_token_expires_at = $2
+      WHERE id = $3
+      `,
+      [verificationToken, tokenExpiresAt, user.id]
+    );
+
+    await sendVerificationEmail(normalizedEmail, verificationToken);
+
+    res.json({
+      message: 'Verification email sent. Please check your inbox.',
+    });
+  } catch (err) {
+    console.error('Resend verification error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const listUsers = async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Admin access required' });
+    }
+    if (req.user.role === 'admin') {
+      const { rows } = await query(
+        `SELECT ${userSelectFields}
+         FROM users ORDER BY created_at DESC LIMIT 500`
+      );
+      return res.json({ users: rows });
+    }
+    const { rows } = await query(
+      `SELECT ${userSelectFields}
+       FROM users WHERE id = $1`,
+      [req.user.id]
+    );
+    return res.json({ users: rows });
+  } catch (err) {
+    console.error('List users error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// â”€â”€ POST /api/users  (Admin only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export const createUser = async (req, res) => {
+  try {
+    const { email, password, full_name, role } = req.body;
+
+    if (!['admin', 'staff', 'agent', 'student'].includes(role)) {
+      return res.status(400).json({ error: 'Invalid role' });
+    }
+
+    if (!email || !password || !full_name) {
+      return res.status(400).json({
+        error: 'email, password and full_name are required',
+      });
+    }
+
+    if (String(password).length < 6) {
+      return res.status(400).json({
+        error: 'Password must be at least 6 characters',
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      return res.status(400).json({ error: 'Enter a valid email address. Any email domain is allowed.' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const { rows } = await query(
+      `
+      INSERT INTO users
+        (email, password_hash, full_name, role, is_active, is_verified)
+      VALUES
+        ($1, $2, $3, $4, true, true)
+      RETURNING id, email, full_name, role, is_active
+      `,
+      [normalizedEmail, passwordHash, full_name.trim(), role]
+    );
+
+    res.status(201).json({ user: rows[0] });
+  } catch (err) {
+    if (err.code === '23505') {
+      return res.status(409).json({ error: 'Email already exists' });
+    }
+
+    console.error('Create user error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// â”€â”€ PUT /api/users/:id â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const isAdmin = req.user.role === 'admin';
+    const isSelf = req.user.id === id;
+
+    if (!isAdmin && !isSelf) {
+      return res.status(403).json({
+        error: 'You can only update your own account',
+      });
+    }
+
+    const { full_name, role, is_active, password } = req.body;
+
+    const updates = [];
+    const params = [];
+
+    if (full_name !== undefined) {
+      if (!String(full_name).trim()) {
+        return res.status(400).json({ error: 'Full name cannot be empty' });
+      }
+
+      params.push(String(full_name).trim());
+      updates.push(`full_name = $${params.length}`);
+    }
+
+    // Only admin can change role, active status, or reset password
+    if (isAdmin) {
+      if (role !== undefined) {
+        if (!['admin', 'staff', 'agent', 'student'].includes(role)) {
+          return res.status(400).json({ error: 'Invalid role' });
+        }
+
+        params.push(role);
+        updates.push(`role = $${params.length}`);
+      }
+
+      if (is_active !== undefined) {
+        params.push(Boolean(is_active));
+        updates.push(`is_active = $${params.length}`);
+      }
+
+      if (password !== undefined) {
+        if (String(password).length < 6) {
+          return res.status(400).json({
+            error: 'Password must be at least 6 characters',
+          });
+        }
+
+        const passwordHash = await bcrypt.hash(password, 12);
+
+        params.push(passwordHash);
+        updates.push(`password_hash = $${params.length}`);
+
+        // Clear old plaintext password column if it exists.
+        updates.push(`password = NULL`);
+      }
+    }
+
+    if (!updates.length) {
+      const { rows } = await query(
+        `
+        SELECT id, email, full_name, role, is_active, last_login, created_at
+        FROM users
+        WHERE id = $1
+        `,
+        [id]
+      );
+
+      if (!rows[0]) return res.status(404).json({ error: 'User not found' });
+
+      return res.json({ user: rows[0] });
+    }
+
+    params.push(id);
+
+    const { rows } = await query(
+      `
+      UPDATE users
+      SET ${updates.join(', ')}
+      WHERE id = $${params.length}
+      RETURNING id, email, full_name, role, is_active
+      `,
+      params
+    );
+
+    if (!rows[0]) return res.status(404).json({ error: 'User not found' });
+
+    res.json({ user: rows[0] });
+  } catch (err) {
+    console.error('Update user error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// â”€â”€ DELETE /api/users/:id  (Admin only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+export const deleteUser = async (req, res) => {
+  if (req.params.id === req.user.id) {
+    return res.status(400).json({ error: 'Cannot delete your own account' });
+  }
+  try {
+    await query('DELETE FROM users WHERE id = $1', [req.params.id]);
+    res.json({ message: 'User deleted' });
+  } catch (err) {
+    console.error('Delete user error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
