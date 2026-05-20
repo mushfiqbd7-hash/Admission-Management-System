@@ -9,6 +9,11 @@ const WORKSTATION_STATUSES = [
   'rejected',
 ];
 
+const WORKSTATION_ENTRY_STATUSES = ['approved'];
+
+const WORKSTATION_STATUS_SQL =
+  "ARRAY['approved','processing','pre_admission','admitted','rejected']";
+
 const canManageWorkstation = (role) => ['admin', 'staff'].includes(role);
 
 const normalizeText = (value) => {
@@ -20,7 +25,6 @@ const normalizeText = (value) => {
 };
 
 const ensureDefaultUniversities = async () => {
-  // Only admit students with a real workstation status (never draft/pending)
   await query(
     `
     INSERT INTO workstation_universities (student_id, status, position)
@@ -28,21 +32,27 @@ const ensureDefaultUniversities = async () => {
     FROM students s
     WHERE s.application_status = ANY($1::text[])
       AND NOT EXISTS (
-        SELECT 1 FROM workstation_universities wu WHERE wu.student_id = s.id
+        SELECT 1
+        FROM workstation_universities wu
+        WHERE wu.student_id = s.id
       )
     `,
-    [WORKSTATION_STATUSES]
+    [WORKSTATION_ENTRY_STATUSES]
   );
 
-  // Auto-create a workstation_records row for every student now in workstation
   await query(
     `
     INSERT INTO workstation_records (student_id)
     SELECT DISTINCT wu.student_id
     FROM workstation_universities wu
-    WHERE NOT EXISTS (
-      SELECT 1 FROM workstation_records wr WHERE wr.student_id = wu.student_id
-    )
+    JOIN students s ON s.id = wu.student_id
+    WHERE wu.status = ANY(${WORKSTATION_STATUS_SQL})
+      AND s.application_status NOT IN ('draft', 'pending', 'revoked')
+      AND NOT EXISTS (
+        SELECT 1
+        FROM workstation_records wr
+        WHERE wr.student_id = wu.student_id
+      )
     ON CONFLICT (student_id) DO NOTHING
     `
   );
@@ -68,9 +78,10 @@ export const listWorkstationStudents = async (req, res) => {
     const offset = (pageNo - 1) * pageSize;
 
     const params = [];
-        const wheres = [
+
+    const wheres = [
       `
-      s.application_status != 'revoked'
+      s.application_status NOT IN ('draft', 'pending', 'revoked')
       AND EXISTS (
         SELECT 1
         FROM workstation_universities wu_exists
@@ -82,39 +93,40 @@ export const listWorkstationStudents = async (req, res) => {
 
     if (status && WORKSTATION_STATUSES.includes(status)) {
       params.push(status);
-      // Show students who have AT LEAST ONE university with this status
+
       wheres.push(`
         EXISTS (
-          SELECT 1 FROM workstation_universities wu_filter
+          SELECT 1
+          FROM workstation_universities wu_filter
           WHERE wu_filter.student_id = s.id
             AND wu_filter.status = $${params.length}
         )
       `);
     }
 
-    if (search) {
-  params.push(`%${search}%`);
-  const p = params.length;
+    if (search && String(search).trim()) {
+      params.push(`%${String(search).trim()}%`);
+      const p = params.length;
 
-  wheres.push(`
-    (
-      s.application_number ILIKE $${p}
-      OR s.given_name ILIKE $${p}
-      OR s.family_name ILIKE $${p}
-      OR s.passport_number ILIKE $${p}
-      OR s.nationality ILIKE $${p}
-      OR s.intended_major ILIKE $${p}
-      OR s.target_university ILIKE $${p}
-      OR cb.full_name ILIKE $${p}
-      OR EXISTS (
-        SELECT 1
-        FROM workstation_universities wu_search
-        WHERE wu_search.student_id = s.id
-        AND wu_search.university_name ILIKE $${p}
-      )
-    )
-  `);
-}
+      wheres.push(`
+        (
+          s.application_number ILIKE $${p}
+          OR s.given_name ILIKE $${p}
+          OR s.family_name ILIKE $${p}
+          OR s.passport_number ILIKE $${p}
+          OR s.nationality ILIKE $${p}
+          OR s.intended_major ILIKE $${p}
+          OR s.target_university ILIKE $${p}
+          OR cb.full_name ILIKE $${p}
+          OR EXISTS (
+            SELECT 1
+            FROM workstation_universities wu_search
+            WHERE wu_search.student_id = s.id
+              AND wu_search.status = ANY(${WORKSTATION_STATUS_SQL})
+              AND wu_search.university_name ILIKE $${p}
+          )
+        )
+      `);
     }
 
     const whereSql = `WHERE ${wheres.join(' AND ')}`;
@@ -130,11 +142,14 @@ export const listWorkstationStudents = async (req, res) => {
           wu.university_name
         FROM workstation_universities wu
         WHERE wu.student_id = s.id
+          AND wu.status = ANY(${WORKSTATION_STATUS_SQL})
         ORDER BY wu.position ASC, wu.created_at ASC
         LIMIT 1
       ) primary_wu ON true
 
-      LEFT JOIN workstation_universities wu ON wu.student_id = s.id
+      LEFT JOIN workstation_universities wu
+        ON wu.student_id = s.id
+       AND wu.status = ANY(${WORKSTATION_STATUS_SQL})
     `;
 
     const {
@@ -176,9 +191,10 @@ export const listWorkstationStudents = async (req, res) => {
         s.intended_start_term,
         s.scholarship_type,
 
-        CASE WHEN cb.role = 'admin' AND cb.full_name = 'System Administrator'
-             THEN 'Admin'
-             ELSE cb.full_name
+        CASE
+          WHEN cb.role = 'admin' AND cb.full_name = 'System Administrator'
+          THEN 'Admin'
+          ELSE cb.full_name
         END AS submitted_by_name,
         cb.email AS submitted_by_email,
         cb.role AS submitted_by_role,
@@ -186,8 +202,11 @@ export const listWorkstationStudents = async (req, res) => {
         COALESCE(wr.payment_of_application, '') AS payment_of_application,
         COALESCE(wr.application_incharge, '') AS application_incharge,
         COALESCE(wr.portal_email, '') AS portal_email,
-        CASE WHEN wr.portal_password IS NOT NULL AND wr.portal_password != ''
-             THEN repeat(chr(8226), 8) ELSE '' END AS portal_password,
+        CASE
+          WHEN wr.portal_password IS NOT NULL AND wr.portal_password != ''
+          THEN repeat(chr(8226), 8)
+          ELSE ''
+        END AS portal_password,
 
         COALESCE(
           json_agg(
@@ -231,17 +250,15 @@ export const listWorkstationStudents = async (req, res) => {
       dataParams
     );
 
-    // Count distinct students per status across ALL university rows.
-    // A student with Processing + Pre-Admission + Rejected is counted in all three cards.
     const { rows: statRows } = await query(
       `
       SELECT
         wu.status AS application_status,
         COUNT(DISTINCT wu.student_id)::int AS count
       FROM workstation_universities wu
-      WHERE EXISTS (
-        SELECT 1 FROM students s WHERE s.id = wu.student_id
-      )
+      JOIN students s ON s.id = wu.student_id
+      WHERE wu.status = ANY(${WORKSTATION_STATUS_SQL})
+        AND s.application_status NOT IN ('draft', 'pending', 'revoked')
       GROUP BY wu.status
       `
     );
@@ -252,7 +269,6 @@ export const listWorkstationStudents = async (req, res) => {
       pre_admission: 0,
       admitted: 0,
       rejected: 0,
-      revoked: 0,
     };
 
     statRows.forEach((r) => {
@@ -372,6 +388,7 @@ export const getWorkstationRecordPassword = async (req, res) => {
     }
 
     const { studentId } = req.params;
+
     const {
       rows: [record],
     } = await query(
@@ -407,7 +424,6 @@ export const createWorkstationUniversity = async (req, res) => {
       ? req.body.status
       : 'approved';
 
-    // Use next available position (never re-use existing positions)
     const {
       rows: [positionRow],
     } = await query(
@@ -432,9 +448,6 @@ export const createWorkstationUniversity = async (req, res) => {
       `,
       [studentId, universityName, status, nextPosition]
     );
-
-    // Do NOT update students.application_status when adding a non-primary university row.
-    // The primary (position 0) row always governs the student's status.
 
     res.status(201).json({ university });
   } catch (err) {
@@ -501,7 +514,7 @@ export const updateWorkstationUniversity = async (req, res) => {
         ${updates.join(', ')},
         updated_at = NOW()
       WHERE student_id = $${studentIdIndex}
-      AND id = $${universityIdIndex}
+        AND id = $${universityIdIndex}
       RETURNING *
       `,
       params
@@ -515,15 +528,14 @@ export const updateWorkstationUniversity = async (req, res) => {
     let updatedStudent = null;
 
     if (newStatus) {
-      // Always sync students.application_status with the PRIMARY university row
-      // (position 0 / earliest created), NOT necessarily the row just changed.
-      // This prevents a non-primary university change from clobbering the student's status.
       const {
         rows: [primaryRow],
       } = await client.query(
         `
-        SELECT status FROM workstation_universities
+        SELECT status
+        FROM workstation_universities
         WHERE student_id = $1
+          AND status = ANY(${WORKSTATION_STATUS_SQL})
         ORDER BY position ASC, created_at ASC
         LIMIT 1
         `,
@@ -593,6 +605,7 @@ export const deleteWorkstationUniversity = async (req, res) => {
       SELECT COUNT(*)::int AS count
       FROM workstation_universities
       WHERE student_id = $1
+        AND status = ANY(${WORKSTATION_STATUS_SQL})
       `,
       [studentId]
     );
@@ -609,7 +622,7 @@ export const deleteWorkstationUniversity = async (req, res) => {
       `
       DELETE FROM workstation_universities
       WHERE student_id = $1
-      AND id = $2
+        AND id = $2
       RETURNING id
       `,
       [studentId, universityId]
@@ -663,9 +676,10 @@ export const exportWorkstationStudents = async (req, res) => {
         s.intended_start_term,
         s.scholarship_type,
 
-        CASE WHEN cb.role = 'admin' AND cb.full_name = 'System Administrator'
-             THEN 'Admin'
-             ELSE cb.full_name
+        CASE
+          WHEN cb.role = 'admin' AND cb.full_name = 'System Administrator'
+          THEN 'Admin'
+          ELSE cb.full_name
         END AS submitted_by_name,
         cb.email AS submitted_by_email,
         cb.role AS submitted_by_role,
@@ -673,8 +687,11 @@ export const exportWorkstationStudents = async (req, res) => {
         COALESCE(wr.payment_of_application, '') AS payment_of_application,
         COALESCE(wr.application_incharge, '') AS application_incharge,
         COALESCE(wr.portal_email, '') AS portal_email,
-        CASE WHEN wr.portal_password IS NOT NULL AND wr.portal_password != ''
-             THEN repeat(chr(8226), 8) ELSE '' END AS portal_password,
+        CASE
+          WHEN wr.portal_password IS NOT NULL AND wr.portal_password != ''
+          THEN repeat(chr(8226), 8)
+          ELSE ''
+        END AS portal_password,
 
         COALESCE(
           json_agg(
@@ -708,17 +725,22 @@ export const exportWorkstationStudents = async (req, res) => {
           wu.university_name
         FROM workstation_universities wu
         WHERE wu.student_id = s.id
+          AND wu.status = ANY(${WORKSTATION_STATUS_SQL})
         ORDER BY wu.position ASC, wu.created_at ASC
         LIMIT 1
       ) primary_wu ON true
 
-      LEFT JOIN workstation_universities wu ON wu.student_id = s.id
+      LEFT JOIN workstation_universities wu
+        ON wu.student_id = s.id
+       AND wu.status = ANY(${WORKSTATION_STATUS_SQL})
 
-      WHERE EXISTS (
-        SELECT 1
-        FROM workstation_universities wu_exists
-        WHERE wu_exists.student_id = s.id
-      )
+      WHERE s.application_status NOT IN ('draft', 'pending', 'revoked')
+        AND EXISTS (
+          SELECT 1
+          FROM workstation_universities wu_exists
+          WHERE wu_exists.student_id = s.id
+            AND wu_exists.status = ANY(${WORKSTATION_STATUS_SQL})
+        )
 
       GROUP BY
         s.id,
@@ -745,4 +767,3 @@ export const exportWorkstationStudents = async (req, res) => {
     });
   }
 };
-

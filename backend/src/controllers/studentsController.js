@@ -1,34 +1,42 @@
 ﻿// src/controllers/studentsController.js
-// VERSION: 2026-FIXED â€” Applications + Work Station visibility fixed
+// VERSION: 2026-FIXED — Applications + Work Station visibility fixed
 
 import { query, getClient } from '../config/database.js';
 import { createNotification, notifyAdminsAndStaff, statusLabel } from '../utils/notifications.js';
 
-const WORKSTATION_STATUSES = [
-  'approved', 'processing', 'pre_admission', 'admitted', 'rejected', 'revoked',
-];
+const WORKSTATION_ENTRY_STATUSES = ['approved'];
+const RETURN_TO_USER_STATUSES = ['draft', 'pending', 'revoked'];
 
-// When a student enters a workstation status, immediately provision their rows
-// so the Workstation page is up-to-date without needing a page reload.
-const provisionWorkstationEntry = async (studentId, status) => {
-  if (!WORKSTATION_STATUSES.includes(status)) return;
+const syncWorkstationEntry = async (studentId, status) => {
   try {
+    if (RETURN_TO_USER_STATUSES.includes(status)) {
+      await query(
+        'DELETE FROM workstation_universities WHERE student_id = $1',
+        [studentId]
+      );
+      return;
+    }
+
+    if (!WORKSTATION_ENTRY_STATUSES.includes(status)) return;
+
     const { rows: existing } = await query(
       'SELECT 1 FROM workstation_universities WHERE student_id = $1 LIMIT 1',
       [studentId]
     );
+
     if (!existing.length) {
       await query(
         'INSERT INTO workstation_universities (student_id, status, position) VALUES ($1, $2, 0)',
-        [studentId, status]
+        [studentId, 'approved']
       );
     }
+
     await query(
       'INSERT INTO workstation_records (student_id) VALUES ($1) ON CONFLICT (student_id) DO NOTHING',
       [studentId]
     );
   } catch (_) {
-    // Non-fatal â€” workstation will self-heal on next page load
+    // Non-fatal — Work Station will self-heal on next page load
   }
 };
 
@@ -42,7 +50,6 @@ const canDeleteApplication = (user, student) =>
     ? ownsApplication(user, student)
     : canSeeAll(user?.role);
 
-// Empty string / undefined / null â†’ null
 const n = (v) => {
   if (v === null || v === undefined || v === '') return null;
   const s = String(v).trim();
@@ -75,8 +82,10 @@ const saveChinaLanguageWork = async (client, studentId, body) => {
 
   if (Array.isArray(body.languages)) {
     await client.query('DELETE FROM student_language WHERE student_id=$1', [studentId]);
+
     for (const l of body.languages) {
       if (!l.language && !l.test_name && !l.score) continue;
+
       await client.query(
         `
         INSERT INTO student_language
@@ -90,8 +99,10 @@ const saveChinaLanguageWork = async (client, studentId, body) => {
 
   if (Array.isArray(body.work)) {
     await client.query('DELETE FROM student_work_experience WHERE student_id=$1', [studentId]);
+
     for (const w of body.work) {
       if (!w.employer && !w.position) continue;
+
       await client.query(
         `
         INSERT INTO student_work_experience
@@ -111,7 +122,6 @@ const saveChinaLanguageWork = async (client, studentId, body) => {
   }
 };
 
-// â”€â”€ List students â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const listStudents = async (req, res) => {
   try {
     const {
@@ -132,11 +142,9 @@ export const listStudents = async (req, res) => {
     const wheres = [];
 
     if (canSeeAll(req.user.role)) {
-      // Admin/staff see submitted applications plus their own private drafts.
       params.push(req.user.id);
       wheres.push(`(s.application_status != 'draft' OR s.created_by = $${params.length})`);
     } else {
-      // Student/agent see only their own applications, including draft.
       params.push(req.user.id);
       wheres.push(`s.created_by = $${params.length}`);
     }
@@ -265,7 +273,6 @@ export const listStudents = async (req, res) => {
   }
 };
 
-// â”€â”€ Get single student â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const getStudent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -289,7 +296,8 @@ export const getStudent = async (req, res) => {
       query('SELECT * FROM student_financial WHERE student_id = $1', [id]),
       query('SELECT * FROM student_language WHERE student_id = $1', [id]),
       query('SELECT * FROM student_work_experience WHERE student_id = $1 ORDER BY start_date DESC', [id]),
-      query(`
+      query(
+        `
         SELECT
           id,
           student_id,
@@ -304,7 +312,9 @@ export const getStudent = async (req, res) => {
         FROM student_documents
         WHERE student_id = $1
         ORDER BY doc_key
-      `, [id]),
+        `,
+        [id]
+      ),
       query(
         `
         SELECT n.*, u.full_name AS author
@@ -335,7 +345,6 @@ export const getStudent = async (req, res) => {
   }
 };
 
-// â”€â”€ Create student â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const createStudent = async (req, res) => {
   const client = await getClient();
 
@@ -390,9 +399,6 @@ export const createStudent = async (req, res) => {
     const today = new Date().toISOString().slice(0, 10);
     const dateStr = today.replace(/-/g, '');
 
-    // Self-heal: ensure the daily-sequence table exists even if migration 017
-    // wasn't applied to this database (common when the Supabase project was
-    // created before the migration was added). Cheap idempotent DDL.
     await client.query(`
       CREATE TABLE IF NOT EXISTS application_number_daily_seq (
         app_date DATE PRIMARY KEY,
@@ -609,6 +615,8 @@ export const createStudent = async (req, res) => {
 
     await client.query('COMMIT');
 
+    await syncWorkstationEntry(sid, submitStatus);
+
     res.status(201).json({ message: 'Student created', student });
   } catch (err) {
     try {
@@ -638,7 +646,6 @@ export const createStudent = async (req, res) => {
   }
 };
 
-// â”€â”€ Update student â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const updateStudent = async (req, res) => {
   const client = await getClient();
 
@@ -652,9 +659,13 @@ export const updateStudent = async (req, res) => {
       [id]
     );
 
-    if (!existing) return res.status(404).json({ error: 'Student not found' });
+    if (!existing) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Student not found' });
+    }
 
     if (!canAccessApplication(req.user, existing)) {
+      await client.query('ROLLBACK');
       return res.status(403).json({ error: 'Access denied' });
     }
 
@@ -737,13 +748,25 @@ export const updateStudent = async (req, res) => {
       } else {
         const canUpdateOwnDraft =
           existing.application_status === 'draft' && requestedStatus === 'draft';
+
         const canSubmitDraft =
           existing.application_status === 'draft' && requestedStatus === 'pending';
 
-        if (!canUpdateOwnDraft && !canSubmitDraft) {
+        const canUpdateReturned =
+          existing.application_status === 'revoked' && requestedStatus === 'revoked';
+
+        const canResubmitReturned =
+          existing.application_status === 'revoked' && requestedStatus === 'pending';
+
+        if (
+          !canUpdateOwnDraft &&
+          !canSubmitDraft &&
+          !canUpdateReturned &&
+          !canResubmitReturned
+        ) {
           await client.query('ROLLBACK');
           return res.status(403).json({
-            error: 'Students and agents can only submit draft applications for review',
+            error: 'Students and agents can only submit draft or returned applications for review',
           });
         }
 
@@ -751,7 +774,6 @@ export const updateStudent = async (req, res) => {
         updates.push(`application_status = $${params.length}`);
       }
     }
-
 
     for (const f of fields) {
       if (!dbCols.has(f)) continue;
@@ -769,11 +791,6 @@ export const updateStudent = async (req, res) => {
         `UPDATE students SET ${updates.join(', ')} WHERE id = $${params.length}`,
         params
       );
-
-      // Provision Workstation entry if status changed to a workstation status
-      if (req.body.application_status && WORKSTATION_STATUSES.includes(req.body.application_status)) {
-        provisionWorkstationEntry(id, req.body.application_status).catch(() => {});
-      }
     }
 
     const { addresses, passport, education, financial } = req.body;
@@ -912,6 +929,10 @@ export const updateStudent = async (req, res) => {
 
     await client.query('COMMIT');
 
+    if (req.body.application_status) {
+      await syncWorkstationEntry(id, req.body.application_status);
+    }
+
     const { rows: [updated] } = await query(
       'SELECT * FROM students WHERE id = $1',
       [id]
@@ -919,11 +940,14 @@ export const updateStudent = async (req, res) => {
 
     res.json({ message: 'Student updated', student: updated });
 
-    if (existing.application_status === 'draft' && req.body.application_status === 'pending') {
+    if (
+      (existing.application_status === 'draft' || existing.application_status === 'revoked') &&
+      req.body.application_status === 'pending'
+    ) {
       notifyAdminsAndStaff({
         applicationId: id,
         type: 'info',
-        message: `New application submitted by ${updated.given_name} ${updated.family_name}`.trim(),
+        message: `Application submitted by ${updated.given_name} ${updated.family_name}`.trim(),
         link: `/students/${id}`,
       }).catch(() => {});
     }
@@ -942,7 +966,6 @@ export const updateStudent = async (req, res) => {
   }
 };
 
-// â”€â”€ Delete student â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const deleteStudent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -953,6 +976,7 @@ export const deleteStudent = async (req, res) => {
     );
 
     if (!existing) return res.status(404).json({ error: 'Student not found' });
+
     if (!canDeleteApplication(req.user, existing)) {
       return res.status(403).json({ error: 'Access denied' });
     }
@@ -979,7 +1003,6 @@ export const deleteStudent = async (req, res) => {
   }
 };
 
-// â”€â”€ Update status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -1023,9 +1046,12 @@ export const updateStatus = async (req, res) => {
       const canSubmitDraft =
         existing.application_status === 'draft' && status === 'pending';
 
-      if (!canSubmitDraft) {
+      const canResubmitReturned =
+        existing.application_status === 'revoked' && status === 'pending';
+
+      if (!canSubmitDraft && !canResubmitReturned) {
         return res.status(403).json({
-          error: 'Students and agents can only submit draft applications for review',
+          error: 'Students and agents can only submit draft or returned applications for review',
         });
       }
     }
@@ -1050,8 +1076,7 @@ export const updateStatus = async (req, res) => {
       [req.user.id, id, JSON.stringify({ new_status: status }), req.ip]
     );
 
-    // Provision Workstation entry immediately when entering a workstation status
-    provisionWorkstationEntry(id, status).catch(() => {});
+    await syncWorkstationEntry(id, status);
 
     res.json({ message: 'Status updated', student: r });
 
@@ -1066,14 +1091,14 @@ export const updateStatus = async (req, res) => {
     }
 
     if (
-      existing.application_status === 'draft' &&
+      (existing.application_status === 'draft' || existing.application_status === 'revoked') &&
       status === 'pending' &&
       r.created_by === req.user.id
     ) {
       notifyAdminsAndStaff({
         applicationId: id,
         type: 'info',
-        message: `New application submitted by ${r.given_name} ${r.family_name}`.trim(),
+        message: `Application submitted by ${r.given_name} ${r.family_name}`.trim(),
         link: `/students/${id}`,
       }).catch(() => {});
     }
@@ -1083,7 +1108,6 @@ export const updateStatus = async (req, res) => {
   }
 };
 
-// â”€â”€ Add note â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const addNote = async (req, res) => {
   try {
     const { id } = req.params;
@@ -1123,7 +1147,6 @@ export const addNote = async (req, res) => {
   }
 };
 
-// â”€â”€ Dashboard stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const getStats = async (req, res) => {
   try {
     const params = [];
@@ -1132,7 +1155,6 @@ export const getStats = async (req, res) => {
     const recentParams = [];
     let recentWhere = '';
 
-    // Admin/staff dashboard should NOT count draft applications.
     if (canSeeAll(req.user.role)) {
       where = `WHERE application_status != 'draft'`;
       recentWhere = `WHERE s.application_status != 'draft'`;
@@ -1204,4 +1226,3 @@ export const getStats = async (req, res) => {
     });
   }
 };
-

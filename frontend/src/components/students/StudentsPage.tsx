@@ -34,7 +34,7 @@ type StudentExtra = Student & {
 };
 
 function statusLabel(status?: string) {
-  if (!status) return 'â€”';
+  if (!status) return '—';
   return STATUS_LABELS[status as ApplicationStatus] || status.replace(/_/g, ' ');
 }
 
@@ -220,6 +220,7 @@ export default function StudentsPage() {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsFullScreen(false);
     };
+
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
@@ -291,7 +292,6 @@ export default function StudentsPage() {
 
   return (
     <div style={isFullScreen ? fullScreenStyle : pageStyle}>
-      {/* Header */}
       <div style={headerCardStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={headerIconStyle}>
@@ -334,9 +334,7 @@ export default function StudentsPage() {
         </div>
       </div>
 
-      {/* Main card */}
       <div style={cardStyle}>
-        {/* Filter bar */}
         <div style={filterBarStyle}>
           <div style={searchBoxStyle}>
             <Search
@@ -413,27 +411,22 @@ export default function StudentsPage() {
           )}
         </div>
 
-        {/* Active filters */}
         {hasFilters && (
           <div style={activeFilterBarStyle}>
             <Filter size={14} style={{ color: '#64748b' }} />
+
             <span style={{ fontSize: 12.5, fontWeight: 800, color: '#64748b' }}>
               Active filters:
             </span>
 
             {search && <span style={filterChipStyle}>Search: {search}</span>}
 
-            {status && (
-              <span style={filterChipStyle}>Status: {statusLabel(status)}</span>
-            )}
+            {status && <span style={filterChipStyle}>Status: {statusLabel(status)}</span>}
 
-            {priority && (
-              <span style={filterChipStyle}>Priority: {priority}</span>
-            )}
+            {priority && <span style={filterChipStyle}>Priority: {priority}</span>}
           </div>
         )}
 
-        {/* Table */}
         <div style={isFullScreen ? tableWrapFullStyle : tableWrapStyle}>
           <table style={isFullScreen ? tableFullStyle : tableStyle}>
             <thead>
@@ -484,17 +477,18 @@ export default function StudentsPage() {
                     canSeeAll ||
                     student.application_status === 'draft' ||
                     student.application_status === 'revoked';
+
                   const canDeleteRow = canSeeAll || student.application_status === 'draft';
 
                   return (
                     <tr key={student.id} style={rowStyle}>
                       <td style={firstTdStyle}>
-                        <span style={appNoStyle}>{student.application_number || 'â€”'}</span>
+                        <span style={appNoStyle}>{student.application_number || '—'}</span>
                       </td>
 
                       {canSeeAll && (
                         <td style={bodyTdStyle}>
-                          <div style={strongTextStyle}>{sAny.submitted_by_name || 'â€”'}</div>
+                          <div style={strongTextStyle}>{sAny.submitted_by_name || '—'}</div>
 
                           {sAny.submitted_by_role && (
                             <div style={smallMutedStyle}>
@@ -511,7 +505,7 @@ export default function StudentsPage() {
                       )}
 
                       <td style={bodyTdStyle}>
-                        <span style={monoTextStyle}>{student.passport_number || 'â€”'}</span>
+                        <span style={monoTextStyle}>{student.passport_number || '—'}</span>
                       </td>
 
                       <td style={bodyTdStyle}>
@@ -533,20 +527,21 @@ export default function StudentsPage() {
                       </td>
 
                       <td style={bodyTdStyle}>
-                        <span style={normalTextStyle}>{student.nationality || 'â€”'}</span>
+                        <span style={normalTextStyle}>{student.nationality || '—'}</span>
                       </td>
 
                       <td style={bodyTdStyle}>
-                        <div style={lineClampStyle} title={student.target_university || 'â€”'}>
-                          {student.target_university || 'â€”'}
+                        <div style={lineClampStyle} title={student.target_university || '—'}>
+                          {student.target_university || '—'}
                         </div>
                       </td>
 
                       <td style={bodyTdStyle}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <GraduationCap size={15} style={{ color: '#94a3b8', flexShrink: 0 }} />
+
                           <span style={normalTextStyle}>
-                            {student.degree_level ? DEGREE_LABELS[student.degree_level] : 'â€”'}
+                            {student.degree_level ? DEGREE_LABELS[student.degree_level] : '—'}
                           </span>
                         </div>
                       </td>
@@ -623,11 +618,10 @@ export default function StudentsPage() {
           )}
         </div>
 
-        {/* Pagination */}
         {data && totalPages > 1 && (
           <div style={paginationStyle}>
             <div style={paginationTextStyle}>
-              Showing {(page - 1) * limit + 1}â€“{Math.min(page * limit, total)} of{' '}
+              Showing {(page - 1) * limit + 1}–{Math.min(page * limit, total)} of{' '}
               {total.toLocaleString()} records
             </div>
 
@@ -651,7 +645,6 @@ export default function StudentsPage() {
         )}
       </div>
 
-      {/* Delete confirm modal */}
       {deleteId && (
         <div style={modalOverlayStyle}>
           <div style={modalCardStyle}>
@@ -685,7 +678,7 @@ export default function StudentsPage() {
                   cursor: deleteMutation.isPending ? 'not-allowed' : 'pointer',
                 }}
               >
-                {deleteMutation.isPending ? 'Deletingâ€¦' : 'Delete'}
+                {deleteMutation.isPending ? 'Deleting…' : 'Delete'}
               </button>
             </div>
           </div>
@@ -694,8 +687,6 @@ export default function StudentsPage() {
     </div>
   );
 }
-
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const pageStyle: CSSProperties = {
   height: '100%',
@@ -1268,4 +1259,3 @@ const confirmDeleteBtnStyle: CSSProperties = {
   cursor: 'pointer',
   fontFamily: 'inherit',
 };
-

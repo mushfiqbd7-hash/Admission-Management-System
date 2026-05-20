@@ -43,7 +43,6 @@ const emptyEducationRow = (isHighest = false): EducationRow => ({
 
 interface Props { mode: 'create' | 'edit'; initialData?: StudentDetail; studentId?: string; }
 
-// ── Shared radio pill component ──────────────────────────────
 function RadioPill({ name, value, checked, label, onChange }: {
   name: string; value: string | boolean; checked: boolean; label: string; onChange: () => void;
 }) {
@@ -62,7 +61,6 @@ function RadioPill({ name, value, checked, label, onChange }: {
   );
 }
 
-// ── Repeatable row card ──────────────────────────────────────
 function RowCard({ title, onRemove, children }: { title: string; onRemove?: () => void; children: React.ReactNode }) {
   return (
     <div style={{ background: 'var(--surface-sunken)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '16px' }}>
@@ -80,7 +78,6 @@ function RowCard({ title, onRemove, children }: { title: string; onRemove?: () =
   );
 }
 
-// ── Add row button ────────────────────────────────────────────
 function AddRowBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button type="button" onClick={onClick}
@@ -99,7 +96,6 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const [step, setStep] = useState(0);
   const [savedId, setSavedId] = useState<string | null>(studentId || null);
 
-  // ── Form state (identical to original) ───────────────────
   const s = initialData?.student;
   const p = initialData?.passport;
   const f = initialData?.financial;
@@ -165,6 +161,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
       ? initialData?.languages as Array<Record<string,string>>
       : [{ language:'', test_name:'', score:'', test_date:'' }]
   );
+
   const [workRows, setWorkRows] = useState(
     (initialData?.work as Array<Record<string,string>>)?.length
       ? initialData?.work as Array<Record<string,string>>
@@ -174,13 +171,13 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const [uploadedDocs, setUploadedDocs] = useState<Record<string,{ id?: string; student_id?: string; file_name:string; uploaded_at:string }>>(
     Object.fromEntries((initialData?.documents||[]).map(d => [d.doc_key, { id: d.id, student_id: d.student_id, file_name: d.file_name||'', uploaded_at: d.uploaded_at||'' }]))
   );
+
   const [uploadingKey, setUploadingKey] = useState<string|null>(null);
   const fileRefs = useRef<Record<string, HTMLInputElement|null>>({});
   const [notes, setNotes] = useState('');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [status, setStatus] = useState<ApplicationStatus>(s?.application_status || 'pending');
 
-  // ── Mutations (identical to original) ────────────────────
   const createMutation = useMutation({
     mutationFn: (data: unknown) => studentsApi.create(data),
     onSuccess: (res) => {
@@ -205,9 +202,6 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
     onError: () => toast.error('Failed to update student'),
   });
 
-  // ── buildPayload ──────────────────────────────────────────────────────────
-  // `statusOverride` lets callers (Save Draft, Next, auto-save on close)
-  // force application_status to 'draft' regardless of the role-default.
   const buildPayload = (statusOverride?: ApplicationStatus) => ({
     ...personal,
     passport_number: passport.passport_number,
@@ -224,77 +218,81 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
     work: workRows.filter(r => r.employer.trim() || r.position.trim()),
   });
 
-  // Submit path: uses role-default status (pending for applicants/agents).
   const handleSave = async () => {
     const canSeeAll = user?.role === 'admin' || user?.role === 'staff';
+
     const nextStatus: ApplicationStatus =
       canSeeAll
         ? (status === 'draft' ? 'pending' : status)
-        : (mode === 'create' || status === 'draft' ? 'pending' : status);
+        : (mode === 'create' || status === 'draft' || status === 'revoked'
+            ? 'pending'
+            : status);
+
     const payload = buildPayload(nextStatus);
+
     if (mode === 'create' && !savedId) await createMutation.mutateAsync(payload);
     else if (savedId) await updateMutation.mutateAsync({ id: savedId, data: payload });
+
     setStatus(nextStatus);
   };
 
-  // Save Draft button: force application_status='draft' so the record shows
-  // up in Applications as Draft regardless of who is filling the form.
-  // Returns the saved id so callers can chain (e.g. document upload).
   const submittedRef = useRef(false);
+
   const handleSaveDraft = async (silent = false): Promise<string | null> => {
-    const payload = buildPayload('draft');
+    const draftStatus: ApplicationStatus = status === 'revoked' ? 'revoked' : 'draft';
+    const payload = buildPayload(draftStatus);
+
     try {
       if (mode === 'create' && !savedId) {
         const res = await createMutation.mutateAsync(payload);
-        setStatus('draft');
+        setStatus(draftStatus);
         return (res as { data: { student: { id: string } } }).data.student.id;
       } else if (savedId) {
         await updateMutation.mutateAsync({ id: savedId, data: payload });
-        setStatus('draft');
+        setStatus(draftStatus);
         return savedId;
       }
     } catch (err) {
       if (!silent) throw err;
     }
+
     return savedId;
   };
 
-  // Next button: silently persist a draft before advancing. Failure here
-  // shouldn't block navigation — the user is mid-form and we don't want
-  // backend validation to trap them on the current step.
   const handleNext = async () => {
     try { await handleSaveDraft(true); } catch { /* swallow — advance anyway */ }
     setStep(s => s + 1);
   };
 
-  // ── Auto-save draft on tab close / unmount ────────────────────────────────
-  // Keep a ref to the latest "build draft payload" closure so the listener
-  // installed once below always sees current form state.
-  const draftSnapshotRef = useRef<() => unknown>(() => buildPayload('draft'));
+  const draftSnapshotRef = useRef<() => unknown>(() =>
+    buildPayload(status === 'revoked' ? 'revoked' : 'draft')
+  );
+
   useEffect(() => {
-    draftSnapshotRef.current = () => buildPayload('draft');
+    draftSnapshotRef.current = () =>
+      buildPayload(status === 'revoked' ? 'revoked' : 'draft');
   });
 
   useEffect(() => {
     const fireAutoSave = () => {
-      // Skip when the form is essentially empty and never saved before — no
-      // point creating an empty Draft record. Also skip after a successful
-      // submission so we don't overwrite a 'pending' record with 'draft'.
       if (submittedRef.current) return;
+
       const hasAnyData =
         !!savedId ||
         !!personal.family_name.trim() ||
         !!personal.given_name.trim() ||
         !!personal.email.trim();
+
       if (!hasAnyData) return;
 
       const token = localStorage.getItem('accessToken');
       if (!token) return;
+
       const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || '/api';
       const url = savedId ? `${apiBase}/students/${savedId}` : `${apiBase}/students`;
       const method = savedId ? 'PUT' : 'POST';
+
       try {
-        // `keepalive` lets the request complete after the page unloads.
         fetch(url, {
           method,
           headers: {
@@ -304,22 +302,21 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
           body: JSON.stringify(draftSnapshotRef.current()),
           keepalive: true,
           credentials: 'include',
-        }).catch(() => { /* silent — best effort */ });
-      } catch { /* silent */ }
+        }).catch(() => {});
+      } catch {}
     };
 
     const onBeforeUnload = () => fireAutoSave();
+
     window.addEventListener('beforeunload', onBeforeUnload);
+
     return () => {
       window.removeEventListener('beforeunload', onBeforeUnload);
-      // Also save when this component unmounts due to in-app navigation.
       fireAutoSave();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Per-file cap for client-side rejection (also enforced by the backend).
-  const MAX_DOC_BYTES = Math.floor(1.5 * 1024 * 1024); // 1.5 MB
+  const MAX_DOC_BYTES = Math.floor(1.5 * 1024 * 1024);
 
   const handleDocUpload = async (docKey: string, docLabel: string, isRequired: boolean, file: File) => {
     if (file.size > MAX_DOC_BYTES) {
@@ -328,9 +325,8 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
       return;
     }
 
-    // If the record hasn't been saved yet, silently save it as a Draft first
-    // so we have an id to attach the document to.
     let targetId = savedId;
+
     if (!targetId) {
       try {
         targetId = await handleSaveDraft(true);
@@ -338,6 +334,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
         toast.error('Could not save draft before upload. Please try again.');
         return;
       }
+
       if (!targetId) {
         toast.error('Could not save draft before upload. Fill at least Name and Email, then retry.');
         return;
@@ -345,15 +342,36 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
     }
 
     setUploadingKey(docKey);
+
     try {
       const fd = new FormData();
-      fd.append('file', file); fd.append('doc_key', docKey);
-      fd.append('doc_label', docLabel); fd.append('is_required', String(isRequired));
-      const res = await api.post(`/students/${targetId}/documents`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      fd.append('file', file);
+      fd.append('doc_key', docKey);
+      fd.append('doc_label', docLabel);
+      fd.append('is_required', String(isRequired));
+
+      const res = await api.post(`/students/${targetId}/documents`, fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
       const uploaded = res.data.document;
-      setUploadedDocs(prev => ({ ...prev, [docKey]: { id: uploaded.id, student_id: uploaded.student_id || targetId || undefined, file_name: uploaded.file_name || file.name, uploaded_at: uploaded.uploaded_at || new Date().toISOString() } }));
+
+      setUploadedDocs(prev => ({
+        ...prev,
+        [docKey]: {
+          id: uploaded.id,
+          student_id: uploaded.student_id || targetId || undefined,
+          file_name: uploaded.file_name || file.name,
+          uploaded_at: uploaded.uploaded_at || new Date().toISOString(),
+        },
+      }));
+
       toast.success(`${docLabel} uploaded`);
-    } catch { toast.error('Upload failed'); } finally { setUploadingKey(null); }
+    } catch {
+      toast.error('Upload failed');
+    } finally {
+      setUploadingKey(null);
+    }
   };
 
   const handleViewDoc = async (docKey: string) => {
@@ -362,6 +380,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
     if (!viewStudentId) return;
 
     const viewer = window.open('', '_blank');
+
     if (viewer) {
       viewer.document.title = 'Loading document...';
       viewer.document.body.innerHTML = '<p style="font-family: system-ui, sans-serif; padding: 24px;">Loading document...</p>';
@@ -374,6 +393,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
         const docsRes = await api.get(`/students/${viewStudentId}/documents`);
         const doc = docsRes.data.documents.find((d: { doc_key: string; id: string }) => d.doc_key === docKey);
         docId = doc?.id;
+
         if (doc) {
           setUploadedDocs(prev => ({ ...prev, [docKey]: { ...prev[docKey], id: doc.id } }));
         }
@@ -385,6 +405,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
       }
 
       const token = localStorage.getItem('accessToken');
+
       if (!token) {
         if (viewer) viewer.close();
         toast.error('Please log in again to view this document');
@@ -393,6 +414,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
       const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || '/api';
       const url = `${apiBase}/students/${viewStudentId}/documents/${docId}/file?token=${encodeURIComponent(token)}`;
+
       if (viewer) viewer.location.href = url;
       else window.open(url, '_blank');
     } catch {
@@ -403,28 +425,43 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
   const handleDeleteDoc = async (docKey: string) => {
     if (!savedId) return;
+
     try {
       const docsRes = await api.get(`/students/${savedId}/documents`);
       const doc = docsRes.data.documents.find((d: { doc_key: string; id: string }) => d.doc_key === docKey);
+
       if (doc) {
         await api.delete(`/students/${savedId}/documents/${doc.id}`);
-        setUploadedDocs(prev => { const n = { ...prev }; delete n[docKey]; return n; });
+        setUploadedDocs(prev => {
+          const n = { ...prev };
+          delete n[docKey];
+          return n;
+        });
         toast.success('Document removed');
       }
-    } catch { toast.error('Failed to remove document'); }
+    } catch {
+      toast.error('Failed to remove document');
+    }
   };
 
   const handleAddNote = async () => {
     if (!notes.trim() || !savedId) return;
-    try { await studentsApi.addNote(savedId, notes); toast.success('Note added'); setNotes(''); }
-    catch { toast.error('Failed to add note'); }
+
+    try {
+      await studentsApi.addNote(savedId, notes);
+      toast.success('Note added');
+      setNotes('');
+    } catch {
+      toast.error('Failed to add note');
+    }
   };
 
   const handleFinish = () => setShowSubmitModal(true);
+
   const handleSubmitConfirmed = async () => {
     setShowSubmitModal(false);
     await handleSave();
-    submittedRef.current = true; // prevent auto-save from overwriting on unmount
+    submittedRef.current = true;
     navigate('/students');
   };
 
@@ -436,10 +473,8 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
   const isMutating = createMutation.isPending || updateMutation.isPending;
 
-  // ── Section rendering ─────────────────────────────────────
   const renderSection = () => {
     switch (SECTIONS[step].id) {
-
       case 'personal': return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <FormSection title="Basic Information">
@@ -450,13 +485,14 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               <FormField label="Date of Birth" required><Input type="date" {...P('date_of_birth')} /></FormField>
               <FormField label="Gender" required>
                 <div style={{ display: 'flex', gap: 20, paddingTop: 6 }}>
-                  <RadioPill name="gender" value="male"   checked={personal.gender==='male'}   label="Male"   onChange={() => setPersonal(p => ({...p, gender:'male'}))} />
+                  <RadioPill name="gender" value="male" checked={personal.gender==='male'} label="Male" onChange={() => setPersonal(p => ({...p, gender:'male'}))} />
                   <RadioPill name="gender" value="female" checked={personal.gender==='female'} label="Female" onChange={() => setPersonal(p => ({...p, gender:'female'}))} />
                 </div>
               </FormField>
               <FormField label="Nationality" required><Input placeholder="e.g. Pakistani" {...P('nationality')} /></FormField>
             </Grid2>
           </FormSection>
+
           <FormSection title="Contact Information">
             <Grid2>
               <FormField label="Email Address" required><Input type="email" placeholder="student@example.com" {...P('email')} /></FormField>
@@ -465,6 +501,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               <FormField label="WeChat ID"><Input placeholder="WeChat ID" {...P('wechat_id')} /></FormField>
             </Grid2>
           </FormSection>
+
           <FormSection title="Application Details">
             <Grid2>
               <FormField label="Target University" required><Input placeholder="University name" {...P('target_university')} /></FormField>
@@ -518,6 +555,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               </Grid2>
             </div>
           </FormSection>
+
           <FormSection title="Current / Mailing Address">
             <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', marginBottom: 14 }}>
               <input
@@ -528,6 +566,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               />
               <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>Same as permanent address</span>
             </label>
+
             {!sameAddress && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <FormField label="Country" required>
@@ -565,14 +604,16 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               <FormField label="Place of Issue"><Input placeholder="City, Country" value={passport.place_of_issue} onChange={e => setPassport(p => ({...p, place_of_issue: e.target.value}))} /></FormField>
             </Grid2>
           </FormSection>
+
           <FormSection title="China Visa">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <FormField label="Do you currently have a China visa?" required>
                 <div style={{ display: 'flex', gap: 20, paddingTop: 4 }}>
-                  <RadioPill name="hasVisa" value="yes" checked={passport.has_china_visa === true}  label="Yes" onChange={() => setPassport(p => ({...p, has_china_visa: true}))} />
-                  <RadioPill name="hasVisa" value="no"  checked={passport.has_china_visa === false} label="No"  onChange={() => setPassport(p => ({...p, has_china_visa: false}))} />
+                  <RadioPill name="hasVisa" value="yes" checked={passport.has_china_visa === true} label="Yes" onChange={() => setPassport(p => ({...p, has_china_visa: true}))} />
+                  <RadioPill name="hasVisa" value="no" checked={passport.has_china_visa === false} label="No" onChange={() => setPassport(p => ({...p, has_china_visa: false}))} />
                 </div>
               </FormField>
+
               {passport.has_china_visa && (
                 <div style={{ paddingLeft: 14, borderLeft: '3px solid var(--navy-100)' }}>
                   <Grid2>
@@ -603,6 +644,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
             <p style={{ fontSize: 12.5, color: 'var(--text-tertiary)', margin: 0 }}>
               Enter highest and any previous education. List the most recent first.
             </p>
+
             {educationRows.map((row, i) => (
               <RowCard key={i} title={`Education Experience #${i + 1}`}
                 onRemove={educationRows.length > 1 ? () => setEducationRows(r => r.filter((_,j) => j !== i)) : undefined}>
@@ -633,6 +675,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                 </Grid2>
               </RowCard>
             ))}
+
             <AddRowBtn label="Add Education Experience" onClick={() => setEducationRows(r => [...r, emptyEducationRow(false)])} />
           </div>
         </FormSection>
@@ -643,10 +686,11 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <FormField label="Have you previously studied in China?" required>
               <div style={{ display: 'flex', gap: 20, paddingTop: 4 }}>
-                <RadioPill name="chinaExp" value="yes" checked={china.has_experience === true}  label="Yes" onChange={() => setChina(p => ({...p, has_experience: true}))} />
-                <RadioPill name="chinaExp" value="no"  checked={china.has_experience === false} label="No"  onChange={() => setChina(p => ({...p, has_experience: false}))} />
+                <RadioPill name="chinaExp" value="yes" checked={china.has_experience === true} label="Yes" onChange={() => setChina(p => ({...p, has_experience: true}))} />
+                <RadioPill name="chinaExp" value="no" checked={china.has_experience === false} label="No" onChange={() => setChina(p => ({...p, has_experience: false}))} />
               </div>
             </FormField>
+
             {china.has_experience && (
               <div style={{ paddingLeft: 14, borderLeft: '3px solid var(--navy-100)' }}>
                 <Grid2>
@@ -687,6 +731,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               <FormField label="Email" required><Input type="email" placeholder="supporter@example.com" value={financial.email} onChange={e => setFinancial(p=>({...p,email:e.target.value}))} /></FormField>
             </Grid2>
           </FormSection>
+
           <FormSection title="Bank Account">
             <Grid2>
               <FormField label="Bank Name"><Input placeholder="Bank name" value={financial.bank_name} onChange={e => setFinancial(p=>({...p,bank_name:e.target.value}))} /></FormField>
@@ -711,6 +756,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                 </Grid2>
               </RowCard>
             ))}
+
             <AddRowBtn label="Add Language" onClick={() => setLangRows(r => [...r, {language:'',test_name:'',score:'',test_date:''}])} />
           </div>
         </FormSection>
@@ -733,6 +779,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                 </div>
               </RowCard>
             ))}
+
             <AddRowBtn label="Add Experience" onClick={() => setWorkRows(r => [...r, {employer:'',position:'',start_date:'',end_date:'',description:''}])} />
           </div>
         </FormSection>
@@ -746,11 +793,13 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               <strong>Maximum file size:</strong> 1.5 MB per document. Accepted formats: PDF, JPG, PNG, DOC, DOCX.
             </p>
           </div>
+
           <FormSection title={`Documents Checklist — ${Object.keys(uploadedDocs).length}/${DOCUMENTS_LIST.length} uploaded`}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {DOCUMENTS_LIST.map((doc, idx) => {
                 const uploaded = uploadedDocs[doc.key];
                 const isUp = uploadingKey === doc.key;
+
                 return (
                   <div key={doc.key} style={{
                     display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px',
@@ -761,21 +810,27 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                     <div style={{ width: 18, height: 18, borderRadius: 5, background: uploaded ? '#16a34a' : 'var(--gray-100)', border: `1px solid ${uploaded ? '#16a34a' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       {uploaded && <CheckCircle size={11} color="#fff" />}
                     </div>
+
                     <span style={{ fontSize: 11, color: 'var(--text-tertiary)', width: 22, textAlign: 'right', flexShrink: 0 }}>{idx+1}.</span>
+
                     <span style={{ flex: 1, fontSize: 13, color: uploaded ? 'var(--text-primary)' : 'var(--text-secondary)', fontWeight: uploaded ? 500 : 400 }}>
                       {doc.label}
                       {doc.required && <span style={{ marginLeft: 6, fontSize: 10.5, color: '#dc2626', fontWeight: 600 }}>Required</span>}
                     </span>
+
                     {uploaded && <span style={{ fontSize: 11.5, color: '#16a34a', maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{uploaded.file_name}</span>}
+
                     <input type="file" style={{ display: 'none' }} ref={el => { fileRefs.current[doc.key] = el; }}
                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                       onChange={e => { const file = e.target.files?.[0]; if (file) handleDocUpload(doc.key, doc.label, doc.required, file); e.target.value = ''; }} />
+
                     <button disabled={isUp}
                       onClick={() => fileRefs.current[doc.key]?.click()}
                       style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, fontSize: 11.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', border: '1px solid', opacity: isUp ? 0.5 : 1, transition: 'all 0.15s', background: uploaded ? '#dcfce7' : 'var(--navy-600)', color: uploaded ? '#15803d' : '#fff', borderColor: uploaded ? '#86efac' : 'var(--navy-600)' }}>
                       {isUp ? <span style={{ width: 11, height: 11, border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.7s linear infinite', display: 'inline-block' }} /> : <Upload size={11} />}
                       {uploaded ? 'Replace' : 'Upload'}
                     </button>
+
                     {uploaded && (
                       <button type="button" onClick={() => handleViewDoc(doc.key)}
                         style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, border: '1px solid #bfdbfe', background: '#eff6ff', color: '#1d4ed8', fontSize: 11.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', flexShrink: 0 }}>
@@ -783,6 +838,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                         View
                       </button>
                     )}
+
                     {uploaded && (
                       <button onClick={() => handleDeleteDoc(doc.key)}
                         style={{ width: 26, height: 26, borderRadius: 6, border: '1px solid #fecdd3', background: '#fff1f2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
@@ -804,7 +860,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               {[
                 { label: 'Passport No.', value: passport.passport_number || '—', mono: true },
                 { label: 'Student Name', value: `${personal.given_name} ${personal.family_name}`.trim() || '—' },
-                { label: 'University',   value: personal.target_university || '—' },
+                { label: 'University', value: personal.target_university || '—' },
               ].map(({ label, value, mono }) => (
                 <div key={label} style={{ background: 'var(--surface-sunken)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '12px 14px' }}>
                   <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 5, fontWeight: 500 }}>{label}</div>
@@ -812,6 +868,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                 </div>
               ))}
             </div>
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {[
                 ['Email', personal.email], ['Mobile', personal.mobile],
@@ -855,16 +912,16 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
   return (
     <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
-
-      {/* ── Step sidebar ──────────────────────────────────── */}
       <div style={{ width: 196, background: 'var(--surface)', borderRight: '1px solid var(--border)', flexShrink: 0, overflowY: 'auto', padding: '14px 10px' }}>
         <p style={{ fontSize: 10.5, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10, padding: '0 6px' }}>
           Sections
         </p>
+
         {SECTIONS.map((sec, i) => {
           const Icon = sec.icon;
           const isActive = i === step;
           const isDone = savedId && i < step;
+
           return (
             <button key={sec.id} onClick={() => setStep(i)}
               style={{
@@ -888,10 +945,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
         })}
       </div>
 
-      {/* ── Main area ─────────────────────────────────────── */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-
-        {/* Section header */}
         <div style={{ padding: '16px 24px 0', flexShrink: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
             {(() => { const Icon = SECTIONS[step].icon; return <Icon size={16} style={{ color: 'var(--navy-500)' }} />; })()}
@@ -904,21 +958,21 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
           </p>
         </div>
 
-        {/* Scrollable form body */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 24px' }}>
           {renderSection()}
         </div>
 
-        {/* Nav bar */}
         <div style={{ borderTop: '1px solid var(--border)', background: 'var(--surface)', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
           <button disabled={step === 0} onClick={() => setStep(s => s - 1)} className="btn-ghost" style={{ gap: 6 }}>
             <ChevronLeft size={14} /> Previous
           </button>
+
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <button onClick={() => { handleSaveDraft().catch(() => {}); }} disabled={isMutating} className="btn-ghost" style={{ gap: 6 }}>
               <Save size={13} />
               {isMutating ? 'Saving…' : 'Save Draft'}
             </button>
+
             {step < SECTIONS.length - 1 ? (
               <button onClick={handleNext} disabled={isMutating} className="btn-primary" style={{ gap: 6 }}>
                 Next <ChevronRight size={14} />
@@ -936,7 +990,6 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
         </div>
       </div>
 
-      {/* ── Submit modal (identical logic) ────────────────── */}
       {showSubmitModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, backdropFilter: 'blur(4px)' }}>
           <div className="card" style={{ width: 440, padding: '28px 28px 24px', boxShadow: 'var(--shadow-xl)' }}>
@@ -945,6 +998,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
                 <ShieldAlert size={26} style={{ color: '#d97706' }} />
               </div>
             </div>
+
             <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center' }}>Submit Application?</h3>
             <p style={{ margin: '0 0 18px', fontSize: 12.5, color: 'var(--text-tertiary)', textAlign: 'center' }}>Please review the following before submitting</p>
 
@@ -969,6 +1023,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
               <button className="btn-ghost" style={{ flex: 1 }} onClick={() => setShowSubmitModal(false)}>
                 Go Back
               </button>
+
               <button onClick={handleSubmitConfirmed} disabled={isMutating}
                 style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 14px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 'var(--radius-md)', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-ui)', opacity: isMutating ? 0.6 : 1 }}>
                 <Send size={13} />

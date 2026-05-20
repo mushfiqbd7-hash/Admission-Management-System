@@ -34,6 +34,7 @@ import { generateApplicationPDF } from '@/utils/generateApplicationPDF';
 
 function calcAge(dob?: string | null): number | null {
   if (!dob) return null;
+
   const birth = new Date(dob);
   if (isNaN(birth.getTime())) return null;
 
@@ -126,6 +127,9 @@ export default function StudentDetailPage() {
       toast.success('Status updated');
       qc.invalidateQueries({ queryKey: ['student', id] });
       qc.invalidateQueries({ queryKey: ['students'] });
+      qc.invalidateQueries({ queryKey: ['workstation-students'] });
+      qc.invalidateQueries({ queryKey: ['workstation-export-records'] });
+      qc.invalidateQueries({ queryKey: ['dashboard-stats'] });
     },
     onError: () => toast.error('Failed to update status'),
   });
@@ -146,7 +150,6 @@ export default function StudentDetailPage() {
         responseType: 'blob',
       });
 
-      // Use the filename from Content-Disposition header (e.g. A12345-John_Smith-CS.zip)
       const disposition = res.headers['content-disposition'] || '';
       const match = disposition.match(/filename="?([^";\r\n]+)"?/i);
       const filename = match?.[1]?.trim() || `documents_${id}.zip`;
@@ -178,13 +181,16 @@ export default function StudentDetailPage() {
     }
 
     const viewer = window.open('', '_blank');
+
     if (viewer) {
       viewer.document.title = 'Loading document...';
-      viewer.document.body.innerHTML = '<p style="font-family: system-ui, sans-serif; padding: 24px;">Loading document...</p>';
+      viewer.document.body.innerHTML =
+        '<p style="font-family: system-ui, sans-serif; padding: 24px;">Loading document...</p>';
     }
 
     const apiBase = (import.meta.env.VITE_API_URL as string | undefined) || '/api';
     const url = `${apiBase}/students/${id}/documents/${docId}/file?token=${encodeURIComponent(token)}`;
+
     if (viewer) viewer.location.href = url;
     else window.open(url, '_blank');
   };
@@ -233,6 +239,11 @@ export default function StudentDetailPage() {
   const dobDisplay = s.date_of_birth
     ? `${formatDate(s.date_of_birth)}${age !== null ? ` (${age})` : ''}`
     : null;
+
+  const canEditApplication =
+    canManageApplication ||
+    s.application_status === 'draft' ||
+    s.application_status === 'revoked';
 
   const tabs = [
     { id: 'overview', label: 'Overview', Icon: FileText },
@@ -304,14 +315,16 @@ export default function StudentDetailPage() {
               >
                 <Download size={15} /> Export
               </button>
-
-              <button
-                onClick={() => navigate(`/students/${id}/edit`)}
-                className="flex h-10 items-center gap-2 rounded-xl bg-[#0f5bff] px-4 text-[13px] font-bold text-white"
-              >
-                <Pencil size={15} /> Edit
-              </button>
             </>
+          )}
+
+          {canEditApplication && (
+            <button
+              onClick={() => navigate(`/students/${id}/edit`)}
+              className="flex h-10 items-center gap-2 rounded-xl bg-[#0f5bff] px-4 text-[13px] font-bold text-white"
+            >
+              <Pencil size={15} /> Edit
+            </button>
           )}
 
           <button
@@ -362,10 +375,7 @@ export default function StudentDetailPage() {
                     : null
                 }
               />
-              <InfoRow
-                label="Submitted"
-                value={formatDate(s.created_at)}
-              />
+              <InfoRow label="Submitted" value={formatDate(s.created_at)} />
             </Section>
 
             <Section title="Personal Information" icon={User}>
@@ -636,6 +646,7 @@ export default function StudentDetailPage() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-[11px] font-black text-white">
                       {(n.author || 'A').charAt(0).toUpperCase()}
                     </div>
+
                     <div className="text-[13px] font-black text-slate-900">
                       {n.author || 'Admin/Staff'}
                     </div>
