@@ -191,142 +191,155 @@ export default function App() {
         </BrowserRouter>
 
         <style>{`
-          .sams-toast-premium[data-sonner-toaster] {
+          .sams-toast-center[data-sonner-toaster] {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            pointer-events: none !important;
+            transform: none !important;
             z-index: 99999 !important;
-            --normal-bg: #ffffff;
-            --normal-border: #e2e8f0;
-            --normal-text: #0f172a;
-            --success-bg: #ffffff;
-            --success-border: #bbf7d0;
-            --success-text: #0f172a;
-            --error-bg: #ffffff;
-            --error-border: #fecaca;
-            --error-text: #0f172a;
-            --warning-bg: #ffffff;
-            --warning-border: #fde68a;
-            --warning-text: #0f172a;
           }
 
-          .sams-toast-premium [data-sonner-toast] {
-            width: 370px !important;
-            min-height: 76px !important;
-            padding: 15px 16px !important;
-            border-radius: 20px !important;
+          .sams-toast-center[data-sonner-toaster]:has([data-sonner-toast])::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: rgba(15, 23, 42, 0.34);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            pointer-events: none;
+          }
+
+          .sams-toast-center [data-sonner-toast] {
+            position: relative !important;
+            z-index: 1 !important;
+            pointer-events: auto !important;
+            width: min(390px, calc(100vw - 32px)) !important;
+            min-height: 86px !important;
+            padding: 18px 20px !important;
+            border-radius: 22px !important;
             border: 1px solid #e2e8f0 !important;
             background: rgba(255, 255, 255, 0.98) !important;
             box-shadow:
-              0 22px 48px rgba(15, 23, 42, 0.16),
-              0 2px 8px rgba(15, 23, 42, 0.06) !important;
-            backdrop-filter: blur(16px) saturate(160%) !important;
-            -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+              0 26px 70px rgba(15, 23, 42, 0.24),
+              0 4px 14px rgba(15, 23, 42, 0.08) !important;
+            backdrop-filter: blur(14px) saturate(160%) !important;
+            -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+            transform: none !important;
             display: flex !important;
             align-items: center !important;
-            gap: 12px !important;
+            gap: 14px !important;
             overflow: hidden !important;
           }
 
-          .sams-toast-premium [data-sonner-toast]::before {
+          .sams-toast-center [data-sonner-toast]::before {
             content: '';
             position: absolute;
             left: 0;
-            top: 14px;
-            bottom: 14px;
+            top: 18px;
+            bottom: 18px;
             width: 4px;
             border-radius: 999px;
             background: #2563eb;
           }
 
-          .sams-toast-premium [data-sonner-toast][data-type='success'] {
+          .sams-toast-center [data-sonner-toast][data-type='success'] {
             border-color: #bbf7d0 !important;
           }
 
-          .sams-toast-premium [data-sonner-toast][data-type='success']::before {
+          .sams-toast-center [data-sonner-toast][data-type='success']::before {
             background: #16a34a;
           }
 
-          .sams-toast-premium [data-sonner-toast][data-type='error'] {
+          .sams-toast-center [data-sonner-toast][data-type='error'] {
             border-color: #fecaca !important;
           }
 
-          .sams-toast-premium [data-sonner-toast][data-type='error']::before {
+          .sams-toast-center [data-sonner-toast][data-type='error']::before {
             background: #dc2626;
           }
 
-          .sams-toast-premium [data-sonner-toast][data-type='warning'] {
+          .sams-toast-center [data-sonner-toast][data-type='warning'] {
             border-color: #fde68a !important;
           }
 
-          .sams-toast-premium [data-sonner-toast][data-type='warning']::before {
+          .sams-toast-center [data-sonner-toast][data-type='warning']::before {
             background: #d97706;
           }
 
-          .sams-toast-premium [data-sonner-toast][data-type='info'] {
+          .sams-toast-center [data-sonner-toast][data-type='info'] {
             border-color: #bfdbfe !important;
           }
 
-          .sams-toast-premium [data-sonner-toast][data-type='info']::before {
+          .sams-toast-center [data-sonner-toast][data-type='info']::before {
             background: #2563eb;
           }
 
-          .sams-toast-premium [data-icon] {
-            width: 40px !important;
-            height: 40px !important;
-            min-width: 40px !important;
+          .sams-toast-center [data-icon] {
+            width: 42px !important;
+            height: 42px !important;
+            min-width: 42px !important;
             margin: 0 !important;
-            border-radius: 14px !important;
+            border-radius: 15px !important;
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
             background: #eff6ff !important;
-            border: 1px solid #bfdbfe !important;
             color: #2563eb !important;
+            border: 1px solid #bfdbfe !important;
             flex-shrink: 0 !important;
           }
 
-          .sams-toast-premium [data-sonner-toast][data-type='success'] [data-icon] {
+          .sams-toast-center [data-sonner-toast][data-type='success'] [data-icon] {
             background: #ecfdf3 !important;
-            border-color: #bbf7d0 !important;
             color: #16a34a !important;
+            border-color: #bbf7d0 !important;
           }
 
-          .sams-toast-premium [data-sonner-toast][data-type='error'] [data-icon] {
+          .sams-toast-center [data-sonner-toast][data-type='error'] [data-icon] {
             background: #fef2f2 !important;
-            border-color: #fecaca !important;
             color: #dc2626 !important;
+            border-color: #fecaca !important;
           }
 
-          .sams-toast-premium [data-sonner-toast][data-type='warning'] [data-icon] {
+          .sams-toast-center [data-sonner-toast][data-type='warning'] [data-icon] {
             background: #fffbeb !important;
-            border-color: #fde68a !important;
             color: #d97706 !important;
+            border-color: #fde68a !important;
           }
 
-          .sams-toast-premium [data-sonner-toast][data-type='info'] [data-icon] {
+          .sams-toast-center [data-sonner-toast][data-type='info'] [data-icon] {
             background: #eff6ff !important;
-            border-color: #bfdbfe !important;
             color: #2563eb !important;
+            border-color: #bfdbfe !important;
           }
 
-          .sams-toast-premium [data-content] {
+          .sams-toast-center [data-content] {
             padding: 0 !important;
+            min-width: 0 !important;
             display: flex !important;
             flex-direction: column !important;
-            gap: 2px !important;
-            min-width: 0 !important;
+            justify-content: center !important;
+            gap: 3px !important;
           }
 
-          .sams-toast-premium [data-title] {
+          .sams-toast-center [data-title] {
             margin: 0 !important;
             font-family: var(--font-ui), Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-            font-size: 14.5px !important;
+            font-size: 15px !important;
             font-weight: 900 !important;
             line-height: 1.25 !important;
             letter-spacing: -0.015em !important;
             color: #0f172a !important;
           }
 
-          .sams-toast-premium [data-description] {
-            margin: 1px 0 0 !important;
+          .sams-toast-center [data-description] {
+            margin: 0 !important;
             font-family: var(--font-ui), Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             font-size: 12.5px !important;
             font-weight: 650 !important;
@@ -334,7 +347,7 @@ export default function App() {
             color: #64748b !important;
           }
 
-          .sams-toast-premium [data-close-button] {
+          .sams-toast-center [data-close-button] {
             width: 28px !important;
             height: 28px !important;
             right: 10px !important;
@@ -346,12 +359,12 @@ export default function App() {
             box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08) !important;
           }
 
-          .sams-toast-premium [data-close-button]:hover {
+          .sams-toast-center [data-close-button]:hover {
             background: #f8fafc !important;
             color: #0f172a !important;
           }
 
-          .sams-toast-premium [data-button] {
+          .sams-toast-center [data-button] {
             height: 34px !important;
             padding: 0 13px !important;
             border-radius: 12px !important;
@@ -360,24 +373,24 @@ export default function App() {
           }
 
           @media (max-width: 640px) {
-            .sams-toast-premium [data-sonner-toast] {
+            .sams-toast-center [data-sonner-toast] {
               width: calc(100vw - 28px) !important;
-              min-height: 72px !important;
+              min-height: 82px !important;
+              padding: 16px 18px !important;
             }
           }
         `}</style>
 
         <Toaster
-          className="sams-toast-premium"
-          position="top-right"
+          className="sams-toast-center"
+          position="top-center"
           richColors={false}
           closeButton
           expand={false}
-          visibleToasts={4}
+          visibleToasts={1}
           gap={10}
-          offset={18}
           toastOptions={{
-            duration: 2800,
+            duration: 2600,
             style: {
               fontFamily:
                 "var(--font-ui), Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
