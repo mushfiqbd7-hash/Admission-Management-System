@@ -115,7 +115,8 @@ export default function App() {
           </Routes>
         </BrowserRouter>
         <Toaster
-          position="bottom-right"
+          position="top-right"
+          offset={20}
           toastOptions={{
             style: {
               fontFamily: 'var(--font-ui)',
