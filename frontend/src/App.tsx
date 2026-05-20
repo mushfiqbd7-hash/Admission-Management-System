@@ -115,15 +115,18 @@ export default function App() {
           </Routes>
         </BrowserRouter>
         <Toaster
-          position="top-right"
-          offset={20}
+          position="top-center"
+          offset="50vh"
           toastOptions={{
             style: {
               fontFamily: 'var(--font-ui)',
               fontSize: 13,
-              borderRadius: 10,
-              border: '1px solid var(--border)',
-              boxShadow: 'var(--shadow-lg)',
+              borderRadius: 16,
+              border: '1px solid rgba(255,255,255,0.72)',
+              background: 'rgba(255,255,255,0.94)',
+              boxShadow: '0 28px 80px rgba(15,23,42,0.24), 0 8px 22px rgba(15,23,42,0.12)',
+              backdropFilter: 'blur(18px)',
+              transform: 'translateY(-50%)',
             },
           }}
         />
