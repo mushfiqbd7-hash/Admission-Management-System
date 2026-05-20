@@ -26,10 +26,13 @@ export const useAuthStore = create<AuthState>()(
       isHydrated:   false,
 
       setAuth: (user, accessToken, refreshToken) => {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
         set({ user, accessToken, refreshToken, isAuth: true });
       },
 
       setToken: (accessToken) => {
+        localStorage.setItem('accessToken', accessToken);
         set({ accessToken });
       },
 
