@@ -7,7 +7,6 @@ const WORKSTATION_STATUSES = [
   'pre_admission',
   'admitted',
   'rejected',
-  'revoked',
 ];
 
 const canManageWorkstation = (role) => ['admin', 'staff'].includes(role);
@@ -69,12 +68,14 @@ export const listWorkstationStudents = async (req, res) => {
     const offset = (pageNo - 1) * pageSize;
 
     const params = [];
-    const wheres = [
+        const wheres = [
       `
-      EXISTS (
+      s.application_status != 'revoked'
+      AND EXISTS (
         SELECT 1
         FROM workstation_universities wu_exists
         WHERE wu_exists.student_id = s.id
+          AND wu_exists.status = ANY(${WORKSTATION_STATUS_SQL})
       )
       `,
     ];
@@ -92,27 +93,28 @@ export const listWorkstationStudents = async (req, res) => {
     }
 
     if (search) {
-      params.push(`%${search}%`);
-      const p = params.length;
+  params.push(`%${search}%`);
+  const p = params.length;
 
-      wheres.push(`
-        (
-          s.application_number ILIKE $${p}
-          OR s.given_name ILIKE $${p}
-          OR s.family_name ILIKE $${p}
-          OR s.passport_number ILIKE $${p}
-          OR s.nationality ILIKE $${p}
-          OR s.intended_major ILIKE $${p}
-          OR s.target_university ILIKE $${p}
-          OR cb.full_name ILIKE $${p}
-          OR EXISTS (
-            SELECT 1
-            FROM workstation_universities wu_search
-            WHERE wu_search.student_id = s.id
-            AND wu_search.university_name ILIKE $${p}
-          )
-        )
-      `);
+  wheres.push(`
+    (
+      s.application_number ILIKE $${p}
+      OR s.given_name ILIKE $${p}
+      OR s.family_name ILIKE $${p}
+      OR s.passport_number ILIKE $${p}
+      OR s.nationality ILIKE $${p}
+      OR s.intended_major ILIKE $${p}
+      OR s.target_university ILIKE $${p}
+      OR cb.full_name ILIKE $${p}
+      OR EXISTS (
+        SELECT 1
+        FROM workstation_universities wu_search
+        WHERE wu_search.student_id = s.id
+        AND wu_search.university_name ILIKE $${p}
+      )
+    )
+  `);
+}
     }
 
     const whereSql = `WHERE ${wheres.join(' AND ')}`;

@@ -31,8 +31,7 @@ type WSStatus =
   | 'pre_admission'
   | 'admitted'
   | 'rejected'
-  | 'revoked';
-
+  
 type WSUniversity = {
   id: string;
   university_name: string;
@@ -102,14 +101,7 @@ const WS_STATUSES: {
     border: '#fecaca',
     dot: '#ef4444',
   },
-  {
-    value: 'revoked',
-    label: 'Revoked',
-    bg: '#fff7ed',
-    color: '#c2410c',
-    border: '#fed7aa',
-    dot: '#fb923c',
-  },
+
 ];
 
 const wsStatusMap = Object.fromEntries(WS_STATUSES.map((s) => [s.value, s])) as Record<
@@ -329,8 +321,7 @@ export default function WorkStationPage() {
     pre_admission: 0,
     admitted: 0,
     rejected: 0,
-    revoked: 0,
-  };
+    };
 
   if (!canManage) {
     return (
@@ -796,7 +787,7 @@ const statusPanelStyle: CSSProperties = {
 
 const statusGridStyle: CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
+  gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
   gap: 10,
 };
 
