@@ -120,36 +120,73 @@ export default function App() {
             position: fixed;
             inset: 0;
             z-index: 0;
-            background: rgba(15, 23, 42, 0.38);
-            backdrop-filter: blur(2px);
+            background: rgba(15, 23, 42, 0.42);
+            backdrop-filter: blur(7px);
             pointer-events: none;
           }
 
           .sams-toast-center [data-sonner-toast] {
             position: relative;
             z-index: 1;
-            width: min(390px, calc(100vw - 48px));
-            min-height: 92px;
-            padding: 22px 24px;
+            width: min(410px, calc(100vw - 44px));
+            min-height: 138px;
+            padding: 26px 28px;
             align-items: flex-start;
+            gap: 14px;
           }
 
           .sams-toast-center [data-title] {
-            font-size: 15px;
-            font-weight: 800;
-            line-height: 1.35;
-            color: #111827;
+            font-size: 18px;
+            font-weight: 900;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            color: #0f172a;
           }
 
           .sams-toast-center [data-description] {
-            margin-top: 4px;
-            font-size: 13px;
-            line-height: 1.5;
+            margin-top: 7px;
+            font-size: 13.5px;
+            font-weight: 700;
+            line-height: 1.6;
             color: #64748b;
           }
 
           .sams-toast-center [data-icon] {
-            margin-top: 1px;
+            width: 46px;
+            height: 46px;
+            margin-top: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+            flex-shrink: 0;
+          }
+
+          .sams-toast-center [data-type='success'] [data-icon] {
+            background: #f0fdf4;
+            color: #16a34a;
+            border-color: #bbf7d0;
+          }
+
+          .sams-toast-center [data-type='error'] [data-icon] {
+            background: #fff1f2;
+            color: #dc2626;
+            border-color: #fecdd3;
+          }
+
+          .sams-toast-center [data-button] {
+            height: 42px;
+            min-width: 120px;
+            border-radius: 13px;
+            font-size: 13px;
+            font-weight: 900;
+          }
+
+          .sams-toast-center [data-content] {
+            padding-top: 2px;
           }
         `}</style>
         <Toaster
@@ -157,15 +194,14 @@ export default function App() {
           position="top-center"
           offset="50vh"
           visibleToasts={1}
-          closeButton
           toastOptions={{
             style: {
               fontFamily: 'var(--font-ui)',
               fontSize: 13,
-              borderRadius: 14,
-              border: '1px solid rgba(226,232,240,0.95)',
+              borderRadius: 22,
+              border: '1px solid rgba(255,255,255,0.92)',
               background: '#ffffff',
-              boxShadow: '0 34px 90px rgba(15,23,42,0.34), 0 10px 28px rgba(15,23,42,0.18)',
+              boxShadow: '0 38px 90px rgba(15,23,42,0.36), 0 16px 36px rgba(15,23,42,0.18)',
               transform: 'translateY(-50%)',
             },
           }}
