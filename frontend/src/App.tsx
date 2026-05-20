@@ -114,18 +114,58 @@ export default function App() {
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </BrowserRouter>
+        <style>{`
+          .sams-toast-center[data-sonner-toaster]:has([data-sonner-toast])::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: rgba(15, 23, 42, 0.38);
+            backdrop-filter: blur(2px);
+            pointer-events: none;
+          }
+
+          .sams-toast-center [data-sonner-toast] {
+            position: relative;
+            z-index: 1;
+            width: min(390px, calc(100vw - 48px));
+            min-height: 92px;
+            padding: 22px 24px;
+            align-items: flex-start;
+          }
+
+          .sams-toast-center [data-title] {
+            font-size: 15px;
+            font-weight: 800;
+            line-height: 1.35;
+            color: #111827;
+          }
+
+          .sams-toast-center [data-description] {
+            margin-top: 4px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #64748b;
+          }
+
+          .sams-toast-center [data-icon] {
+            margin-top: 1px;
+          }
+        `}</style>
         <Toaster
+          className="sams-toast-center"
           position="top-center"
           offset="50vh"
+          visibleToasts={1}
+          closeButton
           toastOptions={{
             style: {
               fontFamily: 'var(--font-ui)',
               fontSize: 13,
-              borderRadius: 16,
-              border: '1px solid rgba(255,255,255,0.72)',
-              background: 'rgba(255,255,255,0.94)',
-              boxShadow: '0 28px 80px rgba(15,23,42,0.24), 0 8px 22px rgba(15,23,42,0.12)',
-              backdropFilter: 'blur(18px)',
+              borderRadius: 14,
+              border: '1px solid rgba(226,232,240,0.95)',
+              background: '#ffffff',
+              boxShadow: '0 34px 90px rgba(15,23,42,0.34), 0 10px 28px rgba(15,23,42,0.18)',
               transform: 'translateY(-50%)',
             },
           }}
