@@ -312,6 +312,10 @@ export const getStudent = async (req, res) => {
           uploaded_by
         FROM student_documents
         WHERE student_id = $1
+          AND (
+            (SELECT application_status FROM students WHERE id = $1) <> 'draft'
+            OR file_path IS NOT NULL
+          )
         ORDER BY doc_key
         `,
         [id]
