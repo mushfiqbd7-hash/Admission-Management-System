@@ -19,7 +19,6 @@ const EditStudentPage = lazy(() => import('@/components/students/EditStudentPage
 const StudentDetail = lazy(() => import('@/components/students/StudentDetailPage'));
 const UsersPage = lazy(() => import('@/components/users/UsersPage'));
 const SettingsPage = lazy(() => import('@/components/settings/SettingsPage'));
-const AuditLogPage = lazy(() => import('@/components/settings/AuditLogPage'));
 const InboxPage = lazy(() => import('@/components/inbox/InboxPage'));
 const DocumentsPage = lazy(() => import('@/components/documents/DocumentsPage'));
 const WorkStationPage = lazy(() => import('@/components/workstation/WorkStationPage'));
@@ -176,7 +175,6 @@ export default function App() {
                 <Route path="/students/:id/edit" element={S(EditStudentPage)} />
                 <Route path="/users" element={<AdminRoute component={UsersPage} />} />
                 <Route path="/settings" element={S(SettingsPage)} />
-                <Route path="/audit-log" element={<AdminRoute component={AuditLogPage} />} />
                 <Route path="/inbox" element={S(InboxPage)} />
                 <Route path="/documents" element={S(DocumentsPage)} />
                 <Route

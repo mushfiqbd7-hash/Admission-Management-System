@@ -15,7 +15,6 @@ import {
   Briefcase,
   Menu,
   X,
-  ClipboardList,
 } from 'lucide-react';
 
 import HeaderRealtimeActions from '@/components/layout/HeaderRealtimeActions';
@@ -45,8 +44,6 @@ export default function AppShell() {
       return { title: 'Messages', subtitle: 'Stay updated with inbox messages and system notifications.' };
     if (location.pathname.startsWith('/users'))
       return { title: 'User Management', subtitle: 'Manage system users, permissions, and roles.' };
-    if (location.pathname.startsWith('/audit-log'))
-      return { title: 'Audit Log', subtitle: 'View system activity and user actions.' };
     if (location.pathname.startsWith('/settings'))
       return { title: 'Settings', subtitle: 'Configure platform preferences and system behavior.' };
     return { title: 'Dashboard', subtitle: 'Monitor applications, progress, and latest activity.' };
@@ -61,7 +58,6 @@ export default function AppShell() {
     { label: 'Messages', path: '/inbox', icon: MessageSquare },
     ...(isAdmin ? [{ label: 'User Management', path: '/users', icon: Users }] : []),
     { label: 'Settings', path: '/settings', icon: Settings },
-  { label: 'Audit Log', path: '/audit-log', icon: ClipboardList, adminOnly: true },
   ];
 
   const handleTopSearch = (e: React.FormEvent) => {

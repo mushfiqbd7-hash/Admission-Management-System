@@ -14,7 +14,6 @@ import { uploadBuffer, deleteBlob, streamBlobToResponse } from './utils/azureSto
 
 import authRoutes from './routes/auth.js';
 import studentsRoutes from './routes/students.js';
-import auditLogRouter from './routes/auditLog.js';
 import usersRoutes from './routes/users.js';
 import docsRoutes from './routes/documents.js';
 import messagesRoutes from './routes/messages.js';
@@ -175,7 +174,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/students', studentsRoutes);
 app.use('/api/students', docsRoutes);
 app.use('/api/users', usersRoutes);
-app.use('/api/audit-log', auditLogRouter);
 app.use('/api', messagesRoutes);
 app.use('/api/workstation', workstationRoutes);
 

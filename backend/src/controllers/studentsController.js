@@ -610,14 +610,6 @@ export const createStudent = async (req, res) => {
 
     await saveChinaLanguageWork(client, sid, req.body);
 
-    await client.query(
-      `
-      INSERT INTO audit_log (user_id, action, entity_type, entity_id, details, ip_address)
-      VALUES ($1, 'CREATE', 'student', $2, $3, $4)
-      `,
-      [req.user.id, sid, JSON.stringify({ name: `${givenName} ${familyName}` }), req.ip]
-    );
-
     await client.query('COMMIT');
 
     await syncWorkstationEntry(sid, submitStatus);
@@ -924,14 +916,6 @@ export const updateStudent = async (req, res) => {
 
     await saveChinaLanguageWork(client, id, req.body);
 
-    await client.query(
-      `
-      INSERT INTO audit_log (user_id, action, entity_type, entity_id, ip_address)
-      VALUES ($1, 'UPDATE', 'student', $2, $3)
-      `,
-      [req.user.id, id, req.ip]
-    );
-
     await client.query('COMMIT');
 
     // Draft → pending: push held bytea docs to Azure
@@ -1023,14 +1007,6 @@ export const deleteStudent = async (req, res) => {
 
     if (!r) return res.status(404).json({ error: 'Student not found' });
 
-    await query(
-      `
-      INSERT INTO audit_log (user_id, action, entity_type, entity_id, details, ip_address)
-      VALUES ($1, 'DELETE', 'student', $2, $3, $4)
-      `,
-      [req.user.id, id, JSON.stringify({ name: `${r.family_name} ${r.given_name}` }), req.ip]
-    );
-
     res.json({ message: 'Student deleted successfully' });
   } catch (err) {
     console.error('deleteStudent error:', err);
@@ -1101,14 +1077,6 @@ export const updateStatus = async (req, res) => {
       RETURNING id, application_status, given_name, family_name, created_by
       `,
       [status, id]
-    );
-
-    await query(
-      `
-      INSERT INTO audit_log (user_id, action, entity_type, entity_id, details, ip_address)
-      VALUES ($1, 'STATUS_CHANGE', 'student', $2, $3, $4)
-      `,
-      [req.user.id, id, JSON.stringify({ new_status: status }), req.ip]
     );
 
     await syncWorkstationEntry(id, status);
