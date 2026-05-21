@@ -170,12 +170,22 @@ export const viewDocument = async (req, res) => {
     if (!hasAccess) return res.status(403).json({ error: 'Access denied' });
 
     const { rows } = await query(
-      'SELECT file_name, file_path, mime_type FROM student_documents WHERE id=$1 AND student_id=$2',
+      'SELECT file_name, file_path, file_data, mime_type FROM student_documents WHERE id=$1 AND student_id=$2',
       [docId, id]
     );
 
     const doc = rows[0];
-    if (!doc?.file_path) return res.status(404).json({ error: 'Document not found' });
+    if (!doc) return res.status(404).json({ error: 'Document not found' });
+
+    // Draft doc stored in bytea — serve directly from DB
+    if (!doc.file_path && doc.file_data) {
+      const safeName = (doc.file_name || 'document').replace(/["\r\n]/g, '_');
+      res.setHeader('Content-Type', doc.mime_type || 'application/octet-stream');
+      res.setHeader('Content-Disposition', `inline; filename="${safeName}"`);
+      return res.send(doc.file_data);
+    }
+
+    if (!doc.file_path) return res.status(404).json({ error: 'Document not found' });
 
     await streamBlobToResponse(doc.file_path, res, doc.file_name, doc.mime_type);
   } catch (err) {
