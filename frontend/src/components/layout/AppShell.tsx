@@ -15,6 +15,7 @@ import {
   Briefcase,
   Menu,
   X,
+  Link2,
 } from 'lucide-react';
 
 import HeaderRealtimeActions from '@/components/layout/HeaderRealtimeActions';
@@ -44,6 +45,8 @@ export default function AppShell() {
       return { title: 'Messages', subtitle: 'Stay updated with inbox messages and system notifications.' };
     if (location.pathname.startsWith('/users'))
       return { title: 'User Management', subtitle: 'Manage system users, permissions, and roles.' };
+    if (location.pathname.startsWith('/application-links'))
+      return { title: 'Application Links', subtitle: 'Generate and manage shareable application invite links.' };
     if (location.pathname.startsWith('/settings'))
       return { title: 'Settings', subtitle: 'Configure platform preferences and system behavior.' };
     return { title: 'Dashboard', subtitle: 'Monitor applications, progress, and latest activity.' };
@@ -57,6 +60,9 @@ export default function AppShell() {
     { label: 'Work Station', path: '/workstation', icon: Briefcase, adminStaff: true },
     { label: 'Messages', path: '/inbox', icon: MessageSquare },
     ...(isAdmin ? [{ label: 'User Management', path: '/users', icon: Users }] : []),
+    ...(['admin', 'staff', 'agent'].includes(user?.role || '')
+      ? [{ label: 'Application Links', path: '/application-links', icon: Link2 }]
+      : []),
     { label: 'Settings', path: '/settings', icon: Settings },
   ];
 

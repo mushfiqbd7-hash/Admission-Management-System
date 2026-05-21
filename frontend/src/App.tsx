@@ -23,6 +23,7 @@ const InboxPage = lazy(() => import('@/components/inbox/InboxPage'));
 const DocumentsPage = lazy(() => import('@/components/documents/DocumentsPage'));
 const WorkStationPage = lazy(() => import('@/components/workstation/WorkStationPage'));
 const PublicApplicationPage = lazy(() => import('@/components/apply/PublicApplicationPage'));
+const ApplicationLinksPage = lazy(() => import('@/components/settings/ApplicationLinksPage'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -185,6 +186,7 @@ export default function App() {
                   path="/workstation"
                   element={<AdminStaffRoute component={WorkStationPage} />}
                 />
+                <Route path="/application-links" element={S(ApplicationLinksPage)} />
               </Route>
             </Route>
 

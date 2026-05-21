@@ -175,9 +175,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/students', studentsRoutes);
 app.use('/api/students', docsRoutes);
 app.use('/api/users', usersRoutes);
-app.use('/api', messagesRoutes);
 app.use('/api/workstation', workstationRoutes);
+// Public invite routes MUST come before messagesRoutes (which has router.use(authenticate) — blocks all /api/* without a token)
 app.use('/api', inviteTokensRoutes);
+app.use('/api', messagesRoutes);
 
 /* Export all students as PDF/print */
 app.get('/api/export/students', authenticate, async (req, res) => {
