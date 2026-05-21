@@ -1,44 +1,30 @@
-﻿// src/controllers/messagesController.js
+// src/controllers/messagesController.js
 import { query } from '../config/database.js';
 import { emitToUser, emitToAdmissionTeam } from '../socket.js';
 import multer from 'multer';
 import path from 'path';
-import { existsSync, mkdirSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { uploadBuffer, streamBlobToResponse } from '../utils/azureStorage.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const msgUploadDir = join(__dirname, '../../uploads/messages');
-if (!existsSync(msgUploadDir)) mkdirSync(msgUploadDir, { recursive: true });
-
-// â”€â”€ Multer for message attachments â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, msgUploadDir),
-  filename:    (req, file, cb) => {
-    const ext  = path.extname(file.originalname);
-    const base = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
-    cb(null, `${Date.now()}_${base}${ext}`);
-  },
-});
+// -- Multer for message attachments -- memory storage, files go to Azure Blob
 const fileFilter = (req, file, cb) => {
   const allowed = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx'];
   if (allowed.includes(path.extname(file.originalname).toLowerCase())) cb(null, true);
   else cb(new Error('Invalid file type'));
 };
 export const uploadAttachment = multer({
-  storage, fileFilter,
+  storage: multer.memoryStorage(),
+  fileFilter,
   limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-// â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Helpers --
 const isAdmissionTeam = (role) => ['admin', 'staff'].includes(role);
 
-// â”€â”€ Get applications for compose dropdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Get applications for compose dropdown --
 export const getApplicationsForDropdown = async (req, res) => {
   try {
     let rows;
     if (isAdmissionTeam(req.user.role)) {
-      // Admin/staff see all non-draft applications
       ({ rows } = await query(`
         SELECT s.id, s.application_number, s.passport_number,
                s.given_name, s.family_name
@@ -47,7 +33,6 @@ export const getApplicationsForDropdown = async (req, res) => {
         ORDER BY s.created_at DESC
       `));
     } else {
-      // Student/agent see only their own
       ({ rows } = await query(`
         SELECT s.id, s.application_number, s.passport_number,
                s.given_name, s.family_name
@@ -68,7 +53,7 @@ export const getApplicationsForDropdown = async (req, res) => {
   }
 };
 
-// â”€â”€ Send message â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Send message --
 export const sendMessage = async (req, res) => {
   try {
     const { application_id, subject, body } = req.body;
@@ -78,7 +63,6 @@ export const sendMessage = async (req, res) => {
     if (!subject?.trim())        return res.status(400).json({ error: 'Subject is required' });
     if (!body?.trim())           return res.status(400).json({ error: 'Message body is required' });
 
-    // Validate application access
     if (!isAdmissionTeam(req.user.role)) {
       const { rows: own } = await query(
         'SELECT id FROM students WHERE id = $1 AND created_by = $2',
@@ -87,24 +71,19 @@ export const sendMessage = async (req, res) => {
       if (!own[0]) return res.status(403).json({ error: 'Access denied to this application' });
     }
 
-    let recipientId   = null;
+    let recipientId    = null;
     let recipientGroup = null;
 
     if (!isAdmissionTeam(req.user.role)) {
-      // Student/agent â†’ send to admission_team group
       recipientGroup = 'admission_team';
     } else {
-      // Admin/staff â†’ reply to application owner
       const { rows: appRows } = await query(
         'SELECT created_by FROM students WHERE id = $1',
         [application_id]
       );
-      if (appRows[0]?.created_by) {
-        recipientId = appRows[0].created_by;
-      }
+      if (appRows[0]?.created_by) recipientId = appRows[0].created_by;
     }
 
-    // Insert message
     const { rows: [msg] } = await query(`
       INSERT INTO messages
         (sender_id, recipient_id, recipient_group, application_id, subject, body)
@@ -112,16 +91,18 @@ export const sendMessage = async (req, res) => {
       RETURNING *
     `, [req.user.id, recipientId, recipientGroup, application_id, subject.trim(), body.trim()]);
 
-    // Save attachments
+    // Upload attachments to Azure Blob, save blob name as file_path
     for (const file of files) {
+      const ext      = path.extname(file.originalname).toLowerCase();
+      const blobName = `messages/${msg.id}/${Date.now()}${ext}`;
+      await uploadBuffer(blobName, file.buffer, file.mimetype);
       await query(`
         INSERT INTO message_attachments
           (message_id, original_name, stored_name, file_path, mime_type, size)
         VALUES ($1, $2, $3, $4, $5, $6)
-      `, [msg.id, file.originalname, file.filename, file.path, file.mimetype, file.size]);
+      `, [msg.id, file.originalname, blobName, blobName, file.mimetype, file.size]);
     }
 
-    // Fetch sender info for real-time emit
     const msgWithSender = {
       ...msg,
       sender_name:  req.user.full_name,
@@ -130,12 +111,8 @@ export const sendMessage = async (req, res) => {
       attachments:  files.map(f => ({ original_name: f.originalname, size: f.size })),
     };
 
-    // Real-time: notify recipients
     if (recipientGroup === 'admission_team') {
-      // Student/agent sent to team
       emitToAdmissionTeam('message:new', msgWithSender);
-
-      // Also create DB notifications for each admin/staff
       const { rows: staff } = await query(
         `SELECT id FROM users WHERE role IN ('admin','staff') AND is_active = TRUE`
       );
@@ -147,7 +124,6 @@ export const sendMessage = async (req, res) => {
            `New message from ${req.user.full_name}: ${subject}`,
            `/students/${application_id}`]
         ).catch(() => {});
-
         emitToUser(u.id, 'notification:new', {
           type: 'info',
           message: `New message from ${req.user.full_name}: ${subject}`,
@@ -155,9 +131,7 @@ export const sendMessage = async (req, res) => {
         });
       }
     } else if (recipientId) {
-      // Admin/staff reply to application owner
       emitToUser(recipientId, 'message:new', msgWithSender);
-
       await query(
         `INSERT INTO notifications (user_id, application_id, type, message, link)
          VALUES ($1, $2, 'info', $3, $4)`,
@@ -165,7 +139,6 @@ export const sendMessage = async (req, res) => {
          `Reply from ${req.user.full_name}: ${subject}`,
          `/students/${application_id}`]
       ).catch(() => {});
-
       emitToUser(recipientId, 'notification:new', {
         type: 'info',
         message: `Reply from ${req.user.full_name}: ${subject}`,
@@ -180,12 +153,11 @@ export const sendMessage = async (req, res) => {
   }
 };
 
-// â”€â”€ Get inbox â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Get inbox --
 export const getInbox = async (req, res) => {
   try {
     let rows;
     if (isAdmissionTeam(req.user.role)) {
-      // Admin/staff see messages addressed to admission_team OR directly to them
       ({ rows } = await query(`
         SELECT m.*,
           CASE WHEN s.role = 'admin' AND s.full_name = 'System Administrator'
@@ -205,7 +177,6 @@ export const getInbox = async (req, res) => {
         ORDER BY m.created_at DESC
       `, [req.user.id]));
     } else {
-      // Student/agent see messages sent directly to them
       ({ rows } = await query(`
         SELECT m.*,
           CASE WHEN s.role = 'admin' AND s.full_name = 'System Administrator'
@@ -226,7 +197,6 @@ export const getInbox = async (req, res) => {
       `, [req.user.id]));
     }
 
-    // Attach attachment counts
     for (const msg of rows) {
       const { rows: atts } = await query(
         'SELECT id, original_name, size FROM message_attachments WHERE message_id = $1',
@@ -242,7 +212,7 @@ export const getInbox = async (req, res) => {
   }
 };
 
-// â”€â”€ Get sent â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Get sent --
 export const getSent = async (req, res) => {
   try {
     const { rows } = await query(`
@@ -278,7 +248,7 @@ export const getSent = async (req, res) => {
   }
 };
 
-// â”€â”€ Mark message read â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Mark message read --
 export const markRead = async (req, res) => {
   try {
     const { id } = req.params;
@@ -301,7 +271,7 @@ export const markRead = async (req, res) => {
   }
 };
 
-// â”€â”€ Delete message â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Delete message --
 export const deleteMessage = async (req, res) => {
   try {
     const { id } = req.params;
@@ -318,7 +288,7 @@ export const deleteMessage = async (req, res) => {
   }
 };
 
-// â”€â”€ Download attachment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Download attachment -- streams from Azure Blob --
 export const downloadAttachment = async (req, res) => {
   try {
     const { attId } = req.params;
@@ -332,21 +302,24 @@ export const downloadAttachment = async (req, res) => {
     if (!rows[0]) return res.status(404).json({ error: 'Attachment not found' });
 
     const att = rows[0];
-    // Access check: sender, recipient, or admission_team member
     const canAccess = att.sender_id === req.user.id ||
       att.recipient_id === req.user.id ||
       (att.recipient_group === 'admission_team' && isAdmissionTeam(req.user.role));
 
     if (!canAccess) return res.status(403).json({ error: 'Access denied' });
 
-    res.download(att.file_path, att.original_name);
+    // Stream from Azure Blob (file_path stores the blob name)
+    await streamBlobToResponse(att.file_path, res, att.original_name, att.mime_type);
   } catch (err) {
+    if (err.code === 'BLOB_NOT_FOUND') {
+      return res.status(404).json({ error: 'Attachment file not found in storage' });
+    }
     console.error('downloadAttachment error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-// â”€â”€ Notifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Notifications --
 export const getNotifications = async (req, res) => {
   try {
     const { rows } = await query(
@@ -397,4 +370,3 @@ export const markAllNotifsRead = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-

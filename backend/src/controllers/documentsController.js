@@ -1,26 +1,13 @@
 // src/controllers/documentsController.js
 import multer from 'multer';
 import path from 'path';
-import { existsSync, mkdirSync, unlinkSync } from 'fs';
 import { query } from '../config/database.js';
+import { uploadBuffer, deleteBlob, streamBlobToResponse, downloadBlobToBuffer } from '../utils/azureStorage.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const uploadDir = process.env.UPLOAD_DIR || './uploads';
-if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = path.join(uploadDir, req.params.id || 'tmp');
-    if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const base = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
-    cb(null, `${req.body.doc_key || 'doc'}_${Date.now()}${ext}`);
-  },
-});
+// Use memory storage — files go to Azure Blob, not local disk
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   const allowed = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx'];
@@ -42,16 +29,9 @@ const canAccessStudentDocuments = async (user, studentId) => {
     'SELECT id, created_by, application_status FROM students WHERE id = $1',
     [studentId]
   );
-
   if (!student) return false;
   if (student.created_by === user.id) return true;
   return canManageAllDocuments(user.role) && student.application_status !== 'draft';
-};
-
-const removeUploadedFileIfNeeded = (file) => {
-  try {
-    if (file?.path) unlinkSync(file.path);
-  } catch (_) {}
 };
 
 const publicDocumentFields = `
@@ -75,15 +55,21 @@ export const uploadDocument = async (req, res) => {
     const { doc_key, doc_label, is_required } = req.body;
 
     const hasAccess = await canAccessStudentDocuments(req.user, id);
-    if (!hasAccess) {
-      removeUploadedFileIfNeeded(req.file);
-      return res.status(403).json({ error: 'Access denied' });
-    }
+    if (!hasAccess) return res.status(403).json({ error: 'Access denied' });
 
-    if (!doc_key) {
-      removeUploadedFileIfNeeded(req.file);
-      return res.status(400).json({ error: 'doc_key is required' });
-    }
+    if (!doc_key) return res.status(400).json({ error: 'doc_key is required' });
+
+    // Delete old blob if replacing existing document
+    const { rows: existing } = await query(
+      'SELECT file_path FROM student_documents WHERE student_id=$1 AND doc_key=$2',
+      [id, doc_key]
+    );
+    if (existing[0]?.file_path) await deleteBlob(existing[0].file_path);
+
+    // Upload to Azure Blob Storage
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    const blobName = `documents/${id}/${doc_key}_${Date.now()}${ext}`;
+    await uploadBuffer(blobName, req.file.buffer, req.file.mimetype);
 
     const { rows } = await query(`
       INSERT INTO student_documents
@@ -96,13 +82,12 @@ export const uploadDocument = async (req, res) => {
     `, [
       id, doc_key, doc_label || doc_key,
       is_required === 'true' || is_required === true,
-      req.file.originalname, req.file.path,
+      req.file.originalname, blobName,
       req.file.size, req.file.mimetype, req.user.id,
     ]);
 
     res.json({ document: rows[0] });
   } catch (err) {
-    removeUploadedFileIfNeeded(req.file);
     console.error('uploadDocument error:', err);
     res.status(500).json({ error: 'Upload failed' });
   }
@@ -113,9 +98,7 @@ export const deleteDocument = async (req, res) => {
     const { id, docId } = req.params;
 
     const hasAccess = await canAccessStudentDocuments(req.user, id);
-    if (!hasAccess) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
+    if (!hasAccess) return res.status(403).json({ error: 'Access denied' });
 
     const { rows } = await query(
       'DELETE FROM student_documents WHERE id=$1 AND student_id=$2 RETURNING *',
@@ -124,9 +107,8 @@ export const deleteDocument = async (req, res) => {
 
     if (!rows[0]) return res.status(404).json({ error: 'Document not found' });
 
-    try {
-      if (rows[0].file_path) unlinkSync(rows[0].file_path);
-    } catch (_) {}
+    // Delete from Azure Blob Storage
+    await deleteBlob(rows[0].file_path);
 
     res.json({ message: 'Document deleted' });
   } catch (err) {
@@ -140,9 +122,7 @@ export const getDocuments = async (req, res) => {
     const { id } = req.params;
 
     const hasAccess = await canAccessStudentDocuments(req.user, id);
-    if (!hasAccess) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
+    if (!hasAccess) return res.status(403).json({ error: 'Access denied' });
 
     const { rows } = await query(
       `SELECT ${publicDocumentFields} FROM student_documents WHERE student_id=$1 ORDER BY doc_key`,
@@ -161,9 +141,7 @@ export const viewDocument = async (req, res) => {
     const { id, docId } = req.params;
 
     const hasAccess = await canAccessStudentDocuments(req.user, id);
-    if (!hasAccess) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
+    if (!hasAccess) return res.status(403).json({ error: 'Access denied' });
 
     const { rows } = await query(
       'SELECT file_name, file_path, mime_type FROM student_documents WHERE id=$1 AND student_id=$2',
@@ -171,25 +149,19 @@ export const viewDocument = async (req, res) => {
     );
 
     const doc = rows[0];
-    if (!doc || !doc.file_path || !existsSync(doc.file_path)) {
-      return res.status(404).json({ error: 'Document not found' });
-    }
+    if (!doc?.file_path) return res.status(404).json({ error: 'Document not found' });
 
-    const safeName = path.basename(doc.file_name || 'document').replace(/["\r\n]/g, '_');
-    res.setHeader('Content-Type', doc.mime_type || 'application/octet-stream');
-    res.setHeader('Content-Disposition', `inline; filename="${safeName}"`);
-    return res.sendFile(path.resolve(doc.file_path));
+    await streamBlobToResponse(doc.file_path, res, doc.file_name, doc.mime_type);
   } catch (err) {
+    if (err.code === 'BLOB_NOT_FOUND') {
+      return res.status(404).json({ error: 'Document file not found in storage' });
+    }
     console.error('viewDocument error:', err);
     res.status(500).json({ error: 'Failed to open document' });
   }
 };
 
-// ── Export all documents as ZIP (admin/staff only) ────────────────────────────
-// ZIP filename: PassportNumber-StudentName-IntendedMajor.zip
-// Files inside ZIP: 01_Passport.pdf, 02_Visa_Scan_Copy.jpg, etc.
-
-// Canonical document order (mirrors frontend DOCUMENTS_LIST in constants.ts)
+// ── Export all documents as ZIP ───────────────────────────────────────────────
 const DOCUMENTS_ORDER = [
   { key: 'passport',          label: 'Passport' },
   { key: 'visa-scan',         label: 'Visa_Scan_Copy' },
@@ -207,22 +179,17 @@ const DOCUMENTS_ORDER = [
 ];
 
 function sanitizeFilename(str) {
-  return (str || '')
-    .replace(/[/\\:*?"<>|]/g, '')
-    .replace(/\s+/g, '_')
-    .trim();
+  return (str || '').replace(/[/\\:*?"<>|]/g, '').replace(/\s+/g, '_').trim();
 }
 
 export const exportDocumentsZip = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Only admin/staff can export
     if (!['admin', 'staff'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    // Fetch student info for ZIP filename
     const { rows: studentRows } = await query(
       'SELECT given_name, family_name, passport_number, intended_major, created_by, application_status FROM students WHERE id = $1',
       [id]
@@ -234,51 +201,48 @@ export const exportDocumentsZip = async (req, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    // Build ZIP filename: PassportNo-FirstName_LastName-Major.zip
     const passport = sanitizeFilename(student.passport_number) || 'NoPassport';
     const name     = sanitizeFilename(`${student.given_name || ''} ${student.family_name || ''}`.trim());
     const major    = sanitizeFilename(student.intended_major) || 'NoMajor';
     const zipName  = `${passport}-${name}-${major}.zip`;
 
-    // Fetch uploaded documents
     const { rows: docs } = await query(
       'SELECT * FROM student_documents WHERE student_id = $1',
       [id]
     );
-
-    if (!docs.length) {
-      return res.status(404).json({ error: 'No documents uploaded for this student' });
-    }
+    if (!docs.length) return res.status(404).json({ error: 'No documents uploaded for this student' });
 
     const archiver = (await import('archiver')).default;
-    const { createReadStream, existsSync } = await import('fs');
-
-    // Build a map of doc_key → db row for quick lookup
     const docsMap = Object.fromEntries(docs.map(d => [d.doc_key, d]));
 
-    // Sort by canonical order, skip missing/not-uploaded docs
+    // Download each blob from Azure and add to ZIP
     const orderedDocs = [];
-    DOCUMENTS_ORDER.forEach((entry, index) => {
+    for (const [index, entry] of DOCUMENTS_ORDER.entries()) {
       const doc = docsMap[entry.key];
-      if (doc && doc.file_path && existsSync(doc.file_path)) {
-        const num = index + 1;
-        const ext = path.extname(doc.file_name || doc.file_path);
-        orderedDocs.push({ doc, filename: `${num}. ${entry.label}${ext}` });
+      if (doc?.file_path) {
+        try {
+          const buffer = await downloadBlobToBuffer(doc.file_path);
+          const ext = path.extname(doc.file_name || doc.file_path);
+          orderedDocs.push({ buffer, filename: `${index + 1}. ${entry.label}${ext}` });
+        } catch (_) { /* blob missing, skip */ }
       }
-    });
+    }
 
-    // Also catch any docs with unknown keys (not in canonical list) — append at end
+    // Append any docs with unknown keys at end
     const knownKeys = new Set(DOCUMENTS_ORDER.map(e => e.key));
-    docs.forEach(doc => {
-      if (!knownKeys.has(doc.doc_key) && doc.file_path && existsSync(doc.file_path)) {
-        const ext = path.extname(doc.file_name || doc.file_path);
-        const label = sanitizeFilename(doc.doc_label || doc.doc_key || 'Document');
-        orderedDocs.push({ doc, filename: `${label}${ext}` });
+    for (const doc of docs) {
+      if (!knownKeys.has(doc.doc_key) && doc.file_path) {
+        try {
+          const buffer = await downloadBlobToBuffer(doc.file_path);
+          const ext = path.extname(doc.file_name || doc.file_path);
+          const label = sanitizeFilename(doc.doc_label || doc.doc_key || 'Document');
+          orderedDocs.push({ buffer, filename: `${label}${ext}` });
+        } catch (_) {}
       }
-    });
+    }
 
     if (!orderedDocs.length) {
-      return res.status(404).json({ error: 'No document files found on disk' });
+      return res.status(404).json({ error: 'No document files found in storage' });
     }
 
     res.setHeader('Content-Type', 'application/zip');
@@ -288,15 +252,13 @@ export const exportDocumentsZip = async (req, res) => {
     archive.on('error', err => { throw err; });
     archive.pipe(res);
 
-    for (const { doc, filename } of orderedDocs) {
-      archive.append(createReadStream(doc.file_path), { name: filename });
+    for (const { buffer, filename } of orderedDocs) {
+      archive.append(buffer, { name: filename });
     }
 
     await archive.finalize();
   } catch (err) {
     console.error('exportDocumentsZip error:', err);
-    if (!res.headersSent) {
-      res.status(500).json({ error: 'Export failed' });
-    }
+    if (!res.headersSent) res.status(500).json({ error: 'Export failed' });
   }
 };

@@ -8,9 +8,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { existsSync, mkdirSync, unlinkSync } from 'fs';
+import { dirname } from 'path';
 import multer from 'multer';
+import { uploadBuffer, deleteBlob, streamBlobToResponse } from './utils/azureStorage.js';
 
 import authRoutes from './routes/auth.js';
 import studentsRoutes from './routes/students.js';
@@ -57,51 +57,24 @@ const parseEnvFloat = (value, fallback) => {
   return Number.isNaN(parsed) ? fallback : parsed;
 };
 
-/* Upload folders */
-const uploadDir = process.env.UPLOAD_DIR || join(__dirname, '../uploads');
-const msgUploadDir = join(uploadDir, 'messages');
-const sharedDocsDir = join(uploadDir, 'shared-documents');
-
-const ensureDir = (dirPath) => {
-  if (!existsSync(dirPath)) {
-    mkdirSync(dirPath, { recursive: true });
-  }
-};
-
-ensureDir(uploadDir);
-ensureDir(msgUploadDir);
-ensureDir(sharedDocsDir);
-
 /* Upload size */
 const maxFileSizeMb = parseEnvFloat(process.env.MAX_FILE_SIZE_MB, 20);
 const maxUploadBytes = Math.round(maxFileSizeMb * 1024 * 1024);
 
-/* Shared document upload config */
+/* Shared document upload config — memory storage, files go to Azure Blob */
 const sharedDocumentFileFilter = (_req, file, cb) => {
   const allowedExt = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx', '.xls', '.xlsx'];
   const originalName = file.originalname || '';
   const dotIndex = originalName.lastIndexOf('.');
   const ext = dotIndex >= 0 ? originalName.slice(dotIndex).toLowerCase() : '';
-
-  if (allowedExt.includes(ext)) {
-    return cb(null, true);
-  }
-
+  if (allowedExt.includes(ext)) return cb(null, true);
   return cb(new Error('Invalid file type. Allowed: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX'));
 };
 
 const multerUpload = multer({
-  storage: multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, sharedDocsDir),
-    filename: (_req, file, cb) => {
-      const safeName = file.originalname.replace(/\s+/g, '_');
-      cb(null, `${Date.now()}-${safeName}`);
-    },
-  }),
+  storage: multer.memoryStorage(),
   fileFilter: sharedDocumentFileFilter,
-  limits: {
-    fileSize: maxUploadBytes,
-  },
+  limits: { fileSize: maxUploadBytes },
 });
 
 /* Security middleware */
@@ -424,6 +397,14 @@ app.post(
         });
       }
 
+      // Upload to Azure Blob Storage
+      const ext = req.file.originalname.includes('.')
+        ? req.file.originalname.slice(req.file.originalname.lastIndexOf('.')).toLowerCase()
+        : '';
+      const blobName = `shared-documents/${Date.now()}-${req.file.originalname.replace(/\s+/g, '_')}`;
+      await uploadBuffer(blobName, req.file.buffer, req.file.mimetype);
+      req.file._blobName = blobName;
+
       const {
         rows: [doc],
       } = await pool.query(
@@ -441,7 +422,7 @@ app.post(
           req.file.originalname,
           req.file.size,
           req.file.mimetype,
-          req.file.path,
+          req.file._blobName,
           req.user.id,
         ]
       );
@@ -471,8 +452,12 @@ app.get('/api/shared-documents/:id/file', authenticate, async (req, res) => {
       return res.status(404).json({ error: 'Document not found' });
     }
 
-    return res.download(doc.file_path, doc.file_name);
+    // Stream from Azure Blob Storage
+    await streamBlobToResponse(doc.file_path, res, doc.file_name, doc.mime_type);
   } catch (err) {
+    if (err.code === 'BLOB_NOT_FOUND') {
+      return res.status(404).json({ error: 'File not found in storage' });
+    }
     console.error('Shared documents file error:', err.message);
     res.status(500).json({ error: 'File not found' });
   }
@@ -496,13 +481,8 @@ app.delete('/api/shared-documents/:id', authenticate, async (req, res) => {
       return res.status(404).json({ error: 'Document not found' });
     }
 
-    try {
-      if (doc.file_path) {
-        unlinkSync(doc.file_path);
-      }
-    } catch (fileErr) {
-      console.warn('Could not delete physical file:', fileErr.message);
-    }
+    // Delete from Azure Blob Storage
+    await deleteBlob(doc.file_path);
 
     res.json({ message: 'Document deleted' });
   } catch (err) {
