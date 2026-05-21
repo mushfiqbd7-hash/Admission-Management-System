@@ -37,7 +37,7 @@ export const requireToken = async (req, res, next) => {
 /** Ensure URL :id matches the student already associated with this token */
 export const requireTokenStudent = (req, res, next) => {
   const expectedId = req.tokenRecord?.student_id;
-  const requestedId = parseInt(req.params.id, 10);
+  const requestedId = req.params.id;
   if (!expectedId || expectedId !== requestedId) {
     return res.status(403).json({ error: 'Access denied' });
   }

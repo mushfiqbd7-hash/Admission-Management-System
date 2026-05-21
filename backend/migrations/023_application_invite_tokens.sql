@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS application_invite_tokens (
   id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   token       VARCHAR(48) UNIQUE NOT NULL,
-  created_by  INTEGER     NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_by  UUID        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   expires_at  TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '7 days'),
   used_at     TIMESTAMPTZ,
-  student_id  INTEGER     REFERENCES students(id) ON DELETE SET NULL,
+  student_id  UUID        REFERENCES students(id) ON DELETE SET NULL,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
