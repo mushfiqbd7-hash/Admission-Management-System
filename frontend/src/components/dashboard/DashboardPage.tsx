@@ -1,7 +1,8 @@
 ﻿// src/components/dashboard/DashboardPage.tsx
 import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import {
   Clock,
   CheckCircle,
@@ -19,13 +20,17 @@ import {
   Activity,
   X,
   Plus,
+  Link2,
+  Copy,
+  Check,
 } from 'lucide-react';
-import { studentsApi, messagesApi } from '@/api/client';
+import { studentsApi, messagesApi, api } from '@/api/client';
 import { STATUS_LABELS } from '@/types';
 import type { Student, Notification } from '@/types';
 import { useNavigate } from 'react-router-dom';
 import type { LucideIcon } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { toast } from 'sonner';
 
 type StatsView = {
   total?: string | number;
@@ -288,11 +293,51 @@ function PagBtn({
   );
 }
 
+type InviteToken = { token: string; expires_at: string; created_at: string; student_id: number | null; created_by_name: string };
+
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const qc = useQueryClient();
 
+  const canGenLink = ['admin', 'staff', 'agent'].includes(user?.role || '');
   const canSeeAdminDashboard = user?.role === 'admin' || user?.role === 'staff';
+
+  // Link generation state
+  const [generatingLink, setGeneratingLink] = useState(false);
+  const [linkModal, setLinkModal] = useState<{ link: string; expires: string } | null>(null);
+  const [copiedToken, setCopiedToken] = useState<string | null>(null);
+
+  const { data: tokensData, refetch: refetchTokens } = useQuery<{ tokens: InviteToken[] }>({
+    queryKey: ['invite-tokens'],
+    queryFn: () => api.get('/invite-tokens').then(r => r.data),
+    enabled: canGenLink,
+    staleTime: 30_000,
+  });
+  const activeTokens = tokensData?.tokens || [];
+
+  const handleGenerateLink = async () => {
+    setGeneratingLink(true);
+    try {
+      const res = await api.post('/invite-tokens', {});
+      const { token, expires_at } = res.data;
+      const link = `${window.location.origin}/apply/${token}`;
+      setLinkModal({ link, expires: expires_at });
+      refetchTokens();
+    } catch {
+      toast.error('Failed to generate link');
+    } finally {
+      setGeneratingLink(false);
+    }
+  };
+
+  const handleCopyLink = (token: string) => {
+    const link = `${window.location.origin}/apply/${token}`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopiedToken(token);
+      setTimeout(() => setCopiedToken(null), 2000);
+    });
+  };
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -477,6 +522,12 @@ export default function DashboardPage() {
                 </button>
               )}
 
+              {canGenLink && (
+                <button onClick={handleGenerateLink} disabled={generatingLink} style={generateLinkBtn}>
+                  {generatingLink ? <Loader2 size={14} style={{ animation: 'spin 0.7s linear infinite' }} /> : <Link2 size={14} />}
+                  Generate Link
+                </button>
+              )}
               <button onClick={() => navigate('/students/new')} style={newApplicationBtn}>
                 <Plus size={14} />
                 New Application
@@ -856,11 +907,70 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Active invite links panel */}
+      {canGenLink && activeTokens.length > 0 && (
+        <div style={{ marginTop: 14, flexShrink: 0 }}>
+          <Panel title="Active Application Links" subtitle={`${activeTokens.length} pending`} icon={Link2}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '4px 0' }}>
+              {activeTokens.map(t => {
+                const link = `${window.location.origin}/apply/${t.token}`;
+                const exp = new Date(t.expires_at);
+                const daysLeft = Math.max(0, Math.ceil((exp.getTime() - Date.now()) / 86400000));
+                const copied = copiedToken === t.token;
+                return (
+                  <div key={t.token} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 10 }}>
+                    <Link2 size={13} style={{ color: '#2563eb', flexShrink: 0 }} />
+                    <span style={{ flex: 1, fontSize: 11.5, color: '#475569', fontFamily: 'DM Mono, monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{link}</span>
+                    <span style={{ fontSize: 11, color: daysLeft <= 1 ? '#dc2626' : '#64748b', fontWeight: 600, whiteSpace: 'nowrap' }}>{daysLeft}d left</span>
+                    {canSeeAdminDashboard && t.created_by_name && (
+                      <span style={{ fontSize: 11, color: '#94a3b8', whiteSpace: 'nowrap' }}>{t.created_by_name}</span>
+                    )}
+                    <button onClick={() => handleCopyLink(t.token)} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: copied ? '#f0fdf4' : '#eff6ff', border: `1px solid ${copied ? '#bbf7d0' : '#bfdbfe'}`, borderRadius: 7, color: copied ? '#16a34a' : '#2563eb', fontSize: 11.5, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'inherit' }}>
+                      {copied ? <><Check size={11} /> Copied</> : <><Copy size={11} /> Copy</>}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </Panel>
+        </div>
+      )}
+
+      {/* Link generated modal */}
+      {linkModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 300, backdropFilter: 'blur(4px)' }}>
+          <div style={{ background: '#fff', borderRadius: 16, padding: '28px 28px 24px', width: 480, boxShadow: '0 24px 64px rgba(15,23,42,0.18)' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#eff6ff', border: '2px solid #bfdbfe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Link2 size={24} style={{ color: '#2563eb' }} />
+              </div>
+            </div>
+            <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: '#0f172a', textAlign: 'center' }}>Application Link Generated</h3>
+            <p style={{ margin: '0 0 18px', fontSize: 12.5, color: '#64748b', textAlign: 'center' }}>
+              Share this link with the applicant. Expires in 7 days or after one submission.
+            </p>
+            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
+              <span style={{ fontSize: 12, color: '#334155', fontFamily: 'DM Mono, monospace', wordBreak: 'break-all' }}>{linkModal.link}</span>
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={() => setLinkModal(null)} style={{ flex: 1, padding: '9px 0', border: '1px solid #e2e8f0', borderRadius: 10, background: '#fff', color: '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+                Close
+              </button>
+              <button
+                onClick={() => { navigator.clipboard.writeText(linkModal.link); toast.success('Link copied!'); }}
+                style={{ flex: 2, padding: '9px 0', border: 'none', borderRadius: 10, background: 'linear-gradient(135deg,#1e3a5f,#1d4ed8)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontFamily: 'inherit' }}>
+                <Copy size={14} /> Copy Link
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const dashboardPageStyle: React.CSSProperties = {
   position: 'relative',
@@ -1136,6 +1246,22 @@ const clearBtn: React.CSSProperties = {
   fontWeight: 800,
   cursor: 'pointer',
   fontFamily: 'inherit',
+};
+
+const generateLinkBtn: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 7,
+  border: '1.5px solid #bfdbfe',
+  background: '#eff6ff',
+  color: '#1d4ed8',
+  borderRadius: 14,
+  padding: '10px 16px',
+  fontSize: 12.5,
+  fontWeight: 700,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+  whiteSpace: 'nowrap',
 };
 
 const newApplicationBtn: React.CSSProperties = {

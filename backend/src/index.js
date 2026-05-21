@@ -18,6 +18,7 @@ import usersRoutes from './routes/users.js';
 import docsRoutes from './routes/documents.js';
 import messagesRoutes from './routes/messages.js';
 import workstationRoutes from './routes/workstationRoutes.js';
+import inviteTokensRoutes from './routes/inviteTokens.js';
 
 import pool from './config/database.js';
 import { authenticate } from './middleware/auth.js';
@@ -176,6 +177,7 @@ app.use('/api/students', docsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api', messagesRoutes);
 app.use('/api/workstation', workstationRoutes);
+app.use('/api', inviteTokensRoutes);
 
 /* Export all students as PDF/print */
 app.get('/api/export/students', authenticate, async (req, res) => {

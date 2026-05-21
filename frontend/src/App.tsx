@@ -22,6 +22,7 @@ const SettingsPage = lazy(() => import('@/components/settings/SettingsPage'));
 const InboxPage = lazy(() => import('@/components/inbox/InboxPage'));
 const DocumentsPage = lazy(() => import('@/components/documents/DocumentsPage'));
 const WorkStationPage = lazy(() => import('@/components/workstation/WorkStationPage'));
+const PublicApplicationPage = lazy(() => import('@/components/apply/PublicApplicationPage'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -161,6 +162,9 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
+            {/* Public — no auth required */}
+            <Route path="/apply/:token" element={S(PublicApplicationPage)} />
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />

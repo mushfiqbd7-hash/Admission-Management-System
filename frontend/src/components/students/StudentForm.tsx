@@ -1,8 +1,9 @@
 // src/components/students/StudentForm.tsx — Phase 3
 // ALL logic, mutations, buildPayload, handleSave, handleDocUpload, handleDeleteDoc,
 // handleAddNote, handleSubmitConfirmed are 100% identical to original.
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   User, MapPin, FileText, BookOpen, Globe, Wallet,
@@ -41,7 +42,13 @@ const emptyEducationRow = (isHighest = false): EducationRow => ({
   start_date:'', end_date:'', gpa:'', is_highest: isHighest,
 });
 
-interface Props { mode: 'create' | 'edit'; initialData?: StudentDetail; studentId?: string; }
+interface Props {
+  mode: 'create' | 'edit' | 'public';
+  initialData?: StudentDetail;
+  studentId?: string;
+  publicToken?: string;
+  onPublicSubmitSuccess?: () => void;
+}
 
 function RadioPill({ name, value, checked, label, onChange }: {
   name: string; value: string | boolean; checked: boolean; label: string; onChange: () => void;
@@ -87,11 +94,23 @@ function AddRowBtn({ label, onClick }: { label: string; onClick: () => void }) {
   );
 }
 
-export default function StudentForm({ mode, initialData, studentId }: Props) {
+export default function StudentForm({ mode, initialData, studentId, publicToken, onPublicSubmitSuccess }: Props) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { user } = useAuthStore();
-  const canManageNotes = user?.role === 'admin' || user?.role === 'staff';
+  const isPublic = mode === 'public';
+  const canManageNotes = !isPublic && (user?.role === 'admin' || user?.role === 'staff');
+
+  const _apiBase = (import.meta.env.VITE_API_URL as string | undefined) || '/api';
+  // Plain axios instance for public form (no auth interceptor)
+  const publicHttp = useMemo(() => ({
+    post: (url: string, data: unknown, cfg?: Record<string, unknown>) =>
+      axios.post(`${_apiBase}${url}`, data, cfg as Record<string, unknown>),
+    put:  (url: string, data: unknown) => axios.put(`${_apiBase}${url}`, data),
+    get:  (url: string)                => axios.get(`${_apiBase}${url}`),
+    delete:(url: string)               => axios.delete(`${_apiBase}${url}`),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), []);
 
   const [step, setStep] = useState(0);
   const [savedId, setSavedId] = useState<string | null>(studentId || null);
@@ -179,31 +198,43 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const [status, setStatus] = useState<ApplicationStatus>(s?.application_status || 'pending');
 
   const createMutation = useMutation({
-    mutationFn: (data: unknown) => studentsApi.create(data),
+    mutationFn: (data: unknown) =>
+      isPublic
+        ? publicHttp.post(`/apply/${publicToken}/students`, data)
+        : studentsApi.create(data),
     onSuccess: (res) => {
-      setSavedId(res.data.student.id);
-      toast.success('Student record created', {
-  description: 'You can continue filling out the application now.',
-});
-      qc.invalidateQueries({ queryKey: ['students'] });
-      qc.invalidateQueries({ queryKey: ['dashboard-stats'] });
+      setSavedId((res as { data: { student: { id: string } } }).data.student.id);
+      if (!isPublic) {
+        toast.success('Student record created', {
+          description: 'You can continue filling out the application now.',
+        });
+        qc.invalidateQueries({ queryKey: ['students'] });
+        qc.invalidateQueries({ queryKey: ['dashboard-stats'] });
+      }
     },
     onError: (err: unknown) => {
-      const data = (err as { response?: { data?: { detail?: string; error?: string } } })?.response?.data;
-      toast.error(data?.detail || data?.error || 'Failed to create student', { duration: 8000 });
+      if (!isPublic) {
+        const data = (err as { response?: { data?: { detail?: string; error?: string } } })?.response?.data;
+        toast.error(data?.detail || data?.error || 'Failed to create student', { duration: 8000 });
+      }
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: unknown }) => studentsApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: unknown }) =>
+      isPublic
+        ? publicHttp.put(`/apply/${publicToken}/students/${id}`, data)
+        : studentsApi.update(id, data),
     onSuccess: () => {
-      toast.success('Application updated', {
-  description: 'Your latest changes have been saved successfully.',
-});
-      qc.invalidateQueries({ queryKey: ['students'] });
-      qc.invalidateQueries({ queryKey: ['student', savedId] });
+      if (!isPublic) {
+        toast.success('Application updated', {
+          description: 'Your latest changes have been saved successfully.',
+        });
+        qc.invalidateQueries({ queryKey: ['students'] });
+        qc.invalidateQueries({ queryKey: ['student', savedId] });
+      }
     },
-    onError: () => toast.error('Failed to update student'),
+    onError: () => { if (!isPublic) toast.error('Failed to update student'); },
   });
 
   const buildPayload = (statusOverride?: ApplicationStatus) => ({
@@ -247,7 +278,7 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
     const payload = buildPayload(draftStatus);
 
     try {
-      if (mode === 'create' && !savedId) {
+      if ((mode === 'create' || mode === 'public') && !savedId) {
         const res = await createMutation.mutateAsync(payload);
         setStatus(draftStatus);
         return (res as { data: { student: { id: string } } }).data.student.id;
@@ -278,6 +309,9 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   });
 
   useEffect(() => {
+    // Skip auto-save for public form (no auth token, different endpoint)
+    if (isPublic) return;
+
     const fireAutoSave = () => {
       if (submittedRef.current) return;
 
@@ -354,9 +388,12 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
       fd.append('doc_label', docLabel);
       fd.append('is_required', String(isRequired));
 
-      const res = await api.post(`/students/${targetId}/documents`, fd, {
+      const docEndpoint = isPublic
+        ? `/apply/${publicToken}/students/${targetId}/documents`
+        : `/students/${targetId}/documents`;
+      const res = await (isPublic ? publicHttp : api).post(docEndpoint, fd, {
         headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      } as Record<string, unknown>);
 
       const uploaded = res.data.document;
 
@@ -382,6 +419,13 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
     const uploaded = uploadedDocs[docKey];
     const viewStudentId = savedId || uploaded?.student_id;
     if (!viewStudentId) return;
+
+    // Public mode: open via public endpoint (no auth token in URL needed)
+    if (isPublic && uploaded?.id) {
+      const url = `${_apiBase}/apply/${publicToken}/students/${viewStudentId}/documents/${uploaded.id}/file`;
+      window.open(url, '_blank');
+      return;
+    }
 
     const viewer = window.open('', '_blank');
 
@@ -434,7 +478,10 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
     try {
       if (docId) {
-        await api.delete(`/students/${savedId}/documents/${docId}`);
+        const delEndpoint = isPublic
+          ? `/apply/${publicToken}/students/${savedId}/documents/${docId}`
+          : `/students/${savedId}/documents/${docId}`;
+        await (isPublic ? publicHttp : api).delete(delEndpoint);
       }
       setUploadedDocs(prev => {
         const n = { ...prev };
@@ -463,6 +510,19 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
 
   const handleSubmitConfirmed = async () => {
     setShowSubmitModal(false);
+    if (isPublic) {
+      try {
+        // Save latest draft data first
+        if (savedId) await handleSaveDraft(true);
+        // Then finalize via the public submit endpoint
+        await publicHttp.post(`/apply/${publicToken}/students/${savedId}/submit`, {});
+        submittedRef.current = true;
+        onPublicSubmitSuccess?.();
+      } catch {
+        toast.error('Submission failed. Please try again.');
+      }
+      return;
+    }
     await handleSave();
     submittedRef.current = true;
     navigate('/students');
@@ -971,10 +1031,12 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
           </button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button onClick={() => { handleSaveDraft().catch(() => {}); }} disabled={isMutating} className="btn-ghost" style={{ gap: 6 }}>
-              <Save size={13} />
-              {isMutating ? 'Saving…' : 'Save Draft'}
-            </button>
+            {!isPublic && (
+              <button onClick={() => { handleSaveDraft().catch(() => {}); }} disabled={isMutating} className="btn-ghost" style={{ gap: 6 }}>
+                <Save size={13} />
+                {isMutating ? 'Saving…' : 'Save Draft'}
+              </button>
+            )}
 
             {step < SECTIONS.length - 1 ? (
               <button onClick={handleNext} disabled={isMutating} className="btn-primary" style={{ gap: 6 }}>

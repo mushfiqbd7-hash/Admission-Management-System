@@ -63,6 +63,15 @@ async function runMigrations() {
     }
 
     console.log('\nMigration run complete.');
+
+    // Clean up expired unused invite tokens
+    try {
+      const { rowCount } = await client.query(
+        `DELETE FROM application_invite_tokens WHERE used_at IS NULL AND expires_at <= NOW()`
+      );
+      if (rowCount > 0) console.log(`  CLEANUP Deleted ${rowCount} expired invite token(s).`);
+    } catch (_) { /* table may not exist yet on first run — ignore */ }
+
   } catch (err) {
     console.error('Fatal migration error:', err.message);
     process.exit(1);
