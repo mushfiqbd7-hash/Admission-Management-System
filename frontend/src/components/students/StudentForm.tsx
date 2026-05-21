@@ -430,19 +430,18 @@ export default function StudentForm({ mode, initialData, studentId }: Props) {
   const handleDeleteDoc = async (docKey: string) => {
     if (!savedId) return;
 
-    try {
-      const docsRes = await api.get(`/students/${savedId}/documents`);
-      const doc = docsRes.data.documents.find((d: { doc_key: string; id: string }) => d.doc_key === docKey);
+    const docId = uploadedDocs[docKey]?.id;
 
-      if (doc) {
-        await api.delete(`/students/${savedId}/documents/${doc.id}`);
-        setUploadedDocs(prev => {
-          const n = { ...prev };
-          delete n[docKey];
-          return n;
-        });
-        toast.success('Document removed');
+    try {
+      if (docId) {
+        await api.delete(`/students/${savedId}/documents/${docId}`);
       }
+      setUploadedDocs(prev => {
+        const n = { ...prev };
+        delete n[docKey];
+        return n;
+      });
+      toast.success('Document removed');
     } catch {
       toast.error('Failed to remove document');
     }
