@@ -1,4 +1,4 @@
-﻿// backend/src/index.js - SAMS Backend Entry Point
+// backend/src/index.js - SAMS Backend Entry Point
 
 import 'dotenv/config';
 

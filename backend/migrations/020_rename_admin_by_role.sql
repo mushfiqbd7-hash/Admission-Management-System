@@ -2,6 +2,6 @@
 -- was not applied before the seed/admin record changed.
 
 UPDATE users
-SET full_name = 'Admin-Mushfiq'
+SET full_name = 'Admin'
 WHERE role = 'admin'
   AND full_name IN ('System Administrator', 'Sytem Administrator');
