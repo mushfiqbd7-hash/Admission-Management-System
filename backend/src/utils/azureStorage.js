@@ -20,7 +20,7 @@ const getContainerClient = () => {
  */
 export const uploadBuffer = async (blobName, buffer, mimeType) => {
   const containerClient = getContainerClient();
-  await containerClient.createIfNotExists({ access: 'private' });
+  await containerClient.createIfNotExists(); // no access param = private by default
   const blockBlobClient = containerClient.getBlockBlobClient(blobName);
   await blockBlobClient.uploadData(buffer, {
     blobHTTPHeaders: { blobContentType: mimeType || 'application/octet-stream' },
