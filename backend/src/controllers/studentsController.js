@@ -934,6 +934,29 @@ export const updateStudent = async (req, res) => {
 
     await client.query('COMMIT');
 
+    // Draft → pending: push held bytea docs to Azure
+    if (existing.application_status === 'draft' && req.body.application_status === 'pending') {
+      const { rows: draftDocs } = await query(
+        'SELECT id, file_name, file_data, mime_type FROM student_documents WHERE student_id = $1 AND file_data IS NOT NULL',
+        [id]
+      );
+      for (const doc of draftDocs) {
+        try {
+          const ext = doc.file_name?.includes('.')
+            ? doc.file_name.slice(doc.file_name.lastIndexOf('.')).toLowerCase()
+            : '';
+          const blobName = `documents/${id}/${doc.id}_${Date.now()}${ext}`;
+          await uploadBuffer(blobName, doc.file_data, doc.mime_type);
+          await query(
+            'UPDATE student_documents SET file_path = $1, file_data = NULL WHERE id = $2',
+            [blobName, doc.id]
+          );
+        } catch (blobErr) {
+          console.error('Draft doc push error (updateStudent):', blobErr);
+        }
+      }
+    }
+
     if (req.body.application_status) {
       await syncWorkstationEntry(id, req.body.application_status);
     }
