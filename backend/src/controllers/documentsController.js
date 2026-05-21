@@ -63,40 +63,45 @@ export const uploadDocument = async (req, res) => {
     const student = await getStudentForDocAccess(id);
     if (!student) return res.status(404).json({ error: 'Application not found' });
 
-    // Block uploads for draft applications
-    if (student.application_status === 'draft') {
-      return res.status(403).json({ error: 'Documents can only be uploaded after the application is submitted' });
-    }
-
     const hasAccess = await canAccessStudentDocuments(req.user, id);
     if (!hasAccess) return res.status(403).json({ error: 'Access denied' });
 
     if (!doc_key) return res.status(400).json({ error: 'doc_key is required' });
 
-    // Delete old blob if replacing existing document
+    // Delete old blob if replacing existing document (submitted state)
     const { rows: existing } = await query(
       'SELECT file_path FROM student_documents WHERE student_id=$1 AND doc_key=$2',
       [id, doc_key]
     );
     if (existing[0]?.file_path) await deleteBlob(existing[0].file_path);
 
-    // Store in documents/ prefix in Azure
     const ext = path.extname(req.file.originalname).toLowerCase();
-    const blobName = `documents/${id}/${doc_key}_${Date.now()}${ext}`;
-    await uploadBuffer(blobName, req.file.buffer, req.file.mimetype);
+    const isDraft = student.application_status === 'draft';
+
+    let blobName = null;
+    let fileData  = null;
+
+    if (isDraft) {
+      // Draft → hold bytes in DB, nothing goes to Azure yet
+      fileData = req.file.buffer;
+    } else {
+      // Submitted → push directly to Azure
+      blobName = `documents/${id}/${doc_key}_${Date.now()}${ext}`;
+      await uploadBuffer(blobName, req.file.buffer, req.file.mimetype);
+    }
 
     const { rows } = await query(`
       INSERT INTO student_documents
-        (student_id, doc_key, doc_label, is_required, file_name, file_path, file_size, mime_type, uploaded_at, uploaded_by)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,NOW(),$9)
+        (student_id, doc_key, doc_label, is_required, file_name, file_path, file_data, file_size, mime_type, uploaded_at, uploaded_by)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,NOW(),$10)
       ON CONFLICT (student_id, doc_key) DO UPDATE SET
         doc_label=$3, is_required=$4, file_name=$5, file_path=$6,
-        file_size=$7, mime_type=$8, uploaded_at=NOW(), uploaded_by=$9
+        file_data=$7, file_size=$8, mime_type=$9, uploaded_at=NOW(), uploaded_by=$10
       RETURNING ${publicDocumentFields}
     `, [
       id, doc_key, doc_label || doc_key,
       is_required === 'true' || is_required === true,
-      req.file.originalname, blobName,
+      req.file.originalname, blobName, fileData,
       req.file.size, req.file.mimetype, req.user.id,
     ]);
 

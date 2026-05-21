@@ -3,7 +3,7 @@
 
 import { query, getClient } from '../config/database.js';
 import { createNotification, notifyAdminsAndStaff, statusLabel } from '../utils/notifications.js';
-import { deleteBlob } from '../utils/azureStorage.js';
+import { deleteBlob, uploadBuffer } from '../utils/azureStorage.js';
 
 const WORKSTATION_ENTRY_STATUSES = ['approved'];
 const RETURN_TO_USER_STATUSES = ['draft', 'pending', 'revoked'];
@@ -1086,7 +1086,28 @@ export const updateStatus = async (req, res) => {
 
     await syncWorkstationEntry(id, status);
 
-    // Reverted to draft → delete all Azure blobs + wipe document records
+    // Draft → pending (submit): push held bytes from DB to Azure, clear bytea
+    if (existing.application_status === 'draft' && status === 'pending') {
+      const { rows: docs } = await query(
+        'SELECT id, file_name, file_data, mime_type FROM student_documents WHERE student_id = $1 AND file_data IS NOT NULL',
+        [id]
+      );
+      for (const doc of docs) {
+        try {
+          const ext      = doc.file_name.includes('.') ? doc.file_name.slice(doc.file_name.lastIndexOf('.')).toLowerCase() : '';
+          const blobName = `documents/${id}/${doc.id}_${Date.now()}${ext}`;
+          await uploadBuffer(blobName, doc.file_data, doc.mime_type);
+          await query(
+            'UPDATE student_documents SET file_path = $1, file_data = NULL WHERE id = $2',
+            [blobName, doc.id]
+          );
+        } catch (err) {
+          console.error(`Failed to push doc ${doc.id} to Azure:`, err.message);
+        }
+      }
+    }
+
+    // Reverted to draft → delete Azure blobs + wipe all document records
     // User must re-upload fresh after re-submitting
     if (status === 'draft' && existing.application_status !== 'draft') {
       const { rows: docs } = await query(
