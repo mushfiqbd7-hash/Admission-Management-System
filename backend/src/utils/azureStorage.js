@@ -70,3 +70,4 @@ export const downloadBlobToBuffer = async (blobName) => {
   const blockBlobClient = containerClient.getBlockBlobClient(blobName);
   return blockBlobClient.downloadToBuffer();
 };
+

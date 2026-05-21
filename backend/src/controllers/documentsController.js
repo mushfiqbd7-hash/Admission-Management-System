@@ -60,9 +60,10 @@ export const uploadDocument = async (req, res) => {
     const { id } = req.params;
     const { doc_key, doc_label, is_required } = req.body;
 
-    // Block uploads for draft applications — only submitted applications allowed
     const student = await getStudentForDocAccess(id);
     if (!student) return res.status(404).json({ error: 'Application not found' });
+
+    // Block uploads for draft applications
     if (student.application_status === 'draft') {
       return res.status(403).json({ error: 'Documents can only be uploaded after the application is submitted' });
     }
@@ -79,7 +80,7 @@ export const uploadDocument = async (req, res) => {
     );
     if (existing[0]?.file_path) await deleteBlob(existing[0].file_path);
 
-    // Upload to Azure Blob Storage
+    // Store in documents/ prefix in Azure
     const ext = path.extname(req.file.originalname).toLowerCase();
     const blobName = `documents/${id}/${doc_key}_${Date.now()}${ext}`;
     await uploadBuffer(blobName, req.file.buffer, req.file.mimetype);

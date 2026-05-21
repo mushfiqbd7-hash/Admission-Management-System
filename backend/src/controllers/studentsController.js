@@ -1086,6 +1086,17 @@ export const updateStatus = async (req, res) => {
 
     await syncWorkstationEntry(id, status);
 
+    // Reverted to draft → delete all Azure blobs + wipe document records
+    // User must re-upload fresh after re-submitting
+    if (status === 'draft' && existing.application_status !== 'draft') {
+      const { rows: docs } = await query(
+        'SELECT file_path FROM student_documents WHERE student_id = $1',
+        [id]
+      );
+      await Promise.allSettled(docs.map(d => deleteBlob(d.file_path)));
+      await query('DELETE FROM student_documents WHERE student_id = $1', [id]);
+    }
+
     res.json({ message: 'Status updated', student: r });
 
     if (r.created_by && r.created_by !== req.user.id) {
