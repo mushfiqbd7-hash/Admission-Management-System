@@ -143,8 +143,15 @@ export const getDocuments = async (req, res) => {
     const hasAccess = await canAccessStudentDocuments(req.user, id);
     if (!hasAccess) return res.status(403).json({ error: 'Access denied' });
 
+    // For draft applications, only return docs already in Azure (file_path set).
+    // Docs held temporarily in file_data bytea are invisible — user must re-upload on return.
+    const student = await getStudentForDocAccess(id);
+    const isDraft = student?.application_status === 'draft';
+
     const { rows } = await query(
-      `SELECT ${publicDocumentFields} FROM student_documents WHERE student_id=$1 ORDER BY doc_key`,
+      `SELECT ${publicDocumentFields} FROM student_documents
+       WHERE student_id=$1 ${isDraft ? 'AND file_path IS NOT NULL' : ''}
+       ORDER BY doc_key`,
       [id]
     );
 
