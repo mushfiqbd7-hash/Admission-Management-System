@@ -22,7 +22,6 @@ import {
   Plus,
   Link2,
   Copy,
-  Check,
 } from 'lucide-react';
 import { studentsApi, messagesApi, api } from '@/api/client';
 import { STATUS_LABELS } from '@/types';
@@ -293,7 +292,6 @@ function PagBtn({
   );
 }
 
-type InviteToken = { token: string; expires_at: string; created_at: string; student_id: number | null; created_by_name: string };
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -306,15 +304,6 @@ export default function DashboardPage() {
   // Link generation state
   const [generatingLink, setGeneratingLink] = useState(false);
   const [linkModal, setLinkModal] = useState<{ link: string; expires: string } | null>(null);
-  const [copiedToken, setCopiedToken] = useState<string | null>(null);
-
-  const { data: tokensData, refetch: refetchTokens } = useQuery<{ tokens: InviteToken[] }>({
-    queryKey: ['invite-tokens'],
-    queryFn: () => api.get('/invite-tokens').then(r => r.data),
-    enabled: canGenLink,
-    staleTime: 30_000,
-  });
-  const activeTokens = tokensData?.tokens || [];
 
   const handleGenerateLink = async () => {
     setGeneratingLink(true);
@@ -323,20 +312,12 @@ export default function DashboardPage() {
       const { token, expires_at } = res.data;
       const link = `${window.location.origin}/apply/${token}`;
       setLinkModal({ link, expires: expires_at });
-      refetchTokens();
+      qc.invalidateQueries({ queryKey: ['invite-tokens'] });
     } catch {
       toast.error('Failed to generate link');
     } finally {
       setGeneratingLink(false);
     }
-  };
-
-  const handleCopyLink = (token: string) => {
-    const link = `${window.location.origin}/apply/${token}`;
-    navigator.clipboard.writeText(link).then(() => {
-      setCopiedToken(token);
-      setTimeout(() => setCopiedToken(null), 2000);
-    });
   };
 
   const [search, setSearch] = useState('');
@@ -907,35 +888,6 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
-
-      {/* Active invite links panel */}
-      {canGenLink && activeTokens.length > 0 && (
-        <div style={{ marginTop: 14, flexShrink: 0 }}>
-          <Panel title="Active Application Links" subtitle={`${activeTokens.length} pending`} icon={Link2}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '4px 0' }}>
-              {activeTokens.map(t => {
-                const link = `${window.location.origin}/apply/${t.token}`;
-                const exp = new Date(t.expires_at);
-                const daysLeft = Math.max(0, Math.ceil((exp.getTime() - Date.now()) / 86400000));
-                const copied = copiedToken === t.token;
-                return (
-                  <div key={t.token} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 10 }}>
-                    <Link2 size={13} style={{ color: '#2563eb', flexShrink: 0 }} />
-                    <span style={{ flex: 1, fontSize: 11.5, color: '#475569', fontFamily: 'DM Mono, monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{link}</span>
-                    <span style={{ fontSize: 11, color: daysLeft <= 1 ? '#dc2626' : '#64748b', fontWeight: 600, whiteSpace: 'nowrap' }}>{daysLeft}d left</span>
-                    {canSeeAdminDashboard && t.created_by_name && (
-                      <span style={{ fontSize: 11, color: '#94a3b8', whiteSpace: 'nowrap' }}>{t.created_by_name}</span>
-                    )}
-                    <button onClick={() => handleCopyLink(t.token)} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: copied ? '#f0fdf4' : '#eff6ff', border: `1px solid ${copied ? '#bbf7d0' : '#bfdbfe'}`, borderRadius: 7, color: copied ? '#16a34a' : '#2563eb', fontSize: 11.5, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'inherit' }}>
-                      {copied ? <><Check size={11} /> Copied</> : <><Copy size={11} /> Copy</>}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          </Panel>
-        </div>
-      )}
 
       {/* Link generated modal */}
       {linkModal && (
