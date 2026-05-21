@@ -313,8 +313,7 @@ app.get('/api/export/students/all', authenticate, async (req, res) => {
         COALESCE(wr.payment_of_application, '') AS payment_of_application,
         COALESCE(wr.application_incharge, '') AS application_incharge,
         COALESCE(wr.portal_email, '') AS portal_email,
-        CASE WHEN wr.portal_password IS NOT NULL AND wr.portal_password != ''
-             THEN repeat(chr(8226), 8) ELSE '' END AS portal_password,
+        COALESCE(wr.portal_password, '') AS portal_password,
         COALESCE(
           STRING_AGG(
             NULLIF(wu.university_name, ''),
