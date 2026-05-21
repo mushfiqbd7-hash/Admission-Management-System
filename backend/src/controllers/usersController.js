@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import { query } from '../config/database.js';
 import { sendVerificationEmail } from '../utils/emailService.js';
+import { uploadBuffer, deleteBlob, streamBlobToResponse } from '../utils/azureStorage.js';
 
 const userSelectFields = `
   id,
@@ -392,3 +393,42 @@ export const deleteUser = async (req, res) => {
 };
 
 
+
+// ── POST /api/users/me/avatar ─────────────────────────────────────────────────
+export const uploadAvatar = async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  try {
+    // Delete old avatar if exists
+    const { rows: [cur] } = await query('SELECT avatar_url FROM users WHERE id = $1', [req.user.id]);
+    if (cur?.avatar_url) {
+      try { await deleteBlob(cur.avatar_url); } catch (_) { /* ignore if missing */ }
+    }
+
+    const ext = req.file.mimetype === 'image/png' ? '.png'
+              : req.file.mimetype === 'image/webp' ? '.webp'
+              : '.jpg';
+    const blobName = `avatars/${req.user.id}_${Date.now()}${ext}`;
+    await uploadBuffer(blobName, req.file.buffer, req.file.mimetype);
+
+    const { rows: [updated] } = await query(
+      'UPDATE users SET avatar_url = $1 WHERE id = $2 RETURNING id, email, full_name, role, avatar_url',
+      [blobName, req.user.id]
+    );
+    res.json({ user: updated });
+  } catch (err) {
+    console.error('uploadAvatar error:', err);
+    res.status(500).json({ error: 'Failed to upload avatar' });
+  }
+};
+
+// ── GET /api/users/me/avatar ──────────────────────────────────────────────────
+export const getAvatar = async (req, res) => {
+  try {
+    const { rows: [user] } = await query('SELECT avatar_url FROM users WHERE id = $1', [req.user.id]);
+    if (!user?.avatar_url) return res.status(404).json({ error: 'No avatar set' });
+    await streamBlobToResponse(user.avatar_url, res, 'avatar', null);
+  } catch (err) {
+    console.error('getAvatar error:', err);
+    res.status(500).json({ error: 'Failed to fetch avatar' });
+  }
+};

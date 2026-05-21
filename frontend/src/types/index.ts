@@ -7,6 +7,7 @@ export interface User {
   email: string;
   full_name: string;
   role: UserRole;
+  avatar_url?: string | null;
 }
 
 export type ApplicationStatus =

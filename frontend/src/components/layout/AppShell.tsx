@@ -139,8 +139,10 @@ export default function AppShell() {
 
       <div className={`shrink-0 border-t border-white/10 ${collapsed ? 'px-3 py-4' : 'px-5 py-5'}`}>
         <div className={`mb-4 flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white font-extrabold text-slate-900">
-            {displayName.charAt(0).toUpperCase()}
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white font-extrabold text-slate-900">
+            {user?.avatar_url
+              ? <img src={`${import.meta.env.VITE_API_URL || '/api'}/users/me/avatar`} alt="" className="h-full w-full object-cover" />
+              : displayName.charAt(0).toUpperCase()}
           </div>
           <div className={collapsed ? 'hidden' : 'min-w-0 flex-1'}>
             <div className="truncate text-[15px] font-extrabold">{displayName}</div>

@@ -1,10 +1,12 @@
-﻿// src/components/settings/SettingsPage.tsx
-import { useState, type ReactNode } from 'react';
+// src/components/settings/SettingsPage.tsx
+import { useState, useRef, type ReactNode } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { KeyRound, Shield, User } from 'lucide-react';
-import { authApi } from '@/api/client';
+import { KeyRound, Shield, User, Camera, Loader2 } from 'lucide-react';
+import { authApi, api } from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
+
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 function SettingsCard({ icon: Icon, title, description, children }: {
   icon: any; title: string; description?: string; children: ReactNode;
@@ -62,10 +64,13 @@ function Spinner() {
 }
 
 export default function SettingsPage() {
-  const { user } = useAuthStore();
+  const { user, setUser } = useAuthStore();
 
   const [pw, setPw] = useState({ currentPassword: '', newPassword: '', confirm: '' });
   const [pwError, setPwError] = useState('');
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const changePwMutation = useMutation({
     mutationFn: () => authApi.changePassword({
@@ -99,6 +104,47 @@ export default function SettingsPage() {
     changePwMutation.mutate();
   };
 
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Client-side 200 KB check
+    if (file.size > 200 * 1024) {
+      toast.error('Image must be 200 KB or smaller.');
+      e.target.value = '';
+      return;
+    }
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      toast.error('Only JPG, PNG, or WebP allowed.');
+      e.target.value = '';
+      return;
+    }
+
+    // Show local preview immediately
+    const reader = new FileReader();
+    reader.onload = (ev) => setAvatarPreview(ev.target?.result as string);
+    reader.readAsDataURL(file);
+
+    // Upload
+    setAvatarUploading(true);
+    try {
+      const form = new FormData();
+      form.append('avatar', file);
+      const res = await api.post('/users/me/avatar', form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      const updatedUser = res.data.user;
+      setUser({ ...user!, ...updatedUser });
+      toast.success('Profile picture updated!');
+    } catch (err: any) {
+      toast.error(err?.response?.data?.error || 'Upload failed');
+      setAvatarPreview(null);
+    } finally {
+      setAvatarUploading(false);
+      e.target.value = '';
+    }
+  };
+
   const displayName  = user?.full_name || (user as any)?.name || 'User';
   const displayRole  = user?.role || 'user';
   const displayEmail = user?.email || 'No email';
@@ -110,6 +156,10 @@ export default function SettingsPage() {
     .join('')
     .toUpperCase();
 
+  // Avatar URL — prefer local preview, then stored blob streamed via API
+  const avatarSrc = avatarPreview
+    ?? (user?.avatar_url ? `${API_URL}/users/me/avatar?t=${Date.now()}` : null);
+
   return (
     <div className="h-full overflow-auto bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.06),transparent_28%),linear-gradient(180deg,#f8fafc_0%,#eef3f9_100%)] px-6 py-7">
       <div className="mx-auto max-w-[1180px]">
@@ -119,14 +169,52 @@ export default function SettingsPage() {
             <SettingsCard icon={User} title="Account Information" description="Current signed-in user">
               <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-[78px] w-[78px] items-center justify-center rounded-[24px] bg-[#061a33] text-[30px] font-black text-white shadow-[0_16px_30px_rgba(6,26,51,0.18)]">
-                    {initials}
+
+                  {/* Avatar with upload overlay */}
+                  <div className="relative shrink-0">
+                    <div
+                      className="flex h-[78px] w-[78px] cursor-pointer items-center justify-center overflow-hidden rounded-[24px] bg-[#061a33] text-[30px] font-black text-white shadow-[0_16px_30px_rgba(6,26,51,0.18)]"
+                      onClick={() => !avatarUploading && fileInputRef.current?.click()}
+                      title="Click to change profile picture"
+                    >
+                      {avatarSrc ? (
+                        <img
+                          src={avatarSrc}
+                          alt="Avatar"
+                          className="h-full w-full object-cover"
+                          onError={() => setAvatarPreview(null)}
+                        />
+                      ) : (
+                        initials
+                      )}
+                    </div>
+
+                    {/* Camera overlay */}
+                    <button
+                      onClick={() => !avatarUploading && fileInputRef.current?.click()}
+                      disabled={avatarUploading}
+                      className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-[#2563eb] text-white shadow-md transition hover:bg-[#1d4ed8] disabled:opacity-60"
+                      title="Upload profile picture"
+                    >
+                      {avatarUploading
+                        ? <Loader2 size={12} className="animate-spin" />
+                        : <Camera size={12} />}
+                    </button>
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={handleAvatarChange}
+                    />
                   </div>
+
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-[18px] font-black tracking-[-0.03em] text-slate-950">{displayName}</div>
                     <div className="mt-1 truncate text-[14px] font-medium text-slate-500">{displayEmail}</div>
                     <div className="mt-2">
-                      <span className="text-[11px] font-semibold text-slate-400">Email cannot be changed</span>
+                      <span className="text-[11px] font-semibold text-slate-400">Max 200 KB · JPG, PNG, WebP</span>
                     </div>
                     <div className="mt-3">
                       <span className="inline-flex rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-[12px] font-black capitalize text-[#2563eb]">
