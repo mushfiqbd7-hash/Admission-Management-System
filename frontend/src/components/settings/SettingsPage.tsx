@@ -6,7 +6,6 @@ import { authApi, api } from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 function SettingsCard({ icon: Icon, title, description, children }: {
   icon: any; title: string; description?: string; children: ReactNode;
@@ -69,7 +68,6 @@ export default function SettingsPage() {
   const [pw, setPw] = useState({ currentPassword: '', newPassword: '', confirm: '' });
   const [pwError, setPwError] = useState('');
   const [avatarUploading, setAvatarUploading] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const changePwMutation = useMutation({
@@ -120,12 +118,6 @@ export default function SettingsPage() {
       return;
     }
 
-    // Show local preview immediately
-    const reader = new FileReader();
-    reader.onload = (ev) => setAvatarPreview(ev.target?.result as string);
-    reader.readAsDataURL(file);
-
-    // Upload
     setAvatarUploading(true);
     try {
       const form = new FormData();
@@ -133,12 +125,11 @@ export default function SettingsPage() {
       const res = await api.post('/users/me/avatar', form, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      const updatedUser = res.data.user;
-      setUser({ ...user!, ...updatedUser });
+      // avatar_url is now a base64 data URL — safe to use directly as img src
+      setUser({ ...user!, ...res.data.user });
       toast.success('Profile picture updated!');
     } catch (err: any) {
       toast.error(err?.response?.data?.error || 'Upload failed');
-      setAvatarPreview(null);
     } finally {
       setAvatarUploading(false);
       e.target.value = '';
@@ -156,9 +147,8 @@ export default function SettingsPage() {
     .join('')
     .toUpperCase();
 
-  // Avatar URL — prefer local preview, then stored blob streamed via API
-  const avatarSrc = avatarPreview
-    ?? (user?.avatar_url ? `${API_URL}/users/me/avatar?t=${Date.now()}` : null);
+  // avatar_url is a base64 data URL stored in DB — use directly
+  const avatarSrc = user?.avatar_url || null;
 
   return (
     <div className="h-full overflow-auto bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.06),transparent_28%),linear-gradient(180deg,#f8fafc_0%,#eef3f9_100%)] px-6 py-7">
@@ -178,12 +168,7 @@ export default function SettingsPage() {
                       title="Click to change profile picture"
                     >
                       {avatarSrc ? (
-                        <img
-                          src={avatarSrc}
-                          alt="Avatar"
-                          className="h-full w-full object-cover"
-                          onError={() => setAvatarPreview(null)}
-                        />
+                        <img src={avatarSrc} alt="Avatar" className="h-full w-full object-cover" />
                       ) : (
                         initials
                       )}

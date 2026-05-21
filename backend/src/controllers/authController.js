@@ -85,10 +85,11 @@ export const login = async (req, res) => {
       accessToken,
       refreshToken,
       user: {
-        id:        user.id,
-        email:     user.email,
-        full_name: displayNameFor(user),
-        role:      user.role,
+        id:         user.id,
+        email:      user.email,
+        full_name:  displayNameFor(user),
+        role:       user.role,
+        avatar_url: user.avatar_url || null,
       },
     });
   } catch (err) {

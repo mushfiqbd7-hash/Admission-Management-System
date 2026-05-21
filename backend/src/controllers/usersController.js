@@ -395,24 +395,17 @@ export const deleteUser = async (req, res) => {
 
 
 // ── POST /api/users/me/avatar ─────────────────────────────────────────────────
+// Stores avatar as a base64 data URL in the DB column so the frontend
+// can use it directly as <img src> — no auth-gated streaming endpoint needed.
 export const uploadAvatar = async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   try {
-    // Delete old avatar if exists
-    const { rows: [cur] } = await query('SELECT avatar_url FROM users WHERE id = $1', [req.user.id]);
-    if (cur?.avatar_url) {
-      try { await deleteBlob(cur.avatar_url); } catch (_) { /* ignore if missing */ }
-    }
-
-    const ext = req.file.mimetype === 'image/png' ? '.png'
-              : req.file.mimetype === 'image/webp' ? '.webp'
-              : '.jpg';
-    const blobName = `avatars/${req.user.id}_${Date.now()}${ext}`;
-    await uploadBuffer(blobName, req.file.buffer, req.file.mimetype);
+    const dataUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
 
     const { rows: [updated] } = await query(
-      'UPDATE users SET avatar_url = $1 WHERE id = $2 RETURNING id, email, full_name, role, avatar_url',
-      [blobName, req.user.id]
+      `UPDATE users SET avatar_url = $1 WHERE id = $2
+       RETURNING id, email, full_name, role, avatar_url`,
+      [dataUrl, req.user.id]
     );
     res.json({ user: updated });
   } catch (err) {
@@ -422,11 +415,13 @@ export const uploadAvatar = async (req, res) => {
 };
 
 // ── GET /api/users/me/avatar ──────────────────────────────────────────────────
+// Kept for completeness; frontend uses the data URL from user object directly.
 export const getAvatar = async (req, res) => {
   try {
     const { rows: [user] } = await query('SELECT avatar_url FROM users WHERE id = $1', [req.user.id]);
     if (!user?.avatar_url) return res.status(404).json({ error: 'No avatar set' });
-    await streamBlobToResponse(user.avatar_url, res, 'avatar', null);
+    // avatar_url is now a data URL — redirect the browser to it
+    res.redirect(user.avatar_url);
   } catch (err) {
     console.error('getAvatar error:', err);
     res.status(500).json({ error: 'Failed to fetch avatar' });
