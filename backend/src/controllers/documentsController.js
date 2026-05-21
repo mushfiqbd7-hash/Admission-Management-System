@@ -24,11 +24,17 @@ export const upload = multer({
 
 const canManageAllDocuments = (role) => ['admin', 'staff'].includes(role);
 
-const canAccessStudentDocuments = async (user, studentId) => {
+// Returns student row or null — caller checks fields
+const getStudentForDocAccess = async (studentId) => {
   const { rows: [student] } = await query(
     'SELECT id, created_by, application_status FROM students WHERE id = $1',
     [studentId]
   );
+  return student || null;
+};
+
+const canAccessStudentDocuments = async (user, studentId) => {
+  const student = await getStudentForDocAccess(studentId);
   if (!student) return false;
   if (student.created_by === user.id) return true;
   return canManageAllDocuments(user.role) && student.application_status !== 'draft';
@@ -53,6 +59,13 @@ export const uploadDocument = async (req, res) => {
 
     const { id } = req.params;
     const { doc_key, doc_label, is_required } = req.body;
+
+    // Block uploads for draft applications — only submitted applications allowed
+    const student = await getStudentForDocAccess(id);
+    if (!student) return res.status(404).json({ error: 'Application not found' });
+    if (student.application_status === 'draft') {
+      return res.status(403).json({ error: 'Documents can only be uploaded after the application is submitted' });
+    }
 
     const hasAccess = await canAccessStudentDocuments(req.user, id);
     if (!hasAccess) return res.status(403).json({ error: 'Access denied' });

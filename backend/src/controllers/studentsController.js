@@ -3,6 +3,7 @@
 
 import { query, getClient } from '../config/database.js';
 import { createNotification, notifyAdminsAndStaff, statusLabel } from '../utils/notifications.js';
+import { deleteBlob } from '../utils/azureStorage.js';
 
 const WORKSTATION_ENTRY_STATUSES = ['approved'];
 const RETURN_TO_USER_STATUSES = ['draft', 'pending', 'revoked'];
@@ -980,6 +981,13 @@ export const deleteStudent = async (req, res) => {
     if (!canDeleteApplication(req.user, existing)) {
       return res.status(403).json({ error: 'Access denied' });
     }
+
+    // Delete all Azure Blob files for this student before DB delete
+    const { rows: docs } = await query(
+      'SELECT file_path FROM student_documents WHERE student_id = $1',
+      [id]
+    );
+    await Promise.allSettled(docs.map(d => deleteBlob(d.file_path)));
 
     const { rows: [r] } = await query(
       'DELETE FROM students WHERE id = $1 RETURNING id, family_name, given_name',
