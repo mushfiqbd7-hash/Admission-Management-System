@@ -46,6 +46,23 @@
   --ui-surface-subtle: #f8fafc; --ui-surface-soft: #fbfdff;
   --ui-border: #e2e8f0; --ui-border-soft: #e8edf4;
   --ui-border-strong: #cbd5e1;
+  --btn-radius: 11px; --btn-radius-lg: 13px;
+  --btn-primary-bg: linear-gradient(180deg, #1f3a5f 0%, #18304f 100%);
+  --btn-primary-bg-hover: linear-gradient(180deg, #244a79 0%, #1f3a5f 100%);
+  --btn-primary-color: #ffffff; --btn-primary-border: rgba(31,58,95,0.96);
+  --btn-primary-shadow: 0 12px 24px rgba(30,58,95,0.20);
+  --btn-secondary-bg: #ffffff; --btn-secondary-bg-hover: #f8fafc;
+  --btn-secondary-color: #475569; --btn-secondary-border: #dbe3ef;
+  --btn-subtle-bg: #eff6ff; --btn-subtle-bg-hover: #dbeafe;
+  --btn-subtle-color: #1d4ed8; --btn-subtle-border: #bfdbfe;
+  --btn-danger-bg: #dc2626; --btn-danger-bg-hover: #b91c1c;
+  --btn-danger-color: #ffffff; --btn-danger-border: #dc2626;
+  --btn-danger-soft-bg: #fff1f2; --btn-danger-soft-color: #dc2626;
+  --btn-danger-soft-border: #fda4af;
+  --btn-success-bg: #16a34a; --btn-success-bg-hover: #15803d;
+  --btn-success-color: #ffffff; --btn-success-border: #16a34a;
+  --btn-success-soft-bg: #f0fdf4; --btn-success-soft-color: #15803d;
+  --btn-success-soft-border: #86efac;
   --sidebar-bg: linear-gradient(180deg, #08111f 0%, #0c1729 48%, #0a1323 100%);
   --sidebar-border: rgba(148,163,184,0.16);
   --sidebar-text: #b8c4d8;
@@ -97,6 +114,24 @@
   --ui-surface-subtle: #181f2b; --ui-surface-soft: #1b2230;
   --ui-border: rgba(148,163,184,0.18); --ui-border-soft: rgba(148,163,184,0.14);
   --ui-border-strong: rgba(148,163,184,0.28);
+  --btn-primary-bg: linear-gradient(180deg, #4f8df7 0%, #2563eb 100%);
+  --btn-primary-bg-hover: linear-gradient(180deg, #6aa6ff 0%, #3b82f6 100%);
+  --btn-primary-color: #ffffff; --btn-primary-border: rgba(147,197,253,0.38);
+  --btn-primary-shadow: 0 14px 30px rgba(37,99,235,0.28), 0 1px 0 rgba(255,255,255,0.16) inset;
+  --btn-secondary-bg: #1b2230; --btn-secondary-bg-hover: #232d3e;
+  --btn-secondary-color: #e4e9f1; --btn-secondary-border: rgba(148,163,184,0.26);
+  --btn-subtle-bg: rgba(96,165,250,0.14); --btn-subtle-bg-hover: rgba(96,165,250,0.22);
+  --btn-subtle-color: #bfdbfe; --btn-subtle-border: rgba(96,165,250,0.32);
+  --btn-danger-bg: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+  --btn-danger-bg-hover: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
+  --btn-danger-color: #ffffff; --btn-danger-border: rgba(248,113,113,0.42);
+  --btn-danger-soft-bg: rgba(248,113,113,0.13); --btn-danger-soft-color: #fecaca;
+  --btn-danger-soft-border: rgba(248,113,113,0.32);
+  --btn-success-bg: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+  --btn-success-bg-hover: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
+  --btn-success-color: #ffffff; --btn-success-border: rgba(74,222,128,0.38);
+  --btn-success-soft-bg: rgba(34,197,94,0.13); --btn-success-soft-color: #bbf7d0;
+  --btn-success-soft-border: rgba(34,197,94,0.32);
   --text-on-accent: #ffffff; --accent: #6aa6ff;
   --accent-hover: #8bbaff; --accent-light: rgba(96,165,250,0.14);
   --sidebar-bg: linear-gradient(180deg, #090d14 0%, #0d1420 50%, #090d14 100%);
@@ -165,11 +200,13 @@
   .text-secondary { color: var(--text-secondary); }
   .text-tertiary  { color: var(--text-tertiary); }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); transition: background var(--dur-base), border-color var(--dur-base); }
-  .sams-icon-button { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.10); border-radius: 9px; background: rgba(255,255,255,0.035); color: var(--sidebar-text); cursor: pointer; transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast), transform var(--dur-fast); }
+  .sams-icon-button { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.10); border-radius: 9px; background: rgba(255,255,255,0.035); color: var(--sidebar-text); cursor: pointer; transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast), transform var(--dur-fast), box-shadow var(--dur-fast); }
   .sams-icon-button:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.18); color: #fff; transform: translateY(-1px); }
   .sams-icon-button:active { transform: translateY(0); }
-  .btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--navy-600); color: var(--text-on-accent); border: none; border-radius: var(--radius-md); font-family: var(--font-ui); font-size: 13px; font-weight: 500; cursor: pointer; transition: background var(--dur-base), box-shadow var(--dur-base); box-shadow: var(--shadow-sm); }
-  .btn-primary:hover { background: var(--navy-500); box-shadow: var(--shadow-md); }
+  .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 38px; padding: 0 15px; background: var(--btn-primary-bg); color: var(--btn-primary-color); border: 1px solid var(--btn-primary-border); border-radius: var(--btn-radius); font-family: var(--font-ui); font-size: 13px; font-weight: 800; cursor: pointer; transition: background var(--dur-base), box-shadow var(--dur-base), transform var(--dur-fast), border-color var(--dur-base); box-shadow: var(--btn-primary-shadow); }
+  .btn-primary:hover { background: var(--btn-primary-bg-hover); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.62; cursor: not-allowed; transform: none; box-shadow: none; }
   .sams-input { width: 100%; padding: 8px 12px; font-family: var(--font-ui); font-size: 13.5px; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-md); outline: none; transition: border-color var(--dur-base), background var(--dur-base); }
   .sams-input:focus { border-color: var(--navy-400); box-shadow: 0 0 0 3px rgba(31,58,95,0.1); }
   .sams-table { width: 100%; border-collapse: collapse; }
@@ -281,14 +318,17 @@
 }
 
 .dark .sams-app-shell .btn-ghost {
-  background: transparent;
-  border-color: var(--border);
-  color: var(--text-secondary);
+  background: var(--btn-secondary-bg);
+  border: 1px solid var(--btn-secondary-border);
+  color: var(--btn-secondary-color);
+  border-radius: var(--btn-radius);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
 }
 
 .dark .sams-app-shell .btn-ghost:hover {
-  background: var(--surface-hover);
+  background: var(--btn-secondary-bg-hover);
   color: var(--text-primary);
+  border-color: var(--border-strong);
 }
 
 .dark .sams-app-shell .sams-nav-item span { color: rgba(255,255,255,0.82) !important; }
@@ -412,6 +452,25 @@
   color: var(--text-tertiary) !important;
 }
 
+.dark .sams-app-shell [style*="color: rgb(29, 78, 216)"],
+.dark .sams-app-shell [style*="color: #1d4ed8"],
+.dark .sams-app-shell [style*="color: rgb(37, 99, 235)"],
+.dark .sams-app-shell [style*="color: #2563eb"] {
+  color: var(--btn-subtle-color) !important;
+}
+
+.dark .sams-app-shell [style*="color: rgb(220, 38, 38)"],
+.dark .sams-app-shell [style*="color: #dc2626"] {
+  color: var(--btn-danger-soft-color) !important;
+}
+
+.dark .sams-app-shell [style*="color: rgb(21, 128, 61)"],
+.dark .sams-app-shell [style*="color: #15803d"],
+.dark .sams-app-shell [style*="color: rgb(22, 163, 74)"],
+.dark .sams-app-shell [style*="color: #16a34a"] {
+  color: var(--btn-success-soft-color) !important;
+}
+
 .dark .sams-app-shell [style*="border: 1px solid rgb(226, 232, 240)"],
 .dark .sams-app-shell [style*="border: 1px solid #e2e8f0"],
 .dark .sams-app-shell [style*="border: 1px solid #e5eaf2"],
@@ -427,7 +486,11 @@
 .dark .sams-app-shell [style*="border-color: #e8edf4"],
 .dark .sams-app-shell [style*="border-color: #dbe3ef"],
 .dark .sams-app-shell [style*="border-color: #dbeafe"],
-.dark .sams-app-shell [style*="border-color: rgba(15, 23, 42"] {
+.dark .sams-app-shell [style*="border-color: rgba(15, 23, 42"],
+.dark .sams-app-shell [style*="border: 1px solid rgb(254, 205, 211)"],
+.dark .sams-app-shell [style*="border: 1px solid #fecdd3"],
+.dark .sams-app-shell [style*="border-color: rgb(254, 205, 211)"],
+.dark .sams-app-shell [style*="border-color: #fecdd3"] {
   border-color: var(--border) !important;
 }
 
@@ -525,8 +588,143 @@
   background: var(--canvas-mesh) !important;
 }
 
-.dark .sams-app-shell button:not(.sams-icon-button):not([style*="linear-gradient"]):not([class*="bg-[#0f5bff]"]):not([class*="text-white"]) {
-  color: inherit;
+.dark .sams-app-shell button:not(.sams-icon-button) {
+  transition: background var(--dur-base), border-color var(--dur-base), color var(--dur-base), box-shadow var(--dur-base), transform var(--dur-fast);
+}
+
+/* Protected-app button polish: normalize legacy inline button styles in dark mode. */
+.dark .sams-app-shell button:not(.sams-icon-button):not(.sams-nav-item) {
+  border-radius: var(--btn-radius) !important;
+}
+
+.dark .sams-app-shell button:not(.sams-icon-button):not(.sams-nav-item):not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.dark .sams-app-shell button:not(.sams-icon-button):not(.sams-nav-item):active {
+  transform: translateY(0);
+}
+
+.dark .sams-app-shell :is(
+  button[style*="background: rgb(30, 58, 95)"],
+  button[style*="background: #1e3a5f"],
+  button[style*="background: rgb(37, 99, 235)"],
+  button[style*="background: #2563eb"],
+  button[class*="bg-[#2563eb]"],
+  button[class*="bg-[#0f5bff]"],
+  .docs-primary-btn
+) {
+  background: var(--btn-primary-bg) !important;
+  border: 1px solid var(--btn-primary-border) !important;
+  color: var(--btn-primary-color) !important;
+  box-shadow: var(--btn-primary-shadow) !important;
+}
+
+.dark .sams-app-shell :is(
+  button[style*="background: rgb(30, 58, 95)"],
+  button[style*="background: #1e3a5f"],
+  button[style*="background: rgb(37, 99, 235)"],
+  button[style*="background: #2563eb"],
+  button[class*="bg-[#2563eb]"],
+  button[class*="bg-[#0f5bff]"],
+  .docs-primary-btn
+):not(:disabled):hover {
+  background: var(--btn-primary-bg-hover) !important;
+}
+
+.dark .sams-app-shell :is(
+  button[style*="background: rgb(220, 38, 38)"],
+  button[style*="background: #dc2626"],
+  .docs-danger-btn
+) {
+  background: var(--btn-danger-bg) !important;
+  border: 1px solid var(--btn-danger-border) !important;
+  color: var(--btn-danger-color) !important;
+  box-shadow: 0 12px 24px rgba(220,38,38,0.22) !important;
+}
+
+.dark .sams-app-shell :is(
+  button[style*="background: rgb(220, 38, 38)"],
+  button[style*="background: #dc2626"],
+  .docs-danger-btn
+):not(:disabled):hover {
+  background: var(--btn-danger-bg-hover) !important;
+}
+
+.dark .sams-app-shell :is(
+  button[style*="background: rgb(22, 163, 74)"],
+  button[style*="background: #16a34a"]
+) {
+  background: var(--btn-success-bg) !important;
+  border: 1px solid var(--btn-success-border) !important;
+  color: var(--btn-success-color) !important;
+  box-shadow: 0 12px 24px rgba(22,163,74,0.22) !important;
+}
+
+.dark .sams-app-shell :is(
+  button[style*="background: rgb(22, 163, 74)"],
+  button[style*="background: #16a34a"]
+):not(:disabled):hover {
+  background: var(--btn-success-bg-hover) !important;
+}
+
+.dark .sams-app-shell :is(
+  button[style*="background: var(--surface)"],
+  button[style*="background: rgb(27, 34, 48)"],
+  .docs-secondary-btn,
+  .docs-modal-close
+) {
+  background: var(--btn-secondary-bg) !important;
+  border-color: var(--btn-secondary-border) !important;
+  color: var(--btn-secondary-color) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset !important;
+}
+
+.dark .sams-app-shell :is(
+  button[style*="background: var(--surface)"],
+  button[style*="background: rgb(27, 34, 48)"],
+  .docs-secondary-btn,
+  .docs-modal-close
+):not(:disabled):hover {
+  background: var(--btn-secondary-bg-hover) !important;
+  border-color: var(--border-strong) !important;
+}
+
+.dark .sams-app-shell :is(
+  button[style*="background: var(--accent-light)"],
+  button[style*="background: rgba(96, 165, 250"],
+  .docs-view-btn
+) {
+  background: var(--btn-subtle-bg) !important;
+  border-color: var(--btn-subtle-border) !important;
+  color: var(--btn-subtle-color) !important;
+}
+
+.dark .sams-app-shell :is(
+  button[style*="background: var(--accent-light)"],
+  button[style*="background: rgba(96, 165, 250"],
+  .docs-view-btn
+):not(:disabled):hover {
+  background: var(--btn-subtle-bg-hover) !important;
+}
+
+.dark .sams-app-shell :is(
+  button[style*="background: var(--status-rejected-bg)"],
+  .docs-delete-btn,
+  .docs-remove-file-btn
+) {
+  background: var(--btn-danger-soft-bg) !important;
+  border-color: var(--btn-danger-soft-border) !important;
+  color: var(--btn-danger-soft-color) !important;
+}
+
+.dark .sams-app-shell :is(
+  button[style*="background: var(--status-approved-bg)"],
+  .docs-download-btn
+) {
+  background: var(--btn-success-soft-bg) !important;
+  border-color: var(--btn-success-soft-border) !important;
+  color: var(--btn-success-soft-color) !important;
 }
 
 /* Final protected-module sweep: Applications, Documents, Work Station, Messages, Users, Settings. */
