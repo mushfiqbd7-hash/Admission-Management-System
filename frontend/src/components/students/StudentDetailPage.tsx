@@ -256,7 +256,7 @@ export default function StudentDetailPage() {
   ];
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-[#f7f9fc]">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       <div className="flex min-h-[76px] items-center gap-4 border-b border-slate-200 bg-white px-6">
         <button
           onClick={() => navigate(-1)}

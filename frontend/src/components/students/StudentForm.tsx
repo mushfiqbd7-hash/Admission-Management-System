@@ -75,7 +75,7 @@ function RowCard({ title, onRemove, children }: { title: string; onRemove?: () =
         <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--navy-600)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{title}</span>
         {onRemove && (
           <button type="button" onClick={onRemove}
-            style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 6, border: '1px solid #fecdd3', background: '#fff1f2', color: '#dc2626', fontSize: 11.5, cursor: 'pointer', fontFamily: 'var(--font-ui)' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 6, border: '1px solid #fecdd3', background: 'var(--status-rejected-bg)', color: '#dc2626', fontSize: 11.5, cursor: 'pointer', fontFamily: 'var(--font-ui)' }}>
             <Trash2 size={12} /> Remove
           </button>
         )}
@@ -850,7 +850,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
 
       case 'documents': return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 'var(--radius-md)', padding: '12px 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: 'var(--accent-light)', border: '1px solid var(--status-processing-border)', borderRadius: 'var(--radius-md)', padding: '12px 16px' }}>
             <AlertCircle size={15} style={{ color: '#1d4ed8', flexShrink: 0, marginTop: 1 }} />
             <p style={{ margin: 0, fontSize: 12.5, color: '#1e40af' }}>
               <strong>Maximum file size:</strong> 1.5 MB per document. Accepted formats: PDF, JPG, PNG, DOC, DOCX.
@@ -866,8 +866,8 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
                 return (
                   <div key={doc.key} style={{
                     display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px',
-                    borderRadius: 8, border: `1px solid ${uploaded ? '#86efac' : 'var(--border)'}`,
-                    background: uploaded ? '#f0fdf4' : 'var(--surface)',
+                    borderRadius: 8, border: `1px solid ${uploaded ? 'var(--status-approved-border)' : 'var(--border)'}`,
+                    background: uploaded ? 'var(--status-approved-bg)' : 'var(--surface)',
                     transition: 'background 0.15s',
                   }}>
                     <div style={{ width: 18, height: 18, borderRadius: 5, background: uploaded ? '#16a34a' : 'var(--gray-100)', border: `1px solid ${uploaded ? '#16a34a' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -889,14 +889,14 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
 
                     <button disabled={isUp}
                       onClick={() => fileRefs.current[doc.key]?.click()}
-                      style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, fontSize: 11.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', border: '1px solid', opacity: isUp ? 0.5 : 1, transition: 'all 0.15s', background: uploaded ? '#dcfce7' : 'var(--navy-600)', color: uploaded ? '#15803d' : '#fff', borderColor: uploaded ? '#86efac' : 'var(--navy-600)' }}>
+                      style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, fontSize: 11.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', border: '1px solid', opacity: isUp ? 0.5 : 1, transition: 'all 0.15s', background: uploaded ? 'var(--status-approved-bg)' : 'var(--navy-600)', color: uploaded ? '#15803d' : '#fff', borderColor: uploaded ? 'var(--status-approved-border)' : 'var(--navy-600)' }}>
                       {isUp ? <span style={{ width: 11, height: 11, border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.7s linear infinite', display: 'inline-block' }} /> : <Upload size={11} />}
                       {uploaded ? 'Replace' : 'Upload'}
                     </button>
 
                     {uploaded && (
                       <button type="button" onClick={() => handleViewDoc(doc.key)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, border: '1px solid #bfdbfe', background: '#eff6ff', color: '#1d4ed8', fontSize: 11.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', flexShrink: 0 }}>
+                        style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, border: '1px solid var(--status-processing-border)', background: 'var(--accent-light)', color: '#1d4ed8', fontSize: 11.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', flexShrink: 0 }}>
                         <Eye size={11} />
                         View
                       </button>
@@ -904,7 +904,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
 
                     {uploaded && (
                       <button onClick={() => handleDeleteDoc(doc.key)}
-                        style={{ width: 26, height: 26, borderRadius: 6, border: '1px solid #fecdd3', background: '#fff1f2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
+                        style={{ width: 26, height: 26, borderRadius: 6, border: '1px solid #fecdd3', background: 'var(--status-rejected-bg)', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
                         <Trash2 size={12} />
                       </button>
                     )}
@@ -1059,7 +1059,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, backdropFilter: 'blur(4px)' }}>
           <div className="card" style={{ width: 440, padding: '28px 28px 24px', boxShadow: 'var(--shadow-xl)' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 18 }}>
-              <div style={{ width: 54, height: 54, borderRadius: '50%', background: '#fef9ec', border: '2px solid #f5d98a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 54, height: 54, borderRadius: '50%', background: 'var(--status-pending-bg)', border: '2px solid var(--status-pending-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ShieldAlert size={26} style={{ color: '#d97706' }} />
               </div>
             </div>
@@ -1067,7 +1067,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
             <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center' }}>Submit Application?</h3>
             <p style={{ margin: '0 0 18px', fontSize: 12.5, color: 'var(--text-tertiary)', textAlign: 'center' }}>Please review the following before submitting</p>
 
-            <div style={{ background: '#fef9ec', border: '1px solid #f5d98a', borderRadius: 'var(--radius-md)', padding: '12px 14px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ background: 'var(--status-pending-bg)', border: '1px solid var(--status-pending-border)', borderRadius: 'var(--radius-md)', padding: '12px 14px', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {[
                 'Once submitted, you cannot edit this application unless it is returned with a "Revoked" status.',
                 'Ensure all required documents are uploaded and all information is accurate.',

@@ -151,7 +151,7 @@ export default function SettingsPage() {
   const avatarSrc = user?.avatar_url || null;
 
   return (
-    <div className="h-full overflow-auto bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.06),transparent_28%),linear-gradient(180deg,#f8fafc_0%,#eef3f9_100%)] px-6 py-7">
+    <div className="h-full overflow-auto bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.06),transparent_28%),linear-gradient(180deg,var(--ui-surface-subtle)_0%,var(--surface-muted)_100%)] px-6 py-7">
       <div className="mx-auto max-w-[1180px]">
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
 

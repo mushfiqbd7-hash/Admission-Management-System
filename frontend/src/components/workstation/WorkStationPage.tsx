@@ -64,23 +64,23 @@ const WS_STATUSES: {
   {
     value: 'approved',
     label: 'Approved',
-    bg: '#f0fdf4',
+    bg: 'var(--status-approved-bg)',
     color: '#15803d',
-    border: '#bbf7d0',
+    border: 'var(--status-approved-border)',
     dot: '#22c55e',
   },
   {
     value: 'processing',
     label: 'Processing',
-    bg: '#eef2ff',
+    bg: 'var(--status-processing-bg)',
     color: '#4338ca',
-    border: '#c7d2fe',
+    border: 'var(--status-processing-border)',
     dot: '#4f46e5',
   },
   {
     value: 'pre_admission',
     label: 'Pre-Admission',
-    bg: '#ecfeff',
+    bg: 'var(--status-admitted-bg)',
     color: '#0e7490',
     border: '#a5f3fc',
     dot: '#06b6d4',
@@ -88,17 +88,17 @@ const WS_STATUSES: {
   {
     value: 'admitted',
     label: 'Admitted',
-    bg: '#f0fdfa',
+    bg: 'var(--status-admitted-bg)',
     color: '#0f766e',
-    border: '#99f6e4',
+    border: 'var(--status-admitted-border)',
     dot: '#14b8a6',
   },
   {
     value: 'rejected',
     label: 'Rejected',
-    bg: '#fef2f2',
+    bg: 'var(--status-rejected-bg)',
     color: '#dc2626',
-    border: '#fecaca',
+    border: 'var(--status-rejected-border)',
     dot: '#ef4444',
   },
 
@@ -185,9 +185,9 @@ function PagBtn({
         height: 32,
         padding: '0 10px',
         borderRadius: 10,
-        border: `1px solid ${active ? '#2563eb' : '#e2e8f0'}`,
-        background: active ? '#2563eb' : '#ffffff',
-        color: active ? '#ffffff' : '#64748b',
+        border: `1px solid ${active ? '#2563eb' : 'var(--ui-border)'}`,
+        background: active ? '#2563eb' : 'var(--surface)',
+        color: active ? '#ffffff' : 'var(--ui-text-muted)',
         fontSize: 12,
         fontWeight: 800,
         cursor: disabled ? 'not-allowed' : 'pointer',
@@ -327,10 +327,10 @@ export default function WorkStationPage() {
     return (
       <div style={restrictedStyle}>
         <AlertCircle size={42} style={{ color: '#fca5a5', marginBottom: 16 }} />
-        <div style={{ fontSize: 17, fontWeight: 900, color: '#0f172a', marginBottom: 6 }}>
+        <div style={{ fontSize: 17, fontWeight: 900, color: 'var(--text-primary)', marginBottom: 6 }}>
           Access Restricted
         </div>
-        <div style={{ fontSize: 13, color: '#94a3b8' }}>
+        <div style={{ fontSize: 13, color: 'var(--ui-text-subtle)' }}>
           Work Station is available for Admin and Staff only.
         </div>
       </div>
@@ -355,7 +355,7 @@ export default function WorkStationPage() {
                 }}
                 style={{
                   ...statusCardStyle,
-                  background: active ? stat.bg : '#ffffff',
+                  background: active ? stat.bg : 'var(--surface)',
                   borderColor: active ? stat.dot : '#e5eaf2',
                   boxShadow: active
                     ? `0 0 0 3px ${stat.dot}22, 0 10px 22px rgba(15,23,42,0.07)`
@@ -402,7 +402,7 @@ export default function WorkStationPage() {
               left: 12,
               top: '50%',
               transform: 'translateY(-50%)',
-              color: '#cbd5e1',
+              color: 'var(--ui-border-strong)',
               pointerEvents: 'none',
             }}
           />
@@ -494,7 +494,7 @@ export default function WorkStationPage() {
                         style={{
                           height: 13,
                           width: cellIndex === 11 ? 180 : cellIndex === 13 ? 170 : 86,
-                          background: '#e2e8f0',
+                          background: 'var(--ui-border)',
                           borderRadius: 8,
                           opacity: 0.65,
                         }}
@@ -511,7 +511,7 @@ export default function WorkStationPage() {
                       <Users size={32} style={{ color: '#22c55e' }} />
                     </div>
 
-                    <div style={{ fontSize: 16, fontWeight: 900, color: '#334155' }}>
+                    <div style={{ fontSize: 16, fontWeight: 900, color: 'var(--ui-text-strong)' }}>
                       {search
                         ? 'No workstation records match your search'
                         : statusFilter !== 'all'
@@ -519,7 +519,7 @@ export default function WorkStationPage() {
                         : 'No approved or processing applications yet'}
                     </div>
 
-                    <div style={{ fontSize: 13, color: '#94a3b8' }}>
+                    <div style={{ fontSize: 13, color: 'var(--ui-text-subtle)' }}>
                       Approved applications will appear here first, then stay here when their status changes.
                     </div>
                   </div>
@@ -725,7 +725,7 @@ export default function WorkStationPage() {
 
       {/* Footer */}
       <div style={footerStyle}>
-        <span style={{ fontSize: 12.5, color: '#64748b', fontWeight: 700 }}>
+        <span style={{ fontSize: 12.5, color: 'var(--ui-text-muted)', fontWeight: 700 }}>
           {allStudents.length} visible · {total} workstation records
         </span>
 
@@ -767,7 +767,7 @@ const pageStyle: CSSProperties = {
   minHeight: 0,
   overflow: 'hidden',
   background:
-    'radial-gradient(circle at top left, rgba(37,99,235,0.06), transparent 32%), linear-gradient(180deg, #f7f9fc 0%, #eef3f9 100%)',
+    'radial-gradient(circle at top left, rgba(37,99,235,0.06), transparent 32%), linear-gradient(180deg, var(--ui-surface-subtle) 0%, var(--surface-muted) 100%)',
 };
 
 const restrictedStyle: CSSProperties = {
@@ -824,7 +824,7 @@ const exportWrapStyle: CSSProperties = {
 
 const filterBarStyle: CSSProperties = {
   margin: '14px 24px 0',
-  background: 'rgba(255,255,255,0.92)',
+  background: 'var(--surface-soft)',
   border: '1px solid #e5eaf2',
   borderRadius: 18,
   padding: '10px 12px',
@@ -847,12 +847,12 @@ const searchInputStyle: CSSProperties = {
   paddingLeft: 36,
   paddingRight: 34,
   fontSize: 13,
-  border: '1px solid #dbe3ef',
+  border: '1px solid var(--ui-border-strong)',
   borderRadius: 13,
   outline: 'none',
   fontFamily: 'inherit',
-  color: '#334155',
-  background: '#ffffff',
+  color: 'var(--ui-text-strong)',
+  background: 'var(--surface)',
   boxSizing: 'border-box',
 };
 
@@ -864,7 +864,7 @@ const clearSearchBtnStyle: CSSProperties = {
   background: 'none',
   border: 'none',
   cursor: 'pointer',
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   display: 'flex',
   padding: 0,
 };
@@ -874,8 +874,8 @@ const activeFilterStyle: CSSProperties = {
   alignItems: 'center',
   gap: 6,
   padding: '7px 11px',
-  background: '#f0fdf4',
-  border: '1px solid #86efac',
+  background: 'var(--status-approved-bg)',
+  border: '1px solid var(--status-approved-border)',
   borderRadius: 999,
   fontSize: 12,
   color: '#15803d',
@@ -893,7 +893,7 @@ const activeFilterClearBtnStyle: CSSProperties = {
 
 const recordsTextStyle: CSSProperties = {
   fontSize: 12,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
   fontWeight: 700,
 };
 
@@ -920,7 +920,7 @@ const fullScreenStyle: CSSProperties = {
   flexDirection: 'column',
   padding: '14px 24px',
   background:
-    'radial-gradient(circle at top left, rgba(37,99,235,0.06), transparent 32%), linear-gradient(180deg, #f7f9fc 0%, #eef3f9 100%)',
+    'radial-gradient(circle at top left, rgba(37,99,235,0.06), transparent 32%), linear-gradient(180deg, var(--ui-surface-subtle) 0%, var(--surface-muted) 100%)',
 };
 
 const tableWrapFullStyle: CSSProperties = {
@@ -934,9 +934,9 @@ const fullScreenBtnStyle: CSSProperties = {
   height: 38,
   padding: '0 14px',
   borderRadius: 12,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
-  color: '#475569',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--surface)',
+  color: 'var(--ui-text-body)',
   fontSize: 12.5,
   fontWeight: 700,
   cursor: 'pointer',
@@ -953,26 +953,26 @@ const thStyle: CSSProperties = {
   textAlign: 'left',
   fontSize: 10.5,
   fontWeight: 900,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
   textTransform: 'uppercase',
   letterSpacing: '0.06em',
   whiteSpace: 'nowrap',
-  background: '#f8fafc',
-  borderTop: '1px solid #e2e8f0',
-  borderBottom: '1px solid #e2e8f0',
+  background: 'var(--ui-surface-subtle)',
+  borderTop: '1px solid var(--ui-border)',
+  borderBottom: '1px solid var(--ui-border)',
 };
 
 const rowStyle: CSSProperties = {
-  background: '#ffffff',
+  background: 'var(--surface)',
   boxShadow: '0 8px 22px rgba(15, 23, 42, 0.05)',
   borderRadius: 18,
 };
 
 const bodyTdStyle: CSSProperties = {
   padding: '14px 14px',
-  borderTop: '1px solid #e8edf4',
-  borderBottom: '1px solid #e8edf4',
-  background: '#ffffff',
+  borderTop: '1px solid var(--ui-border-soft)',
+  borderBottom: '1px solid var(--ui-border-soft)',
+  background: 'var(--surface)',
 };
 
 const centerTdStyle: CSSProperties = {
@@ -989,8 +989,8 @@ const firstTdStyle: CSSProperties = {
   ...centerTdStyle,
   borderTopLeftRadius: 18,
   borderBottomLeftRadius: 18,
-  borderLeft: '1px solid #e8edf4',
-  color: '#94a3b8',
+  borderLeft: '1px solid var(--ui-border-soft)',
+  color: 'var(--ui-text-subtle)',
   fontWeight: 900,
   textAlign: 'center',
 };
@@ -999,7 +999,7 @@ const lastTdStyle: CSSProperties = {
   ...centerTdStyle,
   borderTopRightRadius: 18,
   borderBottomRightRadius: 18,
-  borderRight: '1px solid #e8edf4',
+  borderRight: '1px solid var(--ui-border-soft)',
 };
 
 const appNoStyle: CSSProperties = {
@@ -1011,8 +1011,8 @@ const appNoStyle: CSSProperties = {
   fontFamily: 'Inter, sans-serif',
   fontWeight: 900,
   color: '#1d4ed8',
-  background: '#eff6ff',
-  border: '1px solid #bfdbfe',
+  background: 'var(--accent-light)',
+  border: '1px solid var(--status-processing-border)',
   padding: '5px 9px',
   borderRadius: 999,
   whiteSpace: 'nowrap',
@@ -1023,7 +1023,7 @@ const appNoStyle: CSSProperties = {
 const mainTextStyle: CSSProperties = {
   fontSize: 12.5,
   fontWeight: 900,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -1032,7 +1032,7 @@ const mainTextStyle: CSSProperties = {
 const studentTextStyle: CSSProperties = {
   fontSize: 13,
   fontWeight: 900,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -1041,7 +1041,7 @@ const studentTextStyle: CSSProperties = {
 const mutedTextStyle: CSSProperties = {
   fontSize: 12.5,
   fontWeight: 700,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -1051,12 +1051,12 @@ const inputStyle: CSSProperties = {
   width: '100%',
   height: 36,
   borderRadius: 11,
-  border: '1px solid #dbe3ef',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border-strong)',
+  background: 'var(--surface)',
   padding: '0 10px',
   fontSize: 12.5,
   fontWeight: 700,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   outline: 'none',
   fontFamily: 'inherit',
   boxSizing: 'border-box',
@@ -1066,7 +1066,7 @@ const selectStatusStyle: CSSProperties = {
   width: '100%',
   height: 36,
   borderRadius: 999,
-  border: '1px solid #dbe3ef',
+  border: '1px solid var(--ui-border-strong)',
   padding: '0 10px',
   fontSize: 12,
   fontWeight: 900,
@@ -1092,7 +1092,7 @@ const universityNoStyle: CSSProperties = {
   width: 24,
   height: 24,
   borderRadius: 8,
-  background: '#eff6ff',
+  background: 'var(--accent-light)',
   color: '#1d4ed8',
   display: 'inline-flex',
   alignItems: 'center',
@@ -1105,8 +1105,8 @@ const deleteMiniBtnStyle: CSSProperties = {
   width: 28,
   height: 28,
   borderRadius: 9,
-  border: '1px solid #fecaca',
-  background: '#fef2f2',
+  border: '1px solid var(--status-rejected-border)',
+  background: 'var(--status-rejected-bg)',
   color: '#dc2626',
   display: 'inline-flex',
   alignItems: 'center',
@@ -1118,8 +1118,8 @@ const addUniversityBtnStyle: CSSProperties = {
   width: 'fit-content',
   height: 32,
   borderRadius: 10,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: '1px solid var(--status-processing-border)',
+  background: 'var(--accent-light)',
   color: '#1d4ed8',
   display: 'inline-flex',
   alignItems: 'center',
@@ -1140,8 +1140,8 @@ const viewBtnStyle: CSSProperties = {
   minWidth: 82,
   padding: '0 13px',
   borderRadius: 11,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: '1px solid var(--status-processing-border)',
+  background: 'var(--accent-light)',
   color: '#1d4ed8',
   fontSize: 12.5,
   fontWeight: 900,
@@ -1153,17 +1153,17 @@ const viewBtnStyle: CSSProperties = {
 const emptyTdStyle: CSSProperties = {
   padding: '80px 20px',
   textAlign: 'center',
-  background: '#ffffff',
+  background: 'var(--surface)',
   borderRadius: 18,
-  border: '1px solid #e8edf4',
+  border: '1px solid var(--ui-border-soft)',
 };
 
 const emptyIconBoxStyle: CSSProperties = {
   width: 68,
   height: 68,
   borderRadius: 22,
-  background: '#ecfdf5',
-  border: '1px solid #bbf7d0',
+  background: 'var(--status-approved-bg)',
+  border: '1px solid var(--status-approved-border)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

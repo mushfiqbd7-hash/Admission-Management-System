@@ -526,9 +526,9 @@ export default function InboxPage() {
                 onClick={() => openTab(item.id)}
                 style={{
                   ...folderBtnStyle,
-                  background: active ? '#eff6ff' : 'transparent',
-                  borderColor: active ? '#bfdbfe' : 'transparent',
-                  color: active ? '#1d4ed8' : '#64748b',
+                  background: active ? 'var(--accent-light)' : 'transparent',
+                  borderColor: active ? 'var(--status-processing-border)' : 'transparent',
+                  color: active ? '#1d4ed8' : 'var(--ui-text-muted)',
                 }}
               >
                 <span style={folderIconWrapStyle}>
@@ -590,7 +590,7 @@ export default function InboxPage() {
               left: 14,
               top: '50%',
               transform: 'translateY(-50%)',
-              color: '#94a3b8',
+              color: 'var(--ui-text-subtle)',
             }}
           />
 
@@ -618,7 +618,7 @@ export default function InboxPage() {
           ) : tab === 'notifications' ? (
             filteredNotifications.length === 0 ? (
               <EmptyBox
-                icon={<Bell size={24} style={{ color: '#94a3b8' }} />}
+                icon={<Bell size={24} style={{ color: 'var(--ui-text-subtle)' }} />}
                 title="No notifications"
                 subtitle="System alerts and application updates will appear here."
               />
@@ -633,8 +633,8 @@ export default function InboxPage() {
                     onClick={() => openNotification(item)}
                     style={{
                       ...messageRowStyle,
-                      background: active ? '#eff6ff' : unread ? '#f8fbff' : '#ffffff',
-                      borderColor: active ? '#bfdbfe' : '#e8edf4',
+                      background: active ? 'var(--accent-light)' : unread ? 'var(--ui-surface-soft)' : 'var(--surface)',
+                      borderColor: active ? 'var(--status-processing-border)' : 'var(--ui-border-soft)',
                       boxShadow: active ? '0 10px 24px rgba(37,99,235,0.10)' : 'none',
                     }}
                   >
@@ -681,7 +681,7 @@ export default function InboxPage() {
             )
           ) : currentMessages.length === 0 ? (
             <EmptyBox
-              icon={<MessageSquare size={24} style={{ color: '#94a3b8' }} />}
+              icon={<MessageSquare size={24} style={{ color: 'var(--ui-text-subtle)' }} />}
               title={tab === 'inbox' ? 'Your inbox is empty' : 'No sent messages'}
               subtitle={
                 tab === 'inbox'
@@ -703,8 +703,8 @@ export default function InboxPage() {
                   onClick={() => openMessage(msg)}
                   style={{
                     ...messageRowStyle,
-                    background: active ? '#eff6ff' : unread ? '#f8fbff' : '#ffffff',
-                    borderColor: active ? '#bfdbfe' : '#e8edf4',
+                    background: active ? 'var(--accent-light)' : unread ? 'var(--ui-surface-soft)' : 'var(--surface)',
+                    borderColor: active ? 'var(--status-processing-border)' : 'var(--ui-border-soft)',
                     boxShadow: active ? '0 10px 24px rgba(37,99,235,0.10)' : 'none',
                   }}
                 >
@@ -839,7 +839,7 @@ export default function InboxPage() {
               <div>
                 <FieldLabel>
                   Attachments{' '}
-                  <span style={{ color: '#94a3b8', fontWeight: 600 }}>
+                  <span style={{ color: 'var(--ui-text-subtle)', fontWeight: 600 }}>
                     optional, max 5
                   </span>
                 </FieldLabel>
@@ -847,7 +847,7 @@ export default function InboxPage() {
                 <div style={attachmentStackStyle}>
                   {files.map((file, index) => (
                     <div key={`${file.name}-${index}`} style={fileChipStyle}>
-                      <Paperclip size={14} style={{ color: '#64748b' }} />
+                      <Paperclip size={14} style={{ color: 'var(--ui-text-muted)' }} />
 
                       <span style={fileNameStyle}>{file.name}</span>
 
@@ -1114,11 +1114,11 @@ const pageStyle: CSSProperties = {
   display: 'grid',
   gridTemplateColumns: '250px 390px minmax(0, 1fr)',
   background:
-    'radial-gradient(circle at top left, rgba(37,99,235,0.06), transparent 34%), linear-gradient(180deg, #f8fafc 0%, #eef3f9 100%)',
+    'radial-gradient(circle at top left, rgba(37,99,235,0.06), transparent 34%), linear-gradient(180deg, var(--ui-surface-subtle) 0%, var(--surface-muted) 100%)',
 };
 
 const folderRailStyle: CSSProperties = {
-  background: '#ffffff',
+  background: 'var(--surface)',
   borderRight: '1px solid #e5eaf2',
   padding: '18px 16px 16px',
   display: 'flex',
@@ -1199,7 +1199,7 @@ const folderBadgeStyle: CSSProperties = {
 };
 
 const folderCountStyle: CSSProperties = {
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   fontSize: 12,
   fontWeight: 900,
 };
@@ -1208,7 +1208,7 @@ const railHelperCardStyle: CSSProperties = {
   marginTop: 'auto',
   borderRadius: 18,
   border: '1px solid #dbeafe',
-  background: '#eff6ff',
+  background: 'var(--accent-light)',
   padding: 14,
   display: 'flex',
   gap: 10,
@@ -1226,11 +1226,11 @@ const helperTextStyle: CSSProperties = {
   fontSize: 11.5,
   fontWeight: 650,
   lineHeight: 1.45,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
 };
 
 const messageListPanelStyle: CSSProperties = {
-  background: 'rgba(255,255,255,0.78)',
+  background: 'var(--surface-soft)',
   borderRight: '1px solid #e5eaf2',
   display: 'flex',
   flexDirection: 'column',
@@ -1251,14 +1251,14 @@ const listHeaderStyle: CSSProperties = {
 const listTitleStyle: CSSProperties = {
   fontSize: 18,
   fontWeight: 950,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   letterSpacing: '-0.035em',
 };
 
 const listSubtitleStyle: CSSProperties = {
   marginTop: 3,
   fontSize: 12.5,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   fontWeight: 800,
 };
 
@@ -1266,8 +1266,8 @@ const markAllBtnStyle: CSSProperties = {
   height: 32,
   padding: '0 10px',
   borderRadius: 10,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: '1px solid var(--status-processing-border)',
+  background: 'var(--accent-light)',
   color: '#1d4ed8',
   fontSize: 11.5,
   fontWeight: 900,
@@ -1288,13 +1288,13 @@ const searchInputStyle: CSSProperties = {
   width: '100%',
   height: 44,
   borderRadius: 14,
-  border: '1px solid #dbe3ef',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border-strong)',
+  background: 'var(--surface)',
   padding: '0 38px 0 40px',
   outline: 'none',
   fontSize: 13,
   fontWeight: 700,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   fontFamily: 'inherit',
   boxSizing: 'border-box',
 };
@@ -1306,7 +1306,7 @@ const clearSearchStyle: CSSProperties = {
   transform: 'translateY(-50%)',
   border: 'none',
   background: 'transparent',
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   cursor: 'pointer',
   display: 'inline-flex',
   padding: 0,
@@ -1321,7 +1321,7 @@ const listScrollStyle: CSSProperties = {
 
 const messageRowStyle: CSSProperties = {
   width: '100%',
-  border: '1px solid #e8edf4',
+  border: '1px solid var(--ui-border-soft)',
   borderRadius: 16,
   marginBottom: 10,
   padding: 13,
@@ -1346,7 +1346,7 @@ const messageTopLineStyle: CSSProperties = {
 
 const messageSenderStyle: CSSProperties = {
   fontSize: 13,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -1354,7 +1354,7 @@ const messageSenderStyle: CSSProperties = {
 
 const messageTimeStyle: CSSProperties = {
   fontSize: 11,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   fontWeight: 800,
   flexShrink: 0,
 };
@@ -1362,7 +1362,7 @@ const messageTimeStyle: CSSProperties = {
 const senderSubtitleStyle: CSSProperties = {
   marginTop: 2,
   fontSize: 11.5,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   fontWeight: 800,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -1381,7 +1381,7 @@ const messageSubjectStyle: CSSProperties = {
 const messagePreviewStyle: CSSProperties = {
   marginTop: 4,
   fontSize: 12,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
   lineHeight: 1.4,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -1402,8 +1402,8 @@ const appBadgeStyle: CSSProperties = {
   height: 22,
   borderRadius: 999,
   padding: '0 8px',
-  background: '#eff6ff',
-  border: '1px solid #bfdbfe',
+  background: 'var(--accent-light)',
+  border: '1px solid var(--status-processing-border)',
   color: '#1d4ed8',
   fontSize: 10.5,
   fontWeight: 950,
@@ -1417,9 +1417,9 @@ const attachmentBadgeStyle: CSSProperties = {
   height: 22,
   borderRadius: 999,
   padding: '0 8px',
-  background: '#f8fafc',
-  border: '1px solid #e2e8f0',
-  color: '#64748b',
+  background: 'var(--ui-surface-subtle)',
+  border: '1px solid var(--ui-border)',
+  color: 'var(--ui-text-muted)',
   fontSize: 10.5,
   fontWeight: 900,
 };
@@ -1437,8 +1437,8 @@ const notifIconBoxStyle: CSSProperties = {
   width: 38,
   height: 38,
   borderRadius: 13,
-  background: '#f8fafc',
-  border: '1px solid #e2e8f0',
+  background: 'var(--ui-surface-subtle)',
+  border: '1px solid var(--ui-border)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1458,7 +1458,7 @@ const readerPaneStyle: CSSProperties = {
 const composeCardStyle: CSSProperties = {
   width: '100%',
   maxWidth: 820,
-  background: '#ffffff',
+  background: 'var(--surface)',
   border: '1px solid #e5eaf2',
   borderRadius: 24,
   boxShadow: '0 22px 50px rgba(15,23,42,0.09)',
@@ -1467,8 +1467,8 @@ const composeCardStyle: CSSProperties = {
 
 const composeHeaderStyle: CSSProperties = {
   padding: '22px 24px',
-  borderBottom: '1px solid #e8edf4',
-  background: '#fbfdff',
+  borderBottom: '1px solid var(--ui-border-soft)',
+  background: 'var(--ui-surface-soft)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -1478,14 +1478,14 @@ const composeHeaderStyle: CSSProperties = {
 const composeTitleStyle: CSSProperties = {
   fontSize: 18,
   fontWeight: 950,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   letterSpacing: '-0.035em',
 };
 
 const composeSubtitleStyle: CSSProperties = {
   marginTop: 4,
   fontSize: 13,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   fontWeight: 700,
 };
 
@@ -1498,8 +1498,8 @@ const composeBodyStyle: CSSProperties = {
 
 const composeFooterStyle: CSSProperties = {
   padding: '16px 24px',
-  borderTop: '1px solid #e8edf4',
-  background: '#fbfdff',
+  borderTop: '1px solid var(--ui-border-soft)',
+  background: 'var(--ui-surface-soft)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -1511,20 +1511,20 @@ const fieldLabelStyle: CSSProperties = {
   marginBottom: 7,
   fontSize: 12,
   fontWeight: 950,
-  color: '#475569',
+  color: 'var(--ui-text-body)',
 };
 
 const inputStyle: CSSProperties = {
   width: '100%',
   minHeight: 46,
   borderRadius: 14,
-  border: '1px solid #dbe3ef',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border-strong)',
+  background: 'var(--surface)',
   padding: '0 14px',
   outline: 'none',
   fontSize: 13.5,
   fontWeight: 700,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   fontFamily: 'inherit',
   boxSizing: 'border-box',
 };
@@ -1538,7 +1538,7 @@ const helpTextStyle: CSSProperties = {
   marginTop: 6,
   fontSize: 12,
   fontWeight: 650,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
 };
 
 const attachmentStackStyle: CSSProperties = {
@@ -1550,8 +1550,8 @@ const attachmentStackStyle: CSSProperties = {
 const fileChipStyle: CSSProperties = {
   height: 42,
   borderRadius: 13,
-  border: '1px solid #e2e8f0',
-  background: '#f8fafc',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--ui-surface-subtle)',
   padding: '0 11px',
   display: 'flex',
   alignItems: 'center',
@@ -1563,7 +1563,7 @@ const fileNameStyle: CSSProperties = {
   minWidth: 0,
   fontSize: 12.5,
   fontWeight: 800,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -1572,13 +1572,13 @@ const fileNameStyle: CSSProperties = {
 const fileSizeStyle: CSSProperties = {
   fontSize: 11.5,
   fontWeight: 800,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
 };
 
 const fileRemoveBtnStyle: CSSProperties = {
   border: 'none',
   background: 'transparent',
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   cursor: 'pointer',
   display: 'inline-flex',
   padding: 2,
@@ -1587,8 +1587,8 @@ const fileRemoveBtnStyle: CSSProperties = {
 const attachBtnStyle: CSSProperties = {
   height: 44,
   borderRadius: 14,
-  border: '1.5px dashed #bfdbfe',
-  background: '#eff6ff',
+  border: '1.5px dashed var(--status-processing-border)',
+  background: 'var(--accent-light)',
   color: '#1d4ed8',
   display: 'inline-flex',
   alignItems: 'center',
@@ -1604,9 +1604,9 @@ const discardBtnStyle: CSSProperties = {
   height: 42,
   padding: '0 18px',
   borderRadius: 13,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
-  color: '#64748b',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--surface)',
+  color: 'var(--ui-text-muted)',
   fontSize: 13,
   fontWeight: 900,
   cursor: 'pointer',
@@ -1632,7 +1632,7 @@ const sendBtnStyle: CSSProperties = {
 const readCardStyle: CSSProperties = {
   width: '100%',
   maxWidth: 860,
-  background: '#ffffff',
+  background: 'var(--surface)',
   border: '1px solid #e5eaf2',
   borderRadius: 24,
   boxShadow: '0 22px 50px rgba(15,23,42,0.09)',
@@ -1641,8 +1641,8 @@ const readCardStyle: CSSProperties = {
 
 const readHeaderStyle: CSSProperties = {
   padding: '24px 26px',
-  borderBottom: '1px solid #e8edf4',
-  background: '#fbfdff',
+  borderBottom: '1px solid var(--ui-border-soft)',
+  background: 'var(--ui-surface-soft)',
   display: 'flex',
   alignItems: 'flex-start',
   justifyContent: 'space-between',
@@ -1652,7 +1652,7 @@ const readHeaderStyle: CSSProperties = {
 const readSubjectStyle: CSSProperties = {
   fontSize: 22,
   fontWeight: 950,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   letterSpacing: '-0.045em',
   lineHeight: 1.2,
 };
@@ -1667,14 +1667,14 @@ const readMetaBlockStyle: CSSProperties = {
 const readSenderStyle: CSSProperties = {
   fontSize: 14,
   fontWeight: 950,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
 };
 
 const readRoleStyle: CSSProperties = {
   marginLeft: 7,
   fontSize: 12,
   fontWeight: 800,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   textTransform: 'capitalize',
 };
 
@@ -1682,7 +1682,7 @@ const readSubMetaStyle: CSSProperties = {
   marginTop: 3,
   fontSize: 12.5,
   fontWeight: 750,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
 };
 
 const readDateStyle: CSSProperties = {
@@ -1692,7 +1692,7 @@ const readDateStyle: CSSProperties = {
   gap: 5,
   fontSize: 12,
   fontWeight: 750,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
 };
 
 const readActionsStyle: CSSProperties = {
@@ -1706,8 +1706,8 @@ const replyBtnStyle: CSSProperties = {
   height: 36,
   padding: '0 13px',
   borderRadius: 12,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: '1px solid var(--status-processing-border)',
+  background: 'var(--accent-light)',
   color: '#1d4ed8',
   fontSize: 12.5,
   fontWeight: 950,
@@ -1722,9 +1722,9 @@ const iconBtnStyle: CSSProperties = {
   width: 36,
   height: 36,
   borderRadius: 12,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
-  color: '#64748b',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--surface)',
+  color: 'var(--ui-text-muted)',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1733,16 +1733,16 @@ const iconBtnStyle: CSSProperties = {
 
 const deleteBtnStyle: CSSProperties = {
   ...iconBtnStyle,
-  border: '1px solid #fecaca',
-  background: '#fef2f2',
+  border: '1px solid var(--status-rejected-border)',
+  background: 'var(--status-rejected-bg)',
   color: '#dc2626',
 };
 
 const applicationInfoStyle: CSSProperties = {
   margin: '18px 26px 0',
   borderRadius: 16,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: '1px solid var(--status-processing-border)',
+  background: 'var(--accent-light)',
   padding: '12px 14px',
   display: 'flex',
   alignItems: 'center',
@@ -1760,12 +1760,12 @@ const appInfoTextStyle: CSSProperties = {
   marginTop: 3,
   fontSize: 12,
   fontWeight: 750,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
 };
 
 const readMessageBodyStyle: CSSProperties = {
   padding: '24px 30px',
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
 };
 
 const readParagraphStyle: CSSProperties = {
@@ -1773,7 +1773,7 @@ const readParagraphStyle: CSSProperties = {
   fontSize: 14,
   lineHeight: 1.75,
   fontWeight: 650,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
 };
 
 const readAttachmentsStyle: CSSProperties = {
@@ -1787,7 +1787,7 @@ const attachmentsTitleStyle: CSSProperties = {
   gap: 7,
   fontSize: 13,
   fontWeight: 950,
-  color: '#475569',
+  color: 'var(--ui-text-body)',
 };
 
 const attachmentGridStyle: CSSProperties = {
@@ -1799,8 +1799,8 @@ const attachmentGridStyle: CSSProperties = {
 const downloadAttachmentStyle: CSSProperties = {
   height: 62,
   borderRadius: 16,
-  border: '1px solid #dbe3ef',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border-strong)',
+  background: 'var(--surface)',
   padding: '0 13px',
   display: 'flex',
   alignItems: 'center',
@@ -1814,7 +1814,7 @@ const downloadIconStyle: CSSProperties = {
   width: 38,
   height: 38,
   borderRadius: 13,
-  background: '#eff6ff',
+  background: 'var(--accent-light)',
   color: '#2563eb',
   display: 'inline-flex',
   alignItems: 'center',
@@ -1825,7 +1825,7 @@ const downloadIconStyle: CSSProperties = {
 const downloadNameStyle: CSSProperties = {
   fontSize: 12.5,
   fontWeight: 950,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -1835,15 +1835,15 @@ const downloadSizeStyle: CSSProperties = {
   marginTop: 3,
   fontSize: 11.5,
   fontWeight: 750,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
 };
 
 const notificationLargeIconStyle: CSSProperties = {
   width: 48,
   height: 48,
   borderRadius: 16,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--surface)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1857,7 +1857,7 @@ const notificationReadTextStyle: CSSProperties = {
   margin: 0,
   fontSize: 15,
   lineHeight: 1.75,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   fontWeight: 700,
 };
 
@@ -1866,8 +1866,8 @@ const openRelatedBtnStyle: CSSProperties = {
   height: 42,
   padding: '0 16px',
   borderRadius: 13,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: '1px solid var(--status-processing-border)',
+  background: 'var(--accent-light)',
   color: '#1d4ed8',
   fontSize: 13,
   fontWeight: 950,
@@ -1893,8 +1893,8 @@ const emptyIconStyle: CSSProperties = {
   width: 72,
   height: 72,
   borderRadius: 24,
-  background: '#eff6ff',
-  border: '1px solid #bfdbfe',
+  background: 'var(--accent-light)',
+  border: '1px solid var(--status-processing-border)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1904,7 +1904,7 @@ const emptyIconStyle: CSSProperties = {
 const emptyTitleStyle: CSSProperties = {
   fontSize: 17,
   fontWeight: 950,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   letterSpacing: '-0.035em',
 };
 
@@ -1914,7 +1914,7 @@ const emptySubtitleStyle: CSSProperties = {
   fontSize: 13,
   lineHeight: 1.6,
   fontWeight: 700,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
 };
 
 const emptyComposeBtnStyle: CSSProperties = {
@@ -1938,8 +1938,8 @@ const skeletonRowStyle: CSSProperties = {
   display: 'flex',
   gap: 12,
   borderRadius: 16,
-  border: '1px solid #e8edf4',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border-soft)',
+  background: 'var(--surface)',
   padding: 13,
   marginBottom: 10,
 };
@@ -1948,12 +1948,12 @@ const skeletonAvatarStyle: CSSProperties = {
   width: 42,
   height: 42,
   borderRadius: 14,
-  background: '#e2e8f0',
+  background: 'var(--ui-border)',
   flexShrink: 0,
 };
 
 const skeletonLineStyle: CSSProperties = {
   height: 11,
   borderRadius: 999,
-  background: '#e2e8f0',
+  background: 'var(--ui-border)',
 };

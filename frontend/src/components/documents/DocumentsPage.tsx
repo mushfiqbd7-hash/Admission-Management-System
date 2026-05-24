@@ -47,39 +47,39 @@ const CATEGORIES = [
 
 const CAT_COLORS: Record<string, { bg: string; color: string; border: string }> = {
   'Admission Forms': {
-    bg: '#eff6ff',
+    bg: 'var(--accent-light)',
     color: '#1d4ed8',
-    border: '#bfdbfe',
+    border: 'var(--status-processing-border)',
   },
   'University Documents': {
-    bg: '#f5f3ff',
+    bg: 'var(--status-pre-bg)',
     color: '#7c3aed',
     border: '#ddd6fe',
   },
   'Visa Documents': {
-    bg: '#fffbeb',
+    bg: 'var(--status-pending-bg)',
     color: '#b45309',
-    border: '#fde68a',
+    border: 'var(--status-pending-border)',
   },
   'Financial Documents': {
-    bg: '#f0fdf4',
+    bg: 'var(--status-approved-bg)',
     color: '#15803d',
-    border: '#bbf7d0',
+    border: 'var(--status-approved-border)',
   },
   Templates: {
-    bg: '#f0fdfa',
+    bg: 'var(--status-admitted-bg)',
     color: '#0f766e',
-    border: '#99f6e4',
+    border: 'var(--status-admitted-border)',
   },
   Notices: {
-    bg: '#fff1f2',
+    bg: 'var(--status-rejected-bg)',
     color: '#be123c',
     border: '#fecdd3',
   },
   Others: {
-    bg: '#f8fafc',
-    color: '#475569',
-    border: '#e2e8f0',
+    bg: 'var(--ui-surface-subtle)',
+    color: 'var(--ui-text-body)',
+    border: 'var(--ui-border)',
   },
 };
 
@@ -496,7 +496,7 @@ export default function DocumentsPage() {
       if (viewer) {
         viewer.document.title = 'Loading document...';
         viewer.document.body.innerHTML =
-          '<p style="font-family: system-ui, sans-serif; padding: 24px; color: #334155;">Loading document...</p>';
+          '<p style="font-family: system-ui, sans-serif; padding: 24px; color: var(--ui-text-strong);">Loading document...</p>';
       }
 
       const res = await api.get(`/shared-documents/${doc.id}/file`, {
@@ -822,14 +822,14 @@ const documentsPageCss = `
   padding: 16px 22px 18px;
   background:
     radial-gradient(circle at top left, rgba(37,99,235,0.055), transparent 34%),
-    linear-gradient(180deg, #f8fafc 0%, #eef3f9 100%);
+    linear-gradient(180deg, var(--ui-surface-subtle) 0%, var(--surface-muted) 100%);
 }
 
 .docs-toolbar {
   flex-shrink: 0;
   border-radius: 22px;
-  border: 1px solid #e2e8f0;
-  background: rgba(255,255,255,0.95);
+  border: 1px solid var(--ui-border);
+  background: var(--surface-soft);
   box-shadow: 0 18px 42px rgba(15,23,42,0.055);
   padding: 14px;
   display: grid;
@@ -851,7 +851,7 @@ const documentsPageCss = `
   left: 13px;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: var(--ui-text-subtle);
   pointer-events: none;
 }
 
@@ -865,12 +865,12 @@ const documentsPageCss = `
   width: 100%;
   height: 42px;
   border-radius: 14px;
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
+  border: 1px solid var(--ui-border-strong);
+  background: var(--surface);
   outline: none;
   font-size: 13px;
   font-weight: 700;
-  color: #334155;
+  color: var(--ui-text-strong);
   font-family: inherit;
   box-sizing: border-box;
 }
@@ -887,7 +887,7 @@ const documentsPageCss = `
 }
 
 .docs-select-placeholder {
-  color: #94a3b8;
+  color: var(--ui-text-subtle);
 }
 
 .docs-category-chevron,
@@ -896,7 +896,7 @@ const documentsPageCss = `
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: var(--ui-text-subtle);
   pointer-events: none;
 }
 
@@ -911,7 +911,7 @@ const documentsPageCss = `
   transform: translateY(-50%);
   border: none;
   background: transparent;
-  color: #94a3b8;
+  color: var(--ui-text-subtle);
   cursor: pointer;
   display: inline-flex;
   padding: 0;
@@ -931,8 +931,8 @@ const documentsPageCss = `
 
 .docs-clear-filter-btn {
   padding: 0 12px;
-  border: 1px solid #fecaca;
-  background: #fef2f2;
+  border: 1px solid var(--status-rejected-border);
+  background: var(--status-rejected-bg);
   color: #dc2626;
   font-size: 12.5px;
   font-weight: 900;
@@ -942,9 +942,9 @@ const documentsPageCss = `
 
 .docs-count-pill {
   padding: 0 13px;
-  border: 1px solid #dbe3ef;
-  background: #f8fafc;
-  color: #475569;
+  border: 1px solid var(--ui-border-strong);
+  background: var(--ui-surface-subtle);
+  color: var(--ui-text-body);
   font-size: 12.5px;
   font-weight: 900;
 }
@@ -967,8 +967,8 @@ const documentsPageCss = `
   max-height: calc(100vh - 220px);
   overflow: auto;
   border-radius: 24px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
+  border: 1px solid var(--ui-border);
+  background: var(--surface);
   box-shadow: 0 18px 42px rgba(15,23,42,0.055);
 }
 
@@ -988,13 +988,13 @@ const documentsPageCss = `
 
 .docs-table th {
   padding: 12px;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
-  background: #f8fafc;
+  border-top: 1px solid var(--ui-border);
+  border-bottom: 1px solid var(--ui-border);
+  background: var(--ui-surface-subtle);
   text-align: left;
   font-size: 10.5px;
   font-weight: 950;
-  color: #64748b;
+  color: var(--ui-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   white-space: nowrap;
@@ -1004,28 +1004,28 @@ const documentsPageCss = `
 
 .docs-table td {
   padding: 13px 12px;
-  background: #ffffff;
-  border-top: 1px solid #e8edf4;
-  border-bottom: 1px solid #e8edf4;
+  background: var(--surface);
+  border-top: 1px solid var(--ui-border-soft);
+  border-bottom: 1px solid var(--ui-border-soft);
   vertical-align: middle;
   overflow: hidden;
 }
 
 .docs-table tbody tr {
-  background: #ffffff;
+  background: var(--surface);
   box-shadow: 0 8px 20px rgba(15,23,42,0.04);
 }
 
 .docs-first-td {
   border-top-left-radius: 18px;
   border-bottom-left-radius: 18px;
-  border-left: 1px solid #e8edf4;
+  border-left: 1px solid var(--ui-border-soft);
 }
 
 .docs-last-td {
   border-top-right-radius: 18px;
   border-bottom-right-radius: 18px;
-  border-right: 1px solid #e8edf4;
+  border-right: 1px solid var(--ui-border-soft);
 }
 
 .docs-document-cell {
@@ -1039,8 +1039,8 @@ const documentsPageCss = `
   width: 38px;
   height: 38px;
   border-radius: 13px;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-surface-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1066,7 +1066,7 @@ const documentsPageCss = `
 .docs-doc-title {
   font-size: 13px;
   font-weight: 950;
-  color: #0f172a;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1083,13 +1083,13 @@ const documentsPageCss = `
 .docs-doc-description {
   font-size: 11.5px;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--ui-text-subtle);
 }
 
 .docs-doc-file-name {
   font-size: 11px;
   font-weight: 750;
-  color: #94a3b8;
+  color: var(--ui-text-subtle);
   font-family: Inter, sans-serif;
 }
 
@@ -1100,7 +1100,7 @@ const documentsPageCss = `
   height: 26px;
   padding: 0 9px;
   border-radius: 999px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--ui-border);
   font-size: 11.5px;
   font-weight: 900;
   white-space: nowrap;
@@ -1112,21 +1112,21 @@ const documentsPageCss = `
 .docs-type-badge {
   height: 25px;
   padding: 0 8px;
-  background: #f8fafc;
-  color: #475569;
+  background: var(--ui-surface-subtle);
+  color: var(--ui-text-body);
 }
 
 .docs-size-text {
   font-size: 12px;
   font-weight: 800;
-  color: #64748b;
+  color: var(--ui-text-muted);
   white-space: nowrap;
 }
 
 .docs-uploaded-name {
   font-size: 12px;
   font-weight: 900;
-  color: #334155;
+  color: var(--ui-text-strong);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1136,7 +1136,7 @@ const documentsPageCss = `
   margin-top: 2px;
   font-size: 11px;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--ui-text-subtle);
   text-transform: capitalize;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1146,7 +1146,7 @@ const documentsPageCss = `
 .docs-date-text {
   font-size: 11.5px;
   font-weight: 800;
-  color: #64748b;
+  color: var(--ui-text-muted);
   font-family: Inter, sans-serif;
   white-space: nowrap;
 }
@@ -1177,20 +1177,20 @@ const documentsPageCss = `
 }
 
 .docs-view-btn {
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
+  border: 1px solid var(--status-processing-border);
+  background: var(--accent-light);
   color: #1d4ed8;
 }
 
 .docs-download-btn {
-  border: 1px solid #bbf7d0;
-  background: #f0fdf4;
+  border: 1px solid var(--status-approved-border);
+  background: var(--status-approved-bg);
   color: #15803d;
 }
 
 .docs-delete-btn {
-  border: 1px solid #fecaca;
-  background: #fef2f2;
+  border: 1px solid var(--status-rejected-border);
+  background: var(--status-rejected-bg);
   color: #dc2626;
 }
 
@@ -1204,8 +1204,8 @@ const documentsPageCss = `
 .docs-skeleton-row {
   height: 66px;
   border-radius: 18px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
+  border: 1px solid var(--ui-border);
+  background: var(--surface);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1216,7 +1216,7 @@ const documentsPageCss = `
   width: 38px;
   height: 38px;
   border-radius: 13px;
-  background: #e2e8f0;
+  background: var(--ui-border);
 }
 
 .docs-skeleton-content {
@@ -1226,7 +1226,7 @@ const documentsPageCss = `
 .docs-skeleton-line {
   height: 12px;
   border-radius: 999px;
-  background: #e2e8f0;
+  background: var(--ui-border);
 }
 
 .docs-skeleton-line-short {
@@ -1253,8 +1253,8 @@ const documentsPageCss = `
   width: 76px;
   height: 76px;
   border-radius: 24px;
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
+  border: 1px solid var(--status-processing-border);
+  background: var(--accent-light);
   color: #2563eb;
   display: flex;
   align-items: center;
@@ -1265,7 +1265,7 @@ const documentsPageCss = `
 .docs-empty-title {
   font-size: 17px;
   font-weight: 950;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .docs-empty-subtitle {
@@ -1273,7 +1273,7 @@ const documentsPageCss = `
   max-width: 420px;
   font-size: 13px;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--ui-text-subtle);
   line-height: 1.6;
 }
 
@@ -1301,8 +1301,8 @@ const documentsPageCss = `
   max-height: 90vh;
   overflow-y: auto;
   border-radius: 24px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
+  border: 1px solid var(--ui-border);
+  background: var(--surface);
   box-shadow: 0 28px 80px rgba(15,23,42,0.24);
 }
 
@@ -1311,8 +1311,8 @@ const documentsPageCss = `
   top: 0;
   z-index: 2;
   padding: 20px 22px;
-  border-bottom: 1px solid #e8edf4;
-  background: #fbfdff;
+  border-bottom: 1px solid var(--ui-border-soft);
+  background: var(--ui-surface-soft);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1329,8 +1329,8 @@ const documentsPageCss = `
   width: 44px;
   height: 44px;
   border-radius: 15px;
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
+  border: 1px solid var(--status-processing-border);
+  background: var(--accent-light);
   color: #2563eb;
   display: flex;
   align-items: center;
@@ -1340,7 +1340,7 @@ const documentsPageCss = `
 .docs-modal-title {
   font-size: 16px;
   font-weight: 950;
-  color: #0f172a;
+  color: var(--text-primary);
   letter-spacing: -0.035em;
 }
 
@@ -1348,16 +1348,16 @@ const documentsPageCss = `
   margin-top: 3px;
   font-size: 12.5px;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--ui-text-subtle);
 }
 
 .docs-modal-close {
   width: 36px;
   height: 36px;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  color: #64748b;
+  border: 1px solid var(--ui-border);
+  background: var(--surface);
+  color: var(--ui-text-muted);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -1377,7 +1377,7 @@ const documentsPageCss = `
   margin-bottom: 7px;
   font-size: 12.5px;
   font-weight: 900;
-  color: #475569;
+  color: var(--ui-text-body);
 }
 
 .docs-required {
@@ -1386,14 +1386,14 @@ const documentsPageCss = `
 
 .docs-optional {
   margin-left: 5px;
-  color: #94a3b8;
+  color: var(--ui-text-subtle);
   font-weight: 650;
 }
 
 .docs-input {
   height: 44px;
   border-radius: 14px;
-  border: 1px solid #dbe3ef;
+  border: 1px solid var(--ui-border-strong);
   padding: 0 14px;
   font-size: 13.5px;
   font-weight: 700;
@@ -1424,22 +1424,22 @@ const documentsPageCss = `
 }
 
 .docs-dropzone {
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed var(--ui-border-strong);
   border-radius: 18px;
   padding: 24px 16px;
   cursor: pointer;
   transition: all 0.15s ease;
-  background: #f8fafc;
+  background: var(--ui-surface-subtle);
 }
 
 .docs-dropzone-dragging {
   border-color: #2563eb;
-  background: #eff6ff;
+  background: var(--accent-light);
 }
 
 .docs-dropzone-selected {
-  border-color: #86efac;
-  background: #f0fdf4;
+  border-color: var(--status-approved-border);
+  background: var(--status-approved-bg);
 }
 
 .docs-dropzone-error {
@@ -1460,8 +1460,8 @@ const documentsPageCss = `
   width: 42px;
   height: 42px;
   border-radius: 14px;
-  border: 1px solid #bbf7d0;
-  background: #ffffff;
+  border: 1px solid var(--status-approved-border);
+  background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1486,15 +1486,15 @@ const documentsPageCss = `
   margin-top: 3px;
   font-size: 12px;
   font-weight: 700;
-  color: #64748b;
+  color: var(--ui-text-muted);
 }
 
 .docs-remove-file-btn {
   height: 30px;
   padding: 0 10px;
   border-radius: 10px;
-  border: 1px solid #fecaca;
-  background: #fef2f2;
+  border: 1px solid var(--status-rejected-border);
+  background: var(--status-rejected-bg);
   color: #dc2626;
   font-size: 12px;
   font-weight: 900;
@@ -1511,9 +1511,9 @@ const documentsPageCss = `
   height: 48px;
   margin: 0 auto 10px;
   border-radius: 16px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: #94a3b8;
+  background: var(--surface);
+  border: 1px solid var(--ui-border);
+  color: var(--ui-text-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1522,7 +1522,7 @@ const documentsPageCss = `
 .docs-drop-title {
   font-size: 13.5px;
   font-weight: 900;
-  color: #475569;
+  color: var(--ui-text-body);
 }
 
 .docs-drop-title span {
@@ -1533,15 +1533,15 @@ const documentsPageCss = `
   margin-top: 5px;
   font-size: 12px;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--ui-text-subtle);
 }
 
 .docs-modal-footer {
   position: sticky;
   bottom: 0;
   padding: 16px 22px;
-  border-top: 1px solid #e8edf4;
-  background: #fbfdff;
+  border-top: 1px solid var(--ui-border-soft);
+  background: var(--ui-surface-soft);
   display: flex;
   justify-content: flex-end;
   gap: 10px;
@@ -1564,9 +1564,9 @@ const documentsPageCss = `
 }
 
 .docs-secondary-btn {
-  border: 1px solid #dbe3ef;
-  background: #ffffff;
-  color: #475569;
+  border: 1px solid var(--ui-border-strong);
+  background: var(--surface);
+  color: var(--ui-text-body);
 }
 
 .docs-primary-btn {
@@ -1605,8 +1605,8 @@ const documentsPageCss = `
   width: 420px;
   max-width: 100%;
   border-radius: 24px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
+  border: 1px solid var(--ui-border);
+  background: var(--surface);
   padding: 24px;
   box-shadow: 0 28px 80px rgba(15,23,42,0.24);
 }
@@ -1622,8 +1622,8 @@ const documentsPageCss = `
   width: 46px;
   height: 46px;
   border-radius: 16px;
-  border: 1px solid #fecaca;
-  background: #fef2f2;
+  border: 1px solid var(--status-rejected-border);
+  background: var(--status-rejected-bg);
   color: #dc2626;
   display: flex;
   align-items: center;
@@ -1633,21 +1633,21 @@ const documentsPageCss = `
 .docs-delete-title {
   font-size: 17px;
   font-weight: 950;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .docs-delete-subtitle {
   margin-top: 3px;
   font-size: 12.5px;
   font-weight: 750;
-  color: #94a3b8;
+  color: var(--ui-text-subtle);
 }
 
 .docs-delete-text {
   margin: 0 0 22px;
   font-size: 13.5px;
   font-weight: 650;
-  color: #475569;
+  color: var(--ui-text-body);
   line-height: 1.7;
 }
 

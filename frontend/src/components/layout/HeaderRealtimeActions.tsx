@@ -54,12 +54,12 @@ function HeaderButton({
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-1px)';
         e.currentTarget.style.boxShadow = '0 10px 22px rgba(15,23,42,0.12)';
-        e.currentTarget.style.borderColor = '#bfdbfe';
+        e.currentTarget.style.borderColor = 'var(--status-processing-border)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
         e.currentTarget.style.boxShadow = '0 8px 18px rgba(15,23,42,0.08)';
-        e.currentTarget.style.borderColor = '#e2e8f0';
+        e.currentTarget.style.borderColor = 'var(--ui-border)';
       }}
     >
       {children}
@@ -143,8 +143,8 @@ const buttonStyle: CSSProperties = {
   width: 54,
   height: 54,
   borderRadius: 18,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--surface)',
   color: '#1e3a5f',
   display: 'inline-flex',
   alignItems: 'center',

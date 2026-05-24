@@ -56,23 +56,23 @@ function statusStyle(status?: string): CSSProperties {
 
   switch (status) {
     case 'pending':
-      return { ...base, background: '#fffbeb', color: '#b45309', border: '1px solid #fde68a' };
+      return { ...base, background: 'var(--status-pending-bg)', color: '#b45309', border: '1px solid var(--status-pending-border)' };
     case 'approved':
-      return { ...base, background: '#f0fdf4', color: '#15803d', border: '1px solid #bbf7d0' };
+      return { ...base, background: 'var(--status-approved-bg)', color: '#15803d', border: '1px solid var(--status-approved-border)' };
     case 'processing':
-      return { ...base, background: '#eef2ff', color: '#4338ca', border: '1px solid #c7d2fe' };
+      return { ...base, background: 'var(--status-processing-bg)', color: '#4338ca', border: '1px solid var(--status-processing-border)' };
     case 'pre_admission':
-      return { ...base, background: '#faf5ff', color: '#7e22ce', border: '1px solid #e9d5ff' };
+      return { ...base, background: 'var(--status-pre-bg)', color: '#7e22ce', border: '1px solid var(--status-pre-border)' };
     case 'admitted':
-      return { ...base, background: '#f0fdfa', color: '#0f766e', border: '1px solid #99f6e4' };
+      return { ...base, background: 'var(--status-admitted-bg)', color: '#0f766e', border: '1px solid var(--status-admitted-border)' };
     case 'rejected':
-      return { ...base, background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' };
+      return { ...base, background: 'var(--status-rejected-bg)', color: '#dc2626', border: '1px solid var(--status-rejected-border)' };
     case 'revoked':
-      return { ...base, background: '#fff7ed', color: '#c2410c', border: '1px solid #fed7aa' };
+      return { ...base, background: 'var(--status-revoked-bg)', color: '#c2410c', border: '1px solid var(--status-revoked-border)' };
     case 'draft':
-      return { ...base, background: '#f8fafc', color: '#64748b', border: '1px solid #e2e8f0' };
+      return { ...base, background: 'var(--ui-surface-subtle)', color: 'var(--ui-text-muted)', border: '1px solid var(--ui-border)' };
     default:
-      return { ...base, background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0' };
+      return { ...base, background: 'var(--ui-surface-subtle)', color: 'var(--ui-text-body)', border: '1px solid var(--ui-border)' };
   }
 }
 
@@ -92,7 +92,7 @@ function statusDot(status?: string): CSSProperties {
       ? '#ef4444'
       : status === 'revoked'
       ? '#ea580c'
-      : '#94a3b8';
+      : 'var(--ui-text-subtle)';
 
   return {
     width: 7,
@@ -129,10 +129,10 @@ function ActionBtn({
 }) {
   const toneStyle =
     tone === 'red'
-      ? { color: '#dc2626', bg: '#fef2f2', border: '#fecaca' }
+      ? { color: '#dc2626', bg: 'var(--status-rejected-bg)', border: 'var(--status-rejected-border)' }
       : tone === 'amber'
-      ? { color: '#b45309', bg: '#fffbeb', border: '#fde68a' }
-      : { color: '#1d4ed8', bg: '#eff6ff', border: '#bfdbfe' };
+      ? { color: '#b45309', bg: 'var(--status-pending-bg)', border: 'var(--status-pending-border)' }
+      : { color: '#1d4ed8', bg: 'var(--accent-light)', border: 'var(--status-processing-border)' };
 
   return (
     <button
@@ -185,9 +185,9 @@ function PageButton({
         height: 34,
         minWidth: 34,
         borderRadius: 11,
-        border: '1px solid #dbe3ef',
-        background: '#ffffff',
-        color: '#475569',
+        border: '1px solid var(--ui-border-strong)',
+        background: 'var(--surface)',
+        color: 'var(--ui-text-body)',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -344,7 +344,7 @@ export default function StudentsPage() {
                 left: 14,
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#94a3b8',
+                color: 'var(--ui-text-subtle)',
                 pointerEvents: 'none',
               }}
             />
@@ -413,9 +413,9 @@ export default function StudentsPage() {
 
         {hasFilters && (
           <div style={activeFilterBarStyle}>
-            <Filter size={14} style={{ color: '#64748b' }} />
+            <Filter size={14} style={{ color: 'var(--ui-text-muted)' }} />
 
-            <span style={{ fontSize: 12.5, fontWeight: 800, color: '#64748b' }}>
+            <span style={{ fontSize: 12.5, fontWeight: 800, color: 'var(--ui-text-muted)' }}>
               Active filters:
             </span>
 
@@ -460,7 +460,7 @@ export default function StudentsPage() {
                           style={{
                             height: 14,
                             width: j === 3 ? 130 : j === 5 ? 110 : 86,
-                            background: '#e2e8f0',
+                            background: 'var(--ui-border)',
                             borderRadius: 999,
                             opacity: 0.75,
                           }}
@@ -538,7 +538,7 @@ export default function StudentsPage() {
 
                       <td style={bodyTdStyle}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <GraduationCap size={15} style={{ color: '#94a3b8', flexShrink: 0 }} />
+                          <GraduationCap size={15} style={{ color: 'var(--ui-text-subtle)', flexShrink: 0 }} />
 
                           <span style={normalTextStyle}>
                             {student.degree_level ? DEGREE_LABELS[student.degree_level] : '-'}
@@ -598,7 +598,7 @@ export default function StudentsPage() {
           {!isLoading && students.length === 0 && (
             <div style={emptyStateStyle}>
               <div style={emptyIconStyle}>
-                <FileText size={34} style={{ color: '#94a3b8' }} />
+                <FileText size={34} style={{ color: 'var(--ui-text-subtle)' }} />
               </div>
 
               <div style={emptyTitleStyle}>No records found</div>
@@ -696,7 +696,7 @@ const pageStyle: CSSProperties = {
   flexDirection: 'column',
   padding: '18px 24px 22px',
   background:
-    'radial-gradient(circle at top left, rgba(37,99,235,0.055), transparent 34%), linear-gradient(180deg, #f8fafc 0%, #eef3f9 100%)',
+    'radial-gradient(circle at top left, rgba(37,99,235,0.055), transparent 34%), linear-gradient(180deg, var(--ui-surface-subtle) 0%, var(--surface-muted) 100%)',
 };
 
 const headerCardStyle: CSSProperties = {
@@ -704,8 +704,8 @@ const headerCardStyle: CSSProperties = {
   marginBottom: 16,
   padding: '20px 22px',
   borderRadius: 24,
-  border: '1px solid #e2e8f0',
-  background: 'rgba(255,255,255,0.94)',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--surface-soft)',
   boxShadow: '0 18px 42px rgba(15,23,42,0.055)',
   display: 'flex',
   alignItems: 'center',
@@ -717,8 +717,8 @@ const headerIconStyle: CSSProperties = {
   width: 52,
   height: 52,
   borderRadius: 17,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: '1px solid var(--status-processing-border)',
+  background: 'var(--accent-light)',
   color: '#2563eb',
   display: 'flex',
   alignItems: 'center',
@@ -729,7 +729,7 @@ const headerIconStyle: CSSProperties = {
 const pageTitleStyle: CSSProperties = {
   fontSize: 22,
   fontWeight: 950,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   letterSpacing: '-0.045em',
 };
 
@@ -740,7 +740,7 @@ const pageSubtitleStyle: CSSProperties = {
   gap: 7,
   fontSize: 13,
   fontWeight: 750,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
 };
 
 const addBtnStyle: CSSProperties = {
@@ -766,8 +766,8 @@ const cardStyle: CSSProperties = {
   minHeight: 0,
   overflow: 'hidden',
   borderRadius: 24,
-  border: '1px solid #e2e8f0',
-  background: 'rgba(255,255,255,0.96)',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--surface)',
   boxShadow: '0 18px 42px rgba(15,23,42,0.055)',
   display: 'flex',
   flexDirection: 'column',
@@ -776,8 +776,8 @@ const cardStyle: CSSProperties = {
 const filterBarStyle: CSSProperties = {
   flexShrink: 0,
   padding: 16,
-  borderBottom: '1px solid #e8edf4',
-  background: '#ffffff',
+  borderBottom: '1px solid var(--ui-border-soft)',
+  background: 'var(--surface)',
   display: 'grid',
   gridTemplateColumns: 'minmax(260px, 1fr) 170px 150px auto',
   gap: 12,
@@ -793,13 +793,13 @@ const searchInputStyle: CSSProperties = {
   width: '100%',
   height: 42,
   borderRadius: 14,
-  border: '1px solid #cbd5e1',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border-strong)',
+  background: 'var(--surface)',
   padding: '0 38px 0 40px',
   outline: 'none',
   fontSize: 13,
   fontWeight: 700,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   fontFamily: 'inherit',
   boxSizing: 'border-box',
 };
@@ -811,7 +811,7 @@ const clearSearchStyle: CSSProperties = {
   transform: 'translateY(-50%)',
   border: 'none',
   background: 'transparent',
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   cursor: 'pointer',
   display: 'inline-flex',
   padding: 0,
@@ -821,13 +821,13 @@ const selectStyle: CSSProperties = {
   width: '100%',
   height: 42,
   borderRadius: 14,
-  border: '1px solid #cbd5e1',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border-strong)',
+  background: 'var(--surface)',
   padding: '0 13px',
   outline: 'none',
   fontSize: 13,
   fontWeight: 800,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   fontFamily: 'inherit',
   boxSizing: 'border-box',
 };
@@ -836,8 +836,8 @@ const clearFilterBtnStyle: CSSProperties = {
   height: 42,
   padding: '0 14px',
   borderRadius: 14,
-  border: '1px solid #fecaca',
-  background: '#fef2f2',
+  border: '1px solid var(--status-rejected-border)',
+  background: 'var(--status-rejected-bg)',
   color: '#dc2626',
   fontSize: 13,
   fontWeight: 900,
@@ -852,8 +852,8 @@ const clearFilterBtnStyle: CSSProperties = {
 const activeFilterBarStyle: CSSProperties = {
   flexShrink: 0,
   padding: '10px 16px',
-  background: '#f8fafc',
-  borderBottom: '1px solid #e8edf4',
+  background: 'var(--ui-surface-subtle)',
+  borderBottom: '1px solid var(--ui-border-soft)',
   display: 'flex',
   alignItems: 'center',
   gap: 8,
@@ -863,8 +863,8 @@ const activeFilterBarStyle: CSSProperties = {
 const filterChipStyle: CSSProperties = {
   height: 26,
   borderRadius: 999,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: '1px solid var(--status-processing-border)',
+  background: 'var(--accent-light)',
   color: '#1d4ed8',
   display: 'inline-flex',
   alignItems: 'center',
@@ -896,16 +896,16 @@ const fullScreenStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   padding: '18px 24px 22px',
-  background: 'radial-gradient(circle at top left, rgba(37,99,235,0.055), transparent 34%), linear-gradient(180deg, #f8fafc 0%, #eef3f9 100%)',
+  background: 'radial-gradient(circle at top left, rgba(37,99,235,0.055), transparent 34%), linear-gradient(180deg, var(--ui-surface-subtle) 0%, var(--surface-muted) 100%)',
 };
 
 const fullScreenBtnStyle: CSSProperties = {
   height: 44,
   padding: '0 16px',
   borderRadius: 14,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
-  color: '#475569',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--surface)',
+  color: 'var(--ui-text-body)',
   fontSize: 13.5,
   fontWeight: 650,
   cursor: 'pointer',
@@ -935,29 +935,29 @@ const thStyle: CSSProperties = {
   position: 'sticky',
   top: 0,
   zIndex: 5,
-  background: '#f8fafc',
-  borderTop: '1px solid #e2e8f0',
-  borderBottom: '1px solid #e2e8f0',
+  background: 'var(--ui-surface-subtle)',
+  borderTop: '1px solid var(--ui-border)',
+  borderBottom: '1px solid var(--ui-border)',
   padding: '13px 14px',
   textAlign: 'left',
   fontSize: 11,
   fontWeight: 950,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
   textTransform: 'uppercase',
   letterSpacing: '0.065em',
   whiteSpace: 'nowrap',
 };
 
 const rowStyle: CSSProperties = {
-  background: '#ffffff',
+  background: 'var(--surface)',
   boxShadow: '0 8px 20px rgba(15,23,42,0.04)',
 };
 
 const bodyTdStyle: CSSProperties = {
   padding: '16px 14px',
-  background: '#ffffff',
-  borderTop: '1px solid #e8edf4',
-  borderBottom: '1px solid #e8edf4',
+  background: 'var(--surface)',
+  borderTop: '1px solid var(--ui-border-soft)',
+  borderBottom: '1px solid var(--ui-border-soft)',
   verticalAlign: 'middle',
 };
 
@@ -965,14 +965,14 @@ const firstTdStyle: CSSProperties = {
   ...bodyTdStyle,
   borderTopLeftRadius: 18,
   borderBottomLeftRadius: 18,
-  borderLeft: '1px solid #e8edf4',
+  borderLeft: '1px solid var(--ui-border-soft)',
 };
 
 const lastTdStyle: CSSProperties = {
   ...bodyTdStyle,
   borderTopRightRadius: 18,
   borderBottomRightRadius: 18,
-  borderRight: '1px solid #e8edf4',
+  borderRight: '1px solid var(--ui-border-soft)',
 };
 
 const appNoStyle: CSSProperties = {
@@ -982,8 +982,8 @@ const appNoStyle: CSSProperties = {
   overflow: 'hidden',
   padding: '5px 9px',
   borderRadius: 999,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: '1px solid var(--status-processing-border)',
+  background: 'var(--accent-light)',
   color: '#1d4ed8',
   fontSize: 11.5,
   fontWeight: 950,
@@ -995,7 +995,7 @@ const appNoStyle: CSSProperties = {
 const strongTextStyle: CSSProperties = {
   fontSize: 13,
   fontWeight: 900,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   lineHeight: 1.35,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -1006,7 +1006,7 @@ const smallMutedStyle: CSSProperties = {
   marginTop: 2,
   fontSize: 11,
   fontWeight: 700,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   lineHeight: 1.35,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -1017,7 +1017,7 @@ const smallMutedStyle: CSSProperties = {
 const monoTextStyle: CSSProperties = {
   fontSize: 12.5,
   fontWeight: 800,
-  color: '#475569',
+  color: 'var(--ui-text-body)',
   fontFamily: 'Inter, sans-serif',
   whiteSpace: 'nowrap',
 };
@@ -1025,7 +1025,7 @@ const monoTextStyle: CSSProperties = {
 const normalTextStyle: CSSProperties = {
   fontSize: 12.5,
   fontWeight: 750,
-  color: '#475569',
+  color: 'var(--ui-text-body)',
   lineHeight: 1.45,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -1037,9 +1037,9 @@ const studentAvatarStyle: CSSProperties = {
   width: 34,
   height: 34,
   borderRadius: 12,
-  border: '1px solid #e2e8f0',
-  background: '#f8fafc',
-  color: '#64748b',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--ui-surface-subtle)',
+  color: 'var(--ui-text-muted)',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1049,7 +1049,7 @@ const studentAvatarStyle: CSSProperties = {
 const studentNameStyle: CSSProperties = {
   fontSize: 13,
   fontWeight: 950,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -1059,7 +1059,7 @@ const lineClampStyle: CSSProperties = {
   maxWidth: '100%',
   fontSize: 12.5,
   fontWeight: 750,
-  color: '#475569',
+  color: 'var(--ui-text-body)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -1072,8 +1072,8 @@ const priorityHighStyle: CSSProperties = {
   height: 28,
   padding: '0 10px',
   borderRadius: 999,
-  border: '1px solid #fecaca',
-  background: '#fef2f2',
+  border: '1px solid var(--status-rejected-border)',
+  background: 'var(--status-rejected-bg)',
   color: '#dc2626',
   fontSize: 12,
   fontWeight: 950,
@@ -1088,9 +1088,9 @@ const priorityNormalStyle: CSSProperties = {
   height: 28,
   padding: '0 10px',
   borderRadius: 999,
-  border: '1px solid #e2e8f0',
-  background: '#f8fafc',
-  color: '#64748b',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--ui-surface-subtle)',
+  color: 'var(--ui-text-muted)',
   fontSize: 12,
   fontWeight: 850,
   whiteSpace: 'nowrap',
@@ -1115,8 +1115,8 @@ const emptyIconStyle: CSSProperties = {
   height: 74,
   margin: '0 auto 16px',
   borderRadius: 24,
-  border: '1px solid #e2e8f0',
-  background: '#f8fafc',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--ui-surface-subtle)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1125,14 +1125,14 @@ const emptyIconStyle: CSSProperties = {
 const emptyTitleStyle: CSSProperties = {
   fontSize: 17,
   fontWeight: 950,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
 };
 
 const emptySubtitleStyle: CSSProperties = {
   marginTop: 7,
   fontSize: 13,
   fontWeight: 700,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
 };
 
 const emptyActionStyle: CSSProperties = {
@@ -1140,8 +1140,8 @@ const emptyActionStyle: CSSProperties = {
   height: 38,
   padding: '0 15px',
   borderRadius: 13,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: '1px solid var(--status-processing-border)',
+  background: 'var(--accent-light)',
   color: '#1d4ed8',
   fontSize: 13,
   fontWeight: 900,
@@ -1152,8 +1152,8 @@ const emptyActionStyle: CSSProperties = {
 const paginationStyle: CSSProperties = {
   flexShrink: 0,
   padding: '13px 16px',
-  borderTop: '1px solid #e8edf4',
-  background: '#ffffff',
+  borderTop: '1px solid var(--ui-border-soft)',
+  background: 'var(--surface)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -1163,7 +1163,7 @@ const paginationStyle: CSSProperties = {
 const paginationTextStyle: CSSProperties = {
   fontSize: 12.5,
   fontWeight: 750,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
 };
 
 const pageNumberStyle: CSSProperties = {
@@ -1171,9 +1171,9 @@ const pageNumberStyle: CSSProperties = {
   height: 34,
   padding: '0 12px',
   borderRadius: 11,
-  border: '1px solid #dbe3ef',
-  background: '#f8fafc',
-  color: '#334155',
+  border: '1px solid var(--ui-border-strong)',
+  background: 'var(--ui-surface-subtle)',
+  color: 'var(--ui-text-strong)',
   fontSize: 12.5,
   fontWeight: 900,
   display: 'inline-flex',
@@ -1195,8 +1195,8 @@ const modalOverlayStyle: CSSProperties = {
 const modalCardStyle: CSSProperties = {
   width: 410,
   borderRadius: 24,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--surface)',
   padding: 24,
   boxShadow: '0 24px 60px rgba(15,23,42,0.22)',
 };
@@ -1205,8 +1205,8 @@ const deleteIconStyle: CSSProperties = {
   width: 46,
   height: 46,
   borderRadius: 16,
-  background: '#fef2f2',
-  border: '1px solid #fecaca',
+  background: 'var(--status-rejected-bg)',
+  border: '1px solid var(--status-rejected-border)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1216,21 +1216,21 @@ const deleteIconStyle: CSSProperties = {
 const modalTitleStyle: CSSProperties = {
   fontSize: 17,
   fontWeight: 950,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
 };
 
 const modalSubtitleStyle: CSSProperties = {
   marginTop: 3,
   fontSize: 12.5,
   fontWeight: 750,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
 };
 
 const modalTextStyle: CSSProperties = {
   margin: '0 0 22px',
   fontSize: 13.5,
   fontWeight: 650,
-  color: '#475569',
+  color: 'var(--ui-text-body)',
   lineHeight: 1.7,
 };
 
@@ -1238,9 +1238,9 @@ const cancelBtnStyle: CSSProperties = {
   flex: 1,
   height: 42,
   borderRadius: 14,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
-  color: '#475569',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--surface)',
+  color: 'var(--ui-text-body)',
   fontSize: 13,
   fontWeight: 900,
   cursor: 'pointer',

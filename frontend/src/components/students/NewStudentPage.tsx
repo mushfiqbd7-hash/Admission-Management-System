@@ -11,7 +11,7 @@ export default function NewStudentPage() {
         flexDirection: 'column',
         overflow: 'hidden',
         background:
-          'radial-gradient(circle at top left, rgba(37,99,235,0.055), transparent 34%), linear-gradient(180deg, #f8fafc 0%, #eef3f9 100%)',
+          'radial-gradient(circle at top left, rgba(37,99,235,0.055), transparent 34%), linear-gradient(180deg, var(--ui-surface-subtle) 0%, var(--surface-muted) 100%)',
       }}
     >
       <div
@@ -28,8 +28,8 @@ export default function NewStudentPage() {
             minHeight: 0,
             overflow: 'hidden',
             borderRadius: 24,
-            border: '1px solid #e2e8f0',
-            background: '#ffffff',
+            border: '1px solid var(--ui-border)',
+            background: 'var(--surface)',
             boxShadow: '0 18px 42px rgba(15, 23, 42, 0.055)',
           }}
         >

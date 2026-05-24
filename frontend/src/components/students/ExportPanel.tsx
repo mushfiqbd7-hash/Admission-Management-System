@@ -31,13 +31,13 @@ type ExportPanelProps = {
 };
 
 const STATUSES: StatusConfig[] = [
-  { key: 'all', label: 'Total', color: '#1d4ed8', bg: '#eff6ff', dot: '#2563eb' },
-  { key: 'approved', label: 'Approved', color: '#15803d', bg: '#f0fdf4', dot: '#16a34a' },
-  { key: 'rejected', label: 'Rejected', color: '#dc2626', bg: '#fef2f2', dot: '#dc2626' },
-  { key: 'processing', label: 'Processing', color: '#4338ca', bg: '#eef2ff', dot: '#4f46e5' },
-  { key: 'pre_admission', label: 'Pre Admission', color: '#0e7490', bg: '#ecfeff', dot: '#0891b2' },
-  { key: 'admitted', label: 'Admitted', color: '#0f766e', bg: '#f0fdfa', dot: '#0f766e' },
-  { key: 'revoked', label: 'Revoked', color: '#c2410c', bg: '#fff7ed', dot: '#ea580c' },
+  { key: 'all', label: 'Total', color: '#1d4ed8', bg: 'var(--accent-light)', dot: '#2563eb' },
+  { key: 'approved', label: 'Approved', color: '#15803d', bg: 'var(--status-approved-bg)', dot: '#16a34a' },
+  { key: 'rejected', label: 'Rejected', color: '#dc2626', bg: 'var(--status-rejected-bg)', dot: '#dc2626' },
+  { key: 'processing', label: 'Processing', color: '#4338ca', bg: 'var(--status-processing-bg)', dot: '#4f46e5' },
+  { key: 'pre_admission', label: 'Pre Admission', color: '#0e7490', bg: 'var(--status-admitted-bg)', dot: '#0891b2' },
+  { key: 'admitted', label: 'Admitted', color: '#0f766e', bg: 'var(--status-admitted-bg)', dot: '#0f766e' },
+  { key: 'revoked', label: 'Revoked', color: '#c2410c', bg: 'var(--status-revoked-bg)', dot: '#ea580c' },
 ];
 
 function statusLabel(s: string) {
@@ -572,7 +572,7 @@ export default function ExportPanel({ sourceRows = [] }: ExportPanelProps) {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               {loading && (
-                <span style={{ fontSize: 12, color: '#64748b', fontWeight: 700 }}>
+                <span style={{ fontSize: 12, color: 'var(--ui-text-muted)', fontWeight: 700 }}>
                   Loading data…
                 </span>
               )}
@@ -598,8 +598,8 @@ export default function ExportPanel({ sourceRows = [] }: ExportPanelProps) {
                     onClick={() => setSelectedStatus(active ? '' : st.key)}
                     style={{
                       ...statusCardStyle,
-                      borderColor: active ? '#93c5fd' : '#e2e8f0',
-                      background: active ? '#eff6ff' : '#ffffff',
+                      borderColor: active ? '#93c5fd' : 'var(--ui-border)',
+                      background: active ? 'var(--accent-light)' : 'var(--surface)',
                       boxShadow: active
                         ? '0 10px 22px rgba(37,99,235,0.10)'
                         : '0 8px 18px rgba(15,23,42,0.035)',
@@ -673,8 +673,8 @@ export default function ExportPanel({ sourceRows = [] }: ExportPanelProps) {
                   disabled={!criteriaActive || loading || filteredCount === 0}
                   style={{
                     ...exportBtnStyle,
-                    border: '1px solid #bbf7d0',
-                    background: '#ecfdf5',
+                    border: '1px solid var(--status-approved-border)',
+                    background: 'var(--status-approved-bg)',
                     color: '#15803d',
                     opacity: !criteriaActive || loading || filteredCount === 0 ? 0.5 : 1,
                     cursor:
@@ -692,8 +692,8 @@ export default function ExportPanel({ sourceRows = [] }: ExportPanelProps) {
                   disabled={!criteriaActive || loading || filteredCount === 0}
                   style={{
                     ...exportBtnStyle,
-                    border: '1px solid #bfdbfe',
-                    background: '#eff6ff',
+                    border: '1px solid var(--status-processing-border)',
+                    background: 'var(--accent-light)',
                     color: '#1d4ed8',
                     opacity: !criteriaActive || loading || filteredCount === 0 ? 0.5 : 1,
                     cursor:
@@ -770,8 +770,8 @@ const closedButtonStyle: CSSProperties = {
   padding: '9px 18px',
   borderRadius: 12,
   cursor: 'pointer',
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: '1px solid var(--status-processing-border)',
+  background: 'var(--accent-light)',
   color: '#1d4ed8',
   fontSize: 13,
   fontWeight: 900,
@@ -780,8 +780,8 @@ const closedButtonStyle: CSSProperties = {
 };
 
 const panelStyle: CSSProperties = {
-  background: 'rgba(255,255,255,0.94)',
-  border: '1px solid #e2e8f0',
+  background: 'var(--surface-soft)',
+  border: '1px solid var(--ui-border)',
   borderRadius: 22,
   boxShadow: '0 18px 44px rgba(15,23,42,0.08)',
   overflow: 'hidden',
@@ -799,8 +799,8 @@ const reportIconBoxStyle: CSSProperties = {
   width: 48,
   height: 48,
   borderRadius: 16,
-  background: '#eff6ff',
-  border: '1px solid #bfdbfe',
+  background: 'var(--accent-light)',
+  border: '1px solid var(--status-processing-border)',
   color: '#2563eb',
   display: 'flex',
   alignItems: 'center',
@@ -811,13 +811,13 @@ const reportIconBoxStyle: CSSProperties = {
 const titleStyle: CSSProperties = {
   fontSize: 17,
   fontWeight: 950,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   letterSpacing: '-0.03em',
 };
 
 const subtitleStyle: CSSProperties = {
   fontSize: 13,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   fontWeight: 700,
   marginTop: 3,
 };
@@ -827,9 +827,9 @@ const selectedPillStyle: CSSProperties = {
   minWidth: 92,
   padding: '0 14px',
   borderRadius: 999,
-  background: '#f8fafc',
-  border: '1px solid #dbe3ef',
-  color: '#475569',
+  background: 'var(--ui-surface-subtle)',
+  border: '1px solid var(--ui-border-strong)',
+  color: 'var(--ui-text-body)',
   fontSize: 13,
   fontWeight: 900,
   display: 'inline-flex',
@@ -842,7 +842,7 @@ const closeBtnStyle: CSSProperties = {
   padding: '0 18px',
   borderRadius: 14,
   border: 'none',
-  background: '#0f172a',
+  background: 'var(--text-primary)',
   color: '#ffffff',
   fontSize: 13,
   fontWeight: 900,
@@ -858,15 +858,15 @@ const statusGridStyle: CSSProperties = {
   gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
   gap: 12,
   paddingBottom: 18,
-  borderBottom: '1px solid #e8edf4',
+  borderBottom: '1px solid var(--ui-border-soft)',
 };
 
 const statusCardStyle: CSSProperties = {
   minHeight: 76,
   padding: '13px 14px',
   borderRadius: 16,
-  border: '1px solid #e2e8f0',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border)',
+  background: 'var(--surface)',
   cursor: 'pointer',
   textAlign: 'left',
   fontFamily: 'inherit',
@@ -890,14 +890,14 @@ const statusDotStyle: CSSProperties = {
 const statusNameStyle: CSSProperties = {
   fontSize: 12.5,
   fontWeight: 950,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   whiteSpace: 'nowrap',
 };
 
 const statusCountStyle: CSSProperties = {
   fontSize: 18,
   fontWeight: 950,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   lineHeight: 1,
 };
 
@@ -914,7 +914,7 @@ const filterLabelStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: 6,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
   fontSize: 12.5,
   fontWeight: 900,
 };
@@ -923,10 +923,10 @@ const filterInputStyle: CSSProperties = {
   width: '100%',
   height: 50,
   borderRadius: 14,
-  border: '1px solid #cbd5e1',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border-strong)',
+  background: 'var(--surface)',
   padding: '0 15px',
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   outline: 'none',
   fontSize: 13.5,
   fontWeight: 700,
@@ -938,10 +938,10 @@ const filterSelectStyle: CSSProperties = {
   width: '100%',
   height: 50,
   borderRadius: 14,
-  border: '1px solid #cbd5e1',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border-strong)',
+  background: 'var(--surface)',
   padding: '0 15px',
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   outline: 'none',
   fontSize: 13.5,
   fontWeight: 800,
@@ -952,8 +952,8 @@ const filterSelectStyle: CSSProperties = {
 const recordsReadyStyle: CSSProperties = {
   height: 50,
   borderRadius: 14,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
+  border: '1px solid var(--status-processing-border)',
+  background: 'var(--accent-light)',
   color: '#1d4ed8',
   padding: '0 16px',
   display: 'inline-flex',
@@ -969,8 +969,8 @@ const resetBtnStyle: CSSProperties = {
   height: 50,
   padding: '0 16px',
   borderRadius: 14,
-  border: '1px solid #fecaca',
-  background: '#fef2f2',
+  border: '1px solid var(--status-rejected-border)',
+  background: 'var(--status-rejected-bg)',
   color: '#dc2626',
   fontSize: 13,
   fontWeight: 900,
@@ -1006,7 +1006,7 @@ const activeTextStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: 8,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
   fontSize: 12.5,
   fontWeight: 700,
 };
