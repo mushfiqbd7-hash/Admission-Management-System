@@ -85,14 +85,14 @@
   --surface: #151a23; --surface-raised: #1b2230;
   --surface-sunken: #0f141d; --surface-hover: #232b3a;
   --surface-muted: #181f2b; --border: rgba(148,163,184,0.16);
-  --border-strong: rgba(148,163,184,0.24); --text-primary: #f4f7fb;
-  --text-secondary: #bac4d2; --text-tertiary: #8793a3;
+  --border-strong: rgba(148,163,184,0.24); --text-primary: #fbfcfe;
+  --text-secondary: #d2d9e5; --text-tertiary: #a5b0c1;
   --text-on-accent: #ffffff; --accent: #6aa6ff;
   --accent-hover: #8bbaff; --accent-light: rgba(96,165,250,0.14);
   --sidebar-bg: linear-gradient(180deg, #090d14 0%, #0d1420 50%, #090d14 100%);
   --sidebar-border: rgba(148,163,184,0.14);
-  --sidebar-text: #aeb9c9;
-  --sidebar-muted: #687589;
+  --sidebar-text: #d0d7e4;
+  --sidebar-muted: #96a2b4;
   --sidebar-footer-bg: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.22));
   --shadow-md: 0 16px 36px -22px rgba(0,0,0,0.78), 0 2px 10px rgba(0,0,0,0.34);
   --shadow-xl: 0 34px 90px -34px rgba(0,0,0,0.82), 0 12px 34px rgba(0,0,0,0.46);
@@ -232,8 +232,10 @@
 
 .dark .sams-app-shell [class*="text-slate-500"],
 .dark .sams-app-shell [class*="text-slate-400"],
+.dark .sams-app-shell [class*="text-slate-300"],
 .dark .sams-app-shell [class*="text-gray-500"],
-.dark .sams-app-shell [class*="text-gray-400"] {
+.dark .sams-app-shell [class*="text-gray-400"],
+.dark .sams-app-shell [class*="text-gray-300"] {
   color: var(--text-tertiary) !important;
 }
 
@@ -285,6 +287,22 @@
 .dark .sams-app-shell header h1 { color: var(--text-primary) !important; }
 .dark .sams-app-shell header p { color: var(--text-secondary) !important; }
 
+.dark .sams-app-shell h1,
+.dark .sams-app-shell h2,
+.dark .sams-app-shell h3,
+.dark .sams-app-shell h4,
+.dark .sams-app-shell strong,
+.dark .sams-app-shell b {
+  color: var(--text-primary) !important;
+}
+
+.dark .sams-app-shell p,
+.dark .sams-app-shell label,
+.dark .sams-app-shell td,
+.dark .sams-app-shell li {
+  color: inherit;
+}
+
 .dark .sams-app-shell .card,
 .dark .sams-app-shell [class*="shadow-"] {
   box-shadow: var(--sh-card) !important;
@@ -316,8 +334,14 @@
 .dark .sams-app-shell [style*="background: #ffffff"],
 .dark .sams-app-shell [style*="background: #fff"],
 .dark .sams-app-shell [style*="background: rgba(255, 255, 255"],
-.dark .sams-app-shell [style*="background: rgba(255,255,255"] {
+.dark .sams-app-shell [style*="background: rgba(255,255,255"],
+.dark .sams-app-shell [style*="background-color: rgb(255, 255, 255)"],
+.dark .sams-app-shell [style*="background-color: #ffffff"],
+.dark .sams-app-shell [style*="background-color: #fff"],
+.dark .sams-app-shell [style*="background-color: rgba(255, 255, 255"],
+.dark .sams-app-shell [style*="background-color: rgba(255,255,255"] {
   background: var(--surface) !important;
+  background-color: var(--surface) !important;
   border-color: var(--border) !important;
   color: var(--text-primary) !important;
 }
@@ -328,11 +352,26 @@
 .dark .sams-app-shell [style*="background: #eef2f7"],
 .dark .sams-app-shell [style*="background: #edf2f7"],
 .dark .sams-app-shell [style*="background: #e2e8f0"],
+.dark .sams-app-shell [style*="background: #f1f5f9"],
 .dark .sams-app-shell [class*="bg-[#f7f9fc]"],
 .dark .sams-app-shell [class*="bg-[#f8fafc]"],
+.dark .sams-app-shell [style*="background: rgb(251, 253, 255)"],
 .dark .sams-app-shell [style*="background: rgb(248, 251, 255)"],
-.dark .sams-app-shell [style*="background: rgb(238, 242, 247)"] {
+.dark .sams-app-shell [style*="background: rgb(238, 242, 247)"],
+.dark .sams-app-shell [style*="background: rgb(241, 245, 249)"],
+.dark .sams-app-shell [style*="background-color: rgb(248, 250, 252)"],
+.dark .sams-app-shell [style*="background-color: #f8fafc"],
+.dark .sams-app-shell [style*="background-color: #fbfdff"],
+.dark .sams-app-shell [style*="background-color: #eef2f7"],
+.dark .sams-app-shell [style*="background-color: #edf2f7"],
+.dark .sams-app-shell [style*="background-color: #e2e8f0"],
+.dark .sams-app-shell [style*="background-color: #f1f5f9"],
+.dark .sams-app-shell [style*="background-color: rgb(251, 253, 255)"],
+.dark .sams-app-shell [style*="background-color: rgb(248, 251, 255)"],
+.dark .sams-app-shell [style*="background-color: rgb(238, 242, 247)"],
+.dark .sams-app-shell [style*="background-color: rgb(241, 245, 249)"] {
   background: var(--surface-muted) !important;
+  background-color: var(--surface-muted) !important;
   border-color: var(--border) !important;
 }
 
@@ -368,10 +407,16 @@
 .dark .sams-app-shell [style*="border: 1px solid #e5eaf2"],
 .dark .sams-app-shell [style*="border: 1px solid #e8edf4"],
 .dark .sams-app-shell [style*="border: 1px solid #edf2f7"],
+.dark .sams-app-shell [style*="border: 1px solid #dbe3ef"],
+.dark .sams-app-shell [style*="border: 1px solid #dbeafe"],
 .dark .sams-app-shell [style*="border-color: rgb(226, 232, 240)"],
+.dark .sams-app-shell [style*="border-color: rgb(219, 227, 239)"],
+.dark .sams-app-shell [style*="border-color: rgb(219, 234, 254)"],
 .dark .sams-app-shell [style*="border-color: #e2e8f0"],
 .dark .sams-app-shell [style*="border-color: #e5eaf2"],
 .dark .sams-app-shell [style*="border-color: #e8edf4"],
+.dark .sams-app-shell [style*="border-color: #dbe3ef"],
+.dark .sams-app-shell [style*="border-color: #dbeafe"],
 .dark .sams-app-shell [style*="border-color: rgba(15, 23, 42"] {
   border-color: var(--border) !important;
 }
@@ -397,14 +442,20 @@
 
 .dark .sams-app-shell [style*="background: #eff6ff"],
 .dark .sams-app-shell [style*="background: rgb(239, 246, 255)"],
+.dark .sams-app-shell [style*="background-color: #eff6ff"],
+.dark .sams-app-shell [style*="background-color: rgb(239, 246, 255)"],
 .dark .sams-app-shell [class*="bg-blue-50"] {
   background: rgba(96,165,250,0.13) !important;
+  background-color: rgba(96,165,250,0.13) !important;
   border-color: rgba(96,165,250,0.28) !important;
 }
 
 .dark .sams-app-shell [style*="background: #eef2ff"],
-.dark .sams-app-shell [style*="background: rgb(238, 242, 255)"] {
+.dark .sams-app-shell [style*="background: rgb(238, 242, 255)"],
+.dark .sams-app-shell [style*="background-color: #eef2ff"],
+.dark .sams-app-shell [style*="background-color: rgb(238, 242, 255)"] {
   background: rgba(129,140,248,0.13) !important;
+  background-color: rgba(129,140,248,0.13) !important;
   border-color: rgba(129,140,248,0.28) !important;
 }
 
@@ -412,31 +463,49 @@
 .dark .sams-app-shell [style*="background: #ecfdf5"],
 .dark .sams-app-shell [style*="background: rgb(240, 253, 244)"],
 .dark .sams-app-shell [style*="background: rgb(236, 253, 245)"],
+.dark .sams-app-shell [style*="background-color: #f0fdf4"],
+.dark .sams-app-shell [style*="background-color: #ecfdf5"],
+.dark .sams-app-shell [style*="background-color: rgb(240, 253, 244)"],
+.dark .sams-app-shell [style*="background-color: rgb(236, 253, 245)"],
 .dark .sams-app-shell [class*="bg-green-50"] {
   background: rgba(34,197,94,0.12) !important;
+  background-color: rgba(34,197,94,0.12) !important;
   border-color: rgba(34,197,94,0.28) !important;
 }
 
 .dark .sams-app-shell [style*="background: #fef2f2"],
 .dark .sams-app-shell [style*="background: #fff1f2"],
 .dark .sams-app-shell [style*="background: rgb(254, 242, 242)"],
+.dark .sams-app-shell [style*="background-color: #fef2f2"],
+.dark .sams-app-shell [style*="background-color: #fff1f2"],
+.dark .sams-app-shell [style*="background-color: rgb(254, 242, 242)"],
 .dark .sams-app-shell [class*="bg-red-50"] {
   background: rgba(248,113,113,0.13) !important;
+  background-color: rgba(248,113,113,0.13) !important;
   border-color: rgba(248,113,113,0.28) !important;
 }
 
 .dark .sams-app-shell [style*="background: #fff7ed"],
 .dark .sams-app-shell [style*="background: #fef9ec"],
-.dark .sams-app-shell [style*="background: rgb(255, 247, 237)"] {
+.dark .sams-app-shell [style*="background: rgb(255, 247, 237)"],
+.dark .sams-app-shell [style*="background-color: #fff7ed"],
+.dark .sams-app-shell [style*="background-color: #fef9ec"],
+.dark .sams-app-shell [style*="background-color: rgb(255, 247, 237)"] {
   background: rgba(251,146,60,0.13) !important;
+  background-color: rgba(251,146,60,0.13) !important;
   border-color: rgba(251,146,60,0.30) !important;
 }
 
 .dark .sams-app-shell [style*="background: #ecfeff"],
 .dark .sams-app-shell [style*="background: #f0fdfa"],
 .dark .sams-app-shell [style*="background: rgb(236, 254, 255)"],
-.dark .sams-app-shell [style*="background: rgb(240, 253, 250)"] {
+.dark .sams-app-shell [style*="background: rgb(240, 253, 250)"],
+.dark .sams-app-shell [style*="background-color: #ecfeff"],
+.dark .sams-app-shell [style*="background-color: #f0fdfa"],
+.dark .sams-app-shell [style*="background-color: rgb(236, 254, 255)"],
+.dark .sams-app-shell [style*="background-color: rgb(240, 253, 250)"] {
   background: rgba(45,212,191,0.12) !important;
+  background-color: rgba(45,212,191,0.12) !important;
   border-color: rgba(45,212,191,0.28) !important;
 }
 
