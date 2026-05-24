@@ -1,8 +1,15 @@
 // src/components/auth/RegisterPage.tsx
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Eye, EyeOff, AlertCircle, MailCheck, User, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, MailCheck, User, Mail, Lock, GraduationCap } from 'lucide-react';
 import { authApi } from '@/api/client';
+
+// Cinematic campus video sources — same pool as LoginPage
+const VIDEO_SOURCES = [
+  'https://videos.pexels.com/video-files/3195394/3195394-hd_1920_1080_25fps.mp4',
+  'https://videos.pexels.com/video-files/5198553/5198553-hd_1920_1080_30fps.mp4',
+  'https://videos.pexels.com/video-files/3990862/3990862-hd_1920_1080_30fps.mp4',
+];
 
 interface RegisterForm {
   full_name: string;
@@ -25,8 +32,31 @@ export default function RegisterPage() {
   const [error,           setError]           = useState('');
   const [registered,      setRegistered]      = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState('');
+  const [videoLoaded,     setVideoLoaded]     = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const [form, setForm] = useState<RegisterForm>({ full_name: '', email: '', password: '' });
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    let idx = 0;
+    const tryNext = () => {
+      if (idx >= VIDEO_SOURCES.length) return;
+      v.src = VIDEO_SOURCES[idx];
+      v.load();
+      idx++;
+    };
+    v.addEventListener('error', tryNext);
+    tryNext();
+    const btnShadow = [
+    '0 1px 0 rgba(255,255,255,0.18) inset',
+    '0 10px 20px -4px rgba(37,99,235,0.45)',
+    '0 2px 4px rgba(37,99,235,0.20)',
+  ].join(', ');
+
+  return () => v.removeEventListener('error', tryNext);
+  }, []);
 
   const set = (field: keyof RegisterForm) =>
     (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -62,70 +92,77 @@ export default function RegisterPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#050e1f',
+      position: 'relative',
+      overflow: 'hidden',
       display: 'grid',
       gridTemplateColumns: 'minmax(0,1fr) 520px',
       color: '#fff',
       fontFamily: 'Inter, sans-serif',
     }}>
-      {/* LEFT hero */}
-      <div style={{ position: 'relative', overflow: 'hidden' }}
-           className="hidden md:block">
 
-        {/* Orb 1 */}
-        <div style={{
-          position: 'absolute', top: '-10%', left: '-5%',
-          width: 580, height: 580, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(99,102,241,0.45), transparent 60%)',
-          filter: 'blur(40px)',
-          animation: 'float 10s ease-in-out infinite',
-        }} />
-        {/* Orb 2 */}
-        <div style={{
-          position: 'absolute', bottom: '-15%', left: '25%',
-          width: 480, height: 480, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(59,130,246,0.35), transparent 60%)',
-          filter: 'blur(50px)',
-          animation: 'float 12s ease-in-out infinite reverse',
-        }} />
-        {/* Orb 3 */}
-        <div style={{
-          position: 'absolute', top: '35%', right: '-8%',
-          width: 380, height: 380, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(168,85,247,0.20), transparent 60%)',
-          filter: 'blur(40px)',
-          animation: 'float 14s ease-in-out infinite',
-        }} />
-
-        {/* Grid overlay */}
-        <div style={{
+      {/* ── CINEMATIC VIDEO BACKGROUND ── */}
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        onCanPlay={() => setVideoLoaded(true)}
+        style={{
           position: 'absolute', inset: 0,
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),' +
-            'linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }} />
+          width: '100%', height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+          opacity: videoLoaded ? 1 : 0,
+          transition: 'opacity 1.2s ease',
+        }}
+      />
 
+      {/* Fallback gradient while video loads */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+        background: 'linear-gradient(135deg, #0a0f1e 0%, #0d1a2e 50%, #0a0f1e 100%)',
+        opacity: videoLoaded ? 0 : 1,
+        transition: 'opacity 1.2s ease',
+      }} />
+
+      {/* Cinematic dark overlay */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 1,
+        background: 'linear-gradient(to right, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.38) 50%, rgba(0,0,0,0.72) 100%)',
+      }} />
+
+      {/* Vignette */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 1,
+        background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* LEFT hero */}
+      <div
+        style={{ position: 'relative', zIndex: 2 }}
+        className="hidden md:block"
+      >
         <div style={{
-          position: 'relative', zIndex: 1, height: '100%', padding: 48,
+          height: '100%', padding: 48,
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         }}>
-          {/* Brand mark */}
+          {/* Brand */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div style={{
               width: 48, height: 48, borderRadius: 14,
               background: 'linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06))',
-              border: '1px solid rgba(255,255,255,0.20)',
+              border: '1px solid rgba(255,255,255,0.25)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               backdropFilter: 'blur(20px)',
               boxShadow: '0 1px 0 rgba(255,255,255,0.20) inset, 0 8px 20px -4px rgba(0,0,0,0.40)',
-              fontSize: 20, fontWeight: 700, color: '#fff',
             }}>
-              S
+              <GraduationCap size={26} color="#fff" />
             </div>
             <div>
               <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>SAMS</div>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>Student Admission Management</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.60)' }}>Student Admission Management</div>
             </div>
           </div>
 
@@ -135,6 +172,7 @@ export default function RegisterPage() {
               margin: 0,
               fontSize: 64, fontWeight: 700, lineHeight: 1.0, letterSpacing: '-0.045em',
               color: '#fff',
+              textShadow: '0 2px 20px rgba(0,0,0,0.50)',
             }}>
               Join the team
               <br />
@@ -148,8 +186,9 @@ export default function RegisterPage() {
             </h1>
             <p style={{
               marginTop: 20, maxWidth: 480, fontSize: 16, fontWeight: 400,
-              lineHeight: 1.55, color: 'rgba(255,255,255,0.65)',
+              lineHeight: 1.55, color: 'rgba(255,255,255,0.82)',
               letterSpacing: '-0.005em',
+              textShadow: '0 1px 8px rgba(0,0,0,0.40)',
             }}>
               Create your account to start managing applications,
               <br />
@@ -161,16 +200,17 @@ export default function RegisterPage() {
 
       {/* RIGHT form panel */}
       <div style={{
-        position: 'relative',
-        background: '#070f23',
+        position: 'relative', zIndex: 2,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '40px',
-        borderLeft: '1px solid rgba(255,255,255,0.06)',
+        borderLeft: '1px solid rgba(255,255,255,0.08)',
+        background: 'rgba(0,0,0,0.18)',
+        backdropFilter: 'blur(2px)',
       }}>
-        {/* Ambient glow */}
+        {/* Subtle top glow */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'radial-gradient(ellipse at 50% 20%, rgba(99,102,241,0.16), transparent 50%)',
+          background: 'radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.10), transparent 55%)',
           pointerEvents: 'none',
         }} />
 
@@ -189,8 +229,11 @@ export default function RegisterPage() {
           }}
         >
           {registered ? (
-            /* ── Success state ── */
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 16, padding: '12px 0' }}>
+            /* Success state */
+            <div style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              textAlign: 'center', gap: 16, padding: '12px 0',
+            }}>
               <div style={{
                 width: 64, height: 64, borderRadius: '50%',
                 background: 'rgba(34,197,94,0.12)',
@@ -200,10 +243,16 @@ export default function RegisterPage() {
               }}>
                 <MailCheck size={28} />
               </div>
-              <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, letterSpacing: '-0.03em', color: '#fff' }}>
+              <h2 style={{
+                margin: 0, fontSize: 22, fontWeight: 700,
+                letterSpacing: '-0.03em', color: '#fff',
+              }}>
                 Check your email
               </h2>
-              <p style={{ margin: 0, fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.65 }}>
+              <p style={{
+                margin: 0, fontSize: 13,
+                color: 'rgba(255,255,255,0.55)', lineHeight: 1.65,
+              }}>
                 We sent a verification link to<br />
                 <span style={{ color: '#93c5fd', fontWeight: 600 }}>{registeredEmail}</span><br /><br />
                 Click the link to activate your account.
@@ -211,7 +260,10 @@ export default function RegisterPage() {
               </p>
               <Link
                 to="/login"
-                style={{ fontSize: 12.5, color: 'rgba(147,197,253,0.9)', textDecoration: 'none', fontWeight: 500, marginTop: 4 }}
+                style={{
+                  fontSize: 12.5, color: 'rgba(147,197,253,0.9)',
+                  textDecoration: 'none', fontWeight: 500, marginTop: 4,
+                }}
               >
                 Back to sign in
               </Link>
@@ -220,7 +272,10 @@ export default function RegisterPage() {
             <>
               {/* Card header */}
               <div style={{ marginBottom: 24 }}>
-                <h2 style={{ margin: 0, fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: '#fff' }}>
+                <h2 style={{
+                  margin: 0, fontSize: 26, fontWeight: 700,
+                  letterSpacing: '-0.03em', color: '#fff',
+                }}>
                   Create account
                 </h2>
                 <p style={{ marginTop: 6, fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>
@@ -340,27 +395,30 @@ export default function RegisterPage() {
                     height: 44, width: '100%', borderRadius: 12, border: 'none',
                     background: 'linear-gradient(180deg, #3b82f6 0%, #2563eb 100%)',
                     color: '#fff', fontSize: 13.5, fontWeight: 700, letterSpacing: '-0.005em',
-                    boxShadow:
-                      '0 1px 0 rgba(255,255,255,0.18) inset,' +
-                      '0 10px 20px -4px rgba(37,99,235,0.45),' +
-                      '0 2px 4px rgba(37,99,235,0.20)',
+                    boxShadow: btnShadow,
                     cursor: loading ? 'wait' : 'pointer',
                     opacity: loading ? 0.6 : 1,
                     transition: 'all 200ms ease',
                     fontFamily: 'inherit',
                   }}
                 >
-                  {loading ? 'Creating account…' : 'Create account'}
+                  {loading ? 'Creating account...' : 'Create account'}
                 </button>
               </form>
 
               <p style={{
-                marginTop: 22, fontSize: 11.5, color: 'rgba(255,255,255,0.35)', textAlign: 'center',
+                marginTop: 22, fontSize: 11.5,
+                color: 'rgba(255,255,255,0.35)',
+                textAlign: 'center',
               }}>
                 Already have an account?{' '}
                 <Link
                   to="/login"
-                  style={{ color: 'rgba(147,197,253,0.95)', fontWeight: 600, textDecoration: 'none' }}
+                  style={{
+                    color: 'rgba(147,197,253,0.95)',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                  }}
                 >
                   Sign in
                 </Link>

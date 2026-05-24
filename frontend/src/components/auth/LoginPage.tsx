@@ -1,11 +1,18 @@
 // src/components/auth/LoginPage.tsx
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, GraduationCap } from 'lucide-react';
 import { authApi } from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
+
+// Cinematic campus video sources — first that loads wins
+const VIDEO_SOURCES = [
+  'https://videos.pexels.com/video-files/3195394/3195394-hd_1920_1080_25fps.mp4',
+  'https://videos.pexels.com/video-files/5198553/5198553-hd_1920_1080_30fps.mp4',
+  'https://videos.pexels.com/video-files/3990862/3990862-hd_1920_1080_30fps.mp4',
+];
 
 interface LoginForm {
   email: string;
@@ -35,6 +42,23 @@ export default function LoginPage() {
   const [error,           setError]           = useState('');
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
   const [loading,         setLoading]         = useState(false);
+  const [videoLoaded,     setVideoLoaded]     = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    let idx = 0;
+    const tryNext = () => {
+      if (idx >= VIDEO_SOURCES.length) return;
+      v.src = VIDEO_SOURCES[idx];
+      v.load();
+      idx++;
+    };
+    v.addEventListener('error', tryNext);
+    tryNext();
+    return () => v.removeEventListener('error', tryNext);
+  }, []);
 
   const {
     register,
@@ -74,67 +98,80 @@ export default function LoginPage() {
     }
   };
 
-  // Destructure register results so we can chain onBlur
-  const emailReg    = register('email',    { required: 'Email is required',    pattern: { value: /^\S+@\S+\.\S+$/, message: 'Invalid email address' } });
+  const emailReg    = register('email',    { required: 'Email is required', pattern: { value: /^\S+@\S+\.\S+$/, message: 'Invalid email address' } });
   const passwordReg = register('password', { required: 'Password is required' });
+
+  const btnShadow = [
+    '0 1px 0 rgba(255,255,255,0.18) inset',
+    '0 10px 20px -4px rgba(37,99,235,0.45)',
+    '0 2px 4px rgba(37,99,235,0.20)',
+  ].join(', ');
 
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#050e1f',
+      position: 'relative',
+      overflow: 'hidden',
       display: 'grid',
       gridTemplateColumns: 'minmax(0,1fr) 520px',
       color: '#fff',
       fontFamily: 'Inter, sans-serif',
     }}>
-      {/* LEFT hero */}
-      <div style={{ position: 'relative', overflow: 'hidden' }}
-           className="hidden md:block">
 
-        {/* Orb 1 */}
-        <div style={{
-          position: 'absolute', top: '-15%', left: '-10%',
-          width: 600, height: 600, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(59,130,246,0.45), transparent 60%)',
-          filter: 'blur(40px)',
-          animation: 'float 9s ease-in-out infinite',
-        }} />
-        {/* Orb 2 */}
-        <div style={{
-          position: 'absolute', bottom: '-20%', left: '20%',
-          width: 500, height: 500, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(99,102,241,0.35), transparent 60%)',
-          filter: 'blur(50px)',
-          animation: 'float 11s ease-in-out infinite reverse',
-        }} />
-        {/* Orb 3 */}
-        <div style={{
-          position: 'absolute', top: '30%', right: '-10%',
-          width: 400, height: 400, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(245,158,11,0.18), transparent 60%)',
-          filter: 'blur(40px)',
-          animation: 'float 13s ease-in-out infinite',
-        }} />
-
-        {/* Grid overlay */}
-        <div style={{
+      {/* ── CINEMATIC VIDEO BACKGROUND ── */}
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        onCanPlay={() => setVideoLoaded(true)}
+        style={{
           position: 'absolute', inset: 0,
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),' +
-            'linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }} />
+          width: '100%', height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+          opacity: videoLoaded ? 1 : 0,
+          transition: 'opacity 1.2s ease',
+        }}
+      />
 
+      {/* Fallback gradient while video loads */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 0,
+        background: 'linear-gradient(135deg, #0a0f1e 0%, #0d1a2e 50%, #0a0f1e 100%)',
+        opacity: videoLoaded ? 0 : 1,
+        transition: 'opacity 1.2s ease',
+      }} />
+
+      {/* Cinematic dark overlay */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 1,
+        background: 'linear-gradient(to right, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.38) 50%, rgba(0,0,0,0.72) 100%)',
+      }} />
+
+      {/* Vignette */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 1,
+        background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* LEFT hero */}
+      <div
+        style={{ position: 'relative', zIndex: 2 }}
+        className="hidden md:block"
+      >
         <div style={{
-          position: 'relative', zIndex: 1, height: '100%', padding: 48,
+          height: '100%', padding: 48,
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         }}>
-          {/* Brand mark */}
+          {/* Brand */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div style={{
               width: 48, height: 48, borderRadius: 14,
               background: 'linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06))',
-              border: '1px solid rgba(255,255,255,0.20)',
+              border: '1px solid rgba(255,255,255,0.25)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               backdropFilter: 'blur(20px)',
               boxShadow: '0 1px 0 rgba(255,255,255,0.20) inset, 0 8px 20px -4px rgba(0,0,0,0.40)',
@@ -143,7 +180,7 @@ export default function LoginPage() {
             </div>
             <div>
               <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>SAMS</div>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>Student Admission Management</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.60)' }}>Student Admission Management</div>
             </div>
           </div>
 
@@ -153,6 +190,7 @@ export default function LoginPage() {
               margin: 0,
               fontSize: 64, fontWeight: 700, lineHeight: 1.0, letterSpacing: '-0.045em',
               color: '#fff',
+              textShadow: '0 2px 20px rgba(0,0,0,0.50)',
             }}>
               Manage student
               <br />
@@ -166,8 +204,9 @@ export default function LoginPage() {
             </h1>
             <p style={{
               marginTop: 20, maxWidth: 480, fontSize: 16, fontWeight: 400,
-              lineHeight: 1.55, color: 'rgba(255,255,255,0.70)',
+              lineHeight: 1.55, color: 'rgba(255,255,255,0.82)',
               letterSpacing: '-0.005em',
+              textShadow: '0 1px 8px rgba(0,0,0,0.40)',
             }}>
               Every application is someone&rsquo;s next chapter.
               <br />
@@ -184,14 +223,17 @@ export default function LoginPage() {
               — we move the journey forward.
             </p>
 
-            {/* Stat strip */}
+            {/* Stats */}
             <div style={{ display: 'flex', gap: 32, marginTop: 36 }}>
               {STATS.map((s) => (
                 <div key={s.l}>
-                  <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', color: '#fff' }}>
+                  <div style={{
+                    fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', color: '#fff',
+                    textShadow: '0 1px 8px rgba(0,0,0,0.50)',
+                  }}>
                     {s.v}
                   </div>
-                  <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>
+                  <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
                     {s.l}
                   </div>
                 </div>
@@ -203,16 +245,17 @@ export default function LoginPage() {
 
       {/* RIGHT form panel */}
       <div style={{
-        position: 'relative',
-        background: '#070f23',
+        position: 'relative', zIndex: 2,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '40px',
-        borderLeft: '1px solid rgba(255,255,255,0.06)',
+        borderLeft: '1px solid rgba(255,255,255,0.08)',
+        background: 'rgba(0,0,0,0.18)',
+        backdropFilter: 'blur(2px)',
       }}>
-        {/* Ambient glow */}
+        {/* Subtle top glow */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'radial-gradient(ellipse at 50% 20%, rgba(59,130,246,0.18), transparent 50%)',
+          background: 'radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.10), transparent 55%)',
           pointerEvents: 'none',
         }} />
 
@@ -274,7 +317,7 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            {/* Email field */}
+            {/* Email */}
             <label style={{
               display: 'block', marginBottom: 7, fontSize: 11.5, fontWeight: 600,
               color: 'rgba(255,255,255,0.65)', letterSpacing: '-0.005em',
@@ -314,7 +357,7 @@ export default function LoginPage() {
               </p>
             )}
 
-            {/* Password field */}
+            {/* Password */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 7 }}>
               <label style={{
                 fontSize: 11.5, fontWeight: 600,
@@ -383,10 +426,7 @@ export default function LoginPage() {
                 height: 44, width: '100%', borderRadius: 12, border: 'none',
                 background: 'linear-gradient(180deg, #3b82f6 0%, #2563eb 100%)',
                 color: '#fff', fontSize: 13.5, fontWeight: 700, letterSpacing: '-0.005em',
-                boxShadow:
-                  '0 1px 0 rgba(255,255,255,0.18) inset,' +
-                  '0 10px 20px -4px rgba(37,99,235,0.45),' +
-                  '0 2px 4px rgba(37,99,235,0.20)',
+                boxShadow: '0 1px 0 rgba(255,255,255,0.18) inset, 0 10px 20px -4px rgba(37,99,235,0.45), 0 2px 4px rgba(37,99,235,0.20)',
                 cursor: loading ? 'wait' : 'pointer',
                 opacity: loading ? 0.6 : 1,
                 transition: 'all 200ms ease',
