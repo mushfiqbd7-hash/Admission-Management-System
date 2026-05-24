@@ -12,14 +12,20 @@ interface LoginForm {
   password: string;
 }
 
-export default function LoginPage() {
-  const navigate = useNavigate();
-  const setAuth = useAuthStore((s) => s.setAuth);
+const STATS = [
+  { v: '12k+', l: 'applications/yr' },
+  { v: '180',  l: 'partner universities' },
+  { v: '42',   l: 'countries served' },
+];
 
-  const [showPw, setShowPw] = useState(false);
-  const [error, setError] = useState('');
+export default function LoginPage() {
+  const navigate   = useNavigate();
+  const setAuth    = useAuthStore((s) => s.setAuth);
+
+  const [showPw,          setShowPw]          = useState(false);
+  const [error,           setError]           = useState('');
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading,         setLoading]         = useState(false);
 
   const {
     register,
@@ -31,7 +37,6 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     setUnverifiedEmail(null);
-
     try {
       const res = await authApi.login(data);
       setAuth(res.data.user, res.data.accessToken, res.data.refreshToken);
@@ -50,80 +55,181 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#061a33] flex flex-col md:grid md:grid-cols-[minmax(0,1fr)_520px]">
-      <div
-  className="hidden md:relative md:flex md:flex-col md:overflow-hidden"
-  onMouseMove={(e) => {
-    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    (e.currentTarget as HTMLDivElement).style.setProperty('--x', `${x}px`);
-    (e.currentTarget as HTMLDivElement).style.setProperty('--y', `${y}px`);
-  }}
->
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-60"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?w=1600&q=90&auto=format&fit=crop')",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#061a33]/60 via-[#061a33]/70 to-[#061a33]" />
-        <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 hover:opacity-100"
-     style={{
-       background: 'radial-gradient(600px at var(--x) var(--y), rgba(37,99,235,0.15), transparent 60%)'
-     }}
-/>
+    <div style={{
+      minHeight: '100vh',
+      background: '#050e1f',
+      display: 'grid',
+      gridTemplateColumns: 'minmax(0,1fr) 520px',
+      color: '#fff',
+      fontFamily: 'Inter, sans-serif',
+    }}>
+      {/* ── LEFT: hero ────────────────────────────── */}
+      <div style={{ position: 'relative', overflow: 'hidden' }}
+           className="hidden md:block">
 
-        <div className="relative z-10 flex h-full flex-col justify-between p-12">
-          <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-[#0f5bff] shadow-xl">
-              <GraduationCap size={28} />
+        {/* Animated gradient orbs */}
+        <div style={{
+          position: 'absolute', top: '-15%', left: '-10%',
+          width: 600, height: 600, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.45), transparent 60%)',
+          filter: 'blur(40px)',
+          animation: 'float 9s ease-in-out infinite',
+        }}/>
+        <div style={{
+          position: 'absolute', bottom: '-20%', left: '20%',
+          width: 500, height: 500, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(99,102,241,0.35), transparent 60%)',
+          filter: 'blur(50px)',
+          animation: 'float 11s ease-in-out infinite reverse',
+        }}/>
+        <div style={{
+          position: 'absolute', top: '30%', right: '-10%',
+          width: 400, height: 400, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(245,158,11,0.18), transparent 60%)',
+          filter: 'blur(40px)',
+          animation: 'float 13s ease-in-out infinite',
+        }}/>
+
+        {/* Subtle grid overlay */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),' +
+            'linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
+          backgroundSize: '48px 48px',
+          maskImage: 'radial-gradient(ellipse at 50% 50%, black 30%, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at 50% 50%, black 30%, transparent 80%)',
+        }}/>
+
+        <div style={{
+          position: 'relative', zIndex: 1, height: '100%', padding: 48,
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+        }}>
+          {/* Brand mark */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div style={{
+              width: 48, height: 48, borderRadius: 14,
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06))',
+              border: '1px solid rgba(255,255,255,0.20)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              backdropFilter: 'blur(20px)',
+              boxShadow: '0 1px 0 rgba(255,255,255,0.20) inset, 0 8px 20px -4px rgba(0,0,0,0.40)',
+            }}>
+              <GraduationCap size={26} color="#fff"/>
             </div>
             <div>
-              <div className="text-[26px] font-black tracking-tight text-white">
-  Admission
-</div>
-              <div className="text-[13px] text-white/70">Management System</div>
+              <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>SAMS</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>Student Admission Management</div>
             </div>
           </div>
 
-          <div className="max-w-[620px] pb-10">
-  <h1 className="m-0 text-[58px] font-black leading-[1.02] tracking-[-0.06em] text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
-  Manage student
-  <br />
-  admissions with
-  <br />
-  <span className="text-blue-400">confidence.</span>
-</h1>
+          {/* Centerpiece */}
+          <div style={{ maxWidth: 560, paddingBottom: 40 }} className="fade-up">
+            <h1 style={{
+              margin: 0,
+              fontSize: 64, fontWeight: 700, lineHeight: 1.0, letterSpacing: '-0.045em',
+              color: '#fff',
+            }}>
+              Manage student
+              <br/>
+              admissions with{' '}
+              <span style={{
+                background: 'linear-gradient(135deg, #60a5fa 0%, #818cf8 50%, #f0abfc 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}>confidence.</span>
+            </h1>
+            <p style={{
+              marginTop: 20, maxWidth: 480, fontSize: 16, fontWeight: 400,
+              lineHeight: 1.55, color: 'rgba(255,255,255,0.70)',
+              letterSpacing: '-0.005em',
+            }}>
+              Every application is someone&rsquo;s next chapter.
+              <br/>
+              From <span style={{ color: '#fff', fontWeight: 500 }}>submit</span>{' '}
+              to <span style={{ color: '#fff', fontWeight: 500 }}>accepted</span>{' '}
+              to{' '}
+              <span style={{
+                background: 'linear-gradient(135deg, #60a5fa 0%, #818cf8 50%, #f0abfc 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                fontWeight: 600,
+              }}>arrived</span>{' '}
+              — we move the journey forward.
+            </p>
 
-  <p className="mt-5 max-w-[420px] text-[15px] font-medium leading-6 text-white/50 tracking-wide">
-  Designed for precision. Built for control.
-</p>
-</div>
+            {/* Stat strip */}
+            <div style={{ display: 'flex', gap: 32, marginTop: 36 }}>
+              {STATS.map((s) => (
+                <div key={s.l}>
+                  <div style={{
+                    fontSize: 24, fontWeight: 700,
+                    letterSpacing: '-0.03em', color: '#fff',
+                  }}>{s.v}</div>
+                  <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{s.l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-1 items-center justify-center bg-[#0b1120] px-6 py-10 md:px-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(37,99,235,0.18),transparent_45%)]" />
+      {/* ── RIGHT: form panel ─────────────────────── */}
+      <div style={{
+        position: 'relative',
+        background: '#070f23',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '40px',
+        borderLeft: '1px solid rgba(255,255,255,0.06)',
+      }}>
+        {/* Ambient glow */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(ellipse at 50% 20%, rgba(59,130,246,0.18), transparent 50%)',
+          pointerEvents: 'none',
+        }}/>
 
-        <div className="relative w-full max-w-[390px] rounded-3xl border border-white/10 bg-white/[0.06] p-9 shadow-[0_30px_90px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition duration-300 hover:border-blue-400/25 hover:bg-white/[0.075] hover:shadow-[0_35px_110px_rgba(37,99,235,0.16)] before:pointer-events-none before:absolute before:inset-0 before:rounded-3xl before:bg-white/[0.04] before:opacity-0 hover:before:opacity-100 before:transition animate-[float_6s_ease-in-out_infinite]">
-          <div className="mb-8">
-            <h2 className="m-0 text-[34px] font-black tracking-[-0.05em] text-white">
-              Welcome back
-            </h2>
-            <p className="mt-2 text-[14px] text-white/45">
-              Sign in to continue to SAMS.
+        {/* Glass card */}
+        <div style={{
+          position: 'relative', width: '100%', maxWidth: 380,
+          padding: '34px 36px', borderRadius: 20,
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(255,255,255,0.10)',
+          backdropFilter: 'blur(40px) saturate(140%)',
+          WebkitBackdropFilter: 'blur(40px) saturate(140%)',
+          boxShadow:
+            '0 1px 0 rgba(255,255,255,0.10) inset,' +
+            '0 30px 80px -20px rgba(0,0,0,0.55)',
+        }} className="fade-up">
+
+          {/* Header */}
+          <div style={{ marginBottom: 26 }}>
+            <h2 style={{
+              margin: 0, fontSize: 26, fontWeight: 700,
+              letterSpacing: '-0.03em', color: '#fff',
+            }}>Sign in to SAMS</h2>
+            <p style={{ marginTop: 6, fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>
+              Welcome back. Continue managing applications.
             </p>
           </div>
 
+          {/* Error banner */}
           {error && (
-            <div className="mb-5 flex gap-3 rounded-2xl border border-red-400/25 bg-red-500/10 p-4 text-[13px] leading-6 text-red-200">
-              <AlertCircle size={17} className="mt-[2px] shrink-0" />
+            <div style={{
+              marginBottom: 18, display: 'flex', gap: 9, alignItems: 'flex-start',
+              padding: '10px 12px', borderRadius: 10,
+              border: '1px solid rgba(248,113,113,0.25)',
+              background: 'rgba(239,68,68,0.10)',
+              color: '#fca5a5', fontSize: 12.5,
+            }}>
+              <AlertCircle size={14} style={{ marginTop: 1, flexShrink: 0 }}/>
               <span>{error}</span>
             </div>
           )}
 
+          {/* Resend verification */}
           {unverifiedEmail && (
             <button
               type="button"
@@ -131,103 +237,4 @@ export default function LoginPage() {
                 try {
                   await authApi.resendVerification(unverifiedEmail);
                   toast.success('Verification email sent. Check your inbox.');
-                  setUnverifiedEmail(null);
-                } catch {
-                  toast.error('Failed to resend. Please try again.');
-                }
-              }}
-              className="mb-5 w-full cursor-pointer border-none bg-transparent text-center text-[13px] text-blue-300 underline"
-            >
-              Resend verification email
-            </button>
-          )}
-
-          <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <div className="mb-4">
-              <label className="mb-2 block text-[12px] font-black uppercase tracking-wider text-white/35">
-                Email Address
-              </label>
-
-              <div className="relative">
-                <Mail
-                  size={17}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30"
-                />
-                <input
-                  type="email"
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                  className={`h-12 w-full rounded-2xl border bg-white/[0.06] pl-12 pr-4 text-[14px] text-white outline-none placeholder:text-white/20 focus:border-blue-400/60 focus:ring-4 focus:ring-blue-500/10 ${
-                    errors.email ? 'border-red-400/45' : 'border-white/10'
-                  }`}
-                  {...register('email', {
-                    required: 'Email is required',
-                    pattern: {
-                      value: /^\S+@\S+\.\S+$/,
-                      message: 'Invalid email address',
-                    },
-                  })}
-                />
-              </div>
-
-              {errors.email && (
-                <p className="mt-2 text-[12px] text-red-300">{errors.email.message}</p>
-              )}
-            </div>
-
-            <div className="mb-5">
-              <label className="mb-2 block text-[12px] font-black uppercase tracking-wider text-white/35">
-                Password
-              </label>
-
-              <div className="relative">
-                <Lock
-                  size={17}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30"
-                />
-                <input
-                  type={showPw ? 'text' : 'password'}
-                  autoComplete="current-password"
-                  placeholder="••••••••"
-                  className={`h-12 w-full rounded-2xl border bg-white/[0.06] pl-12 pr-12 text-[14px] text-white outline-none placeholder:text-white/20 focus:border-blue-400/60 focus:ring-4 focus:ring-blue-500/10 ${
-                    errors.password ? 'border-red-400/45' : 'border-white/10'
-                  }`}
-                  {...register('password', {
-                    required: 'Password is required',
-                  })}
-                />
-
-                <button
-                  type="button"
-                  onClick={() => setShowPw((v) => !v)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/35 hover:text-white/65"
-                >
-                  {showPw ? <EyeOff size={17} /> : <Eye size={17} />}
-                </button>
-              </div>
-
-              {errors.password && (
-                <p className="mt-2 text-[12px] text-red-300">{errors.password.message}</p>
-              )}
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-             className="flex h-12 w-full items-center justify-center rounded-2xl bg-[#0f5bff] text-[14px] font-black text-white shadow-[0_14px_28px_rgba(37,99,235,0.35)] transition duration-200 hover:-translate-y-[1px] hover:bg-blue-500 hover:shadow-[0_18px_36px_rgba(37,99,235,0.45)] disabled:translate-y-0 disabled:opacity-60"
-             >
-              {loading ? 'Signing in...' : 'Sign In'}
-            </button>
-          </form>
-
-          <p className="mt-7 text-center text-[13px] text-white/35">
-            No account?{' '}
-            <Link to="/register" className="font-black text-blue-300 hover:text-blue-200">
-              Create one
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
+                  setUnver
