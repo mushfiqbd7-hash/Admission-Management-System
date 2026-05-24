@@ -940,7 +940,7 @@ export default function DashboardPage() {
               Share this link with the applicant. Expires in 7 days or after one submission.
             </p>
             <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
-              <span style={{ fontSize: 12, color: '#334155', fontFamily: 'Inter', sans-serif, wordBreak: 'break-all' }}>{linkModal.link}</span>
+              <span style={{ fontSize: 12, color: '#334155', fontFamily: 'Inter, sans-serif', wordBreak: 'break-all' }}>{linkModal.link}</span>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={() => setLinkModal(null)} style={{ flex: 1, padding: '9px 0', border: '1px solid #e2e8f0', borderRadius: 10, background: '#fff', color: '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
@@ -1270,7 +1270,7 @@ const newApplicationBtn: React.CSSProperties = {
 };
 
 const appNoBadgeStyle: React.CSSProperties = {
-  fontFamily: 'Inter', sans-serif,
+  fontFamily: 'Inter, sans-serif',
   fontSize: 11,
   fontWeight: 900,
   color: '#1d4ed8',
@@ -1439,7 +1439,7 @@ const sideTitleStyle: React.CSSProperties = {
 
 const sideAppNoStyle: React.CSSProperties = {
   fontSize: 10.5,
-  fontFamily: 'Inter', sans-serif,
+  fontFamily: 'Inter, sans-serif',
   color: '#2563eb',
   marginTop: 3,
   overflow: 'hidden',

@@ -113,7 +113,7 @@ export default function ApplicationLinksPage() {
                 {/* Link URL */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
                   <Link2 size={13} style={{ color: '#2563eb', flexShrink: 0 }} />
-                  <span style={{ fontSize: 11.5, color: '#475569', fontFamily: 'Inter', sans-serif, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{ fontSize: 11.5, color: '#475569', fontFamily: 'Inter, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {link}
                   </span>
                 </div>
@@ -163,7 +163,7 @@ export default function ApplicationLinksPage() {
               Share this link with the applicant. Single-use, expires in 7 days.
             </p>
             <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
-              <span style={{ fontSize: 12, color: '#334155', fontFamily: 'Inter', sans-serif, wordBreak: 'break-all' }}>{linkModal.link}</span>
+              <span style={{ fontSize: 12, color: '#334155', fontFamily: 'Inter, sans-serif', wordBreak: 'break-all' }}>{linkModal.link}</span>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={() => setLinkModal(null)} style={{ flex: 1, padding: '9px 0', border: '1px solid #e2e8f0', borderRadius: 10, background: '#fff', color: '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>

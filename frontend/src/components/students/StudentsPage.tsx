@@ -987,7 +987,7 @@ const appNoStyle: CSSProperties = {
   color: '#1d4ed8',
   fontSize: 11.5,
   fontWeight: 950,
-  fontFamily: 'Inter', sans-serif,
+  fontFamily: 'Inter, sans-serif',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
 };
@@ -1018,7 +1018,7 @@ const monoTextStyle: CSSProperties = {
   fontSize: 12.5,
   fontWeight: 800,
   color: '#475569',
-  fontFamily: 'Inter', sans-serif,
+  fontFamily: 'Inter, sans-serif',
   whiteSpace: 'nowrap',
 };
 

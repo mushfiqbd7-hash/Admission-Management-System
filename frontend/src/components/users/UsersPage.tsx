@@ -1033,7 +1033,7 @@ const idTextStyle: CSSProperties = {
   fontSize: 11.5,
   fontWeight: 700,
   color: '#94a3b8',
-  fontFamily: 'Inter', sans-serif,
+  fontFamily: 'Inter, sans-serif',
 };
 
 const emailTextStyle: CSSProperties = {
