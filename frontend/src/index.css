@@ -2,284 +2,88 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════
-   SAMS Design System — Phase 1
-   Palette: Deep Navy · Warm White · Slate · Controlled Accent
-═══════════════════════════════════════════════════════ */
+   SAMS Design System — Complete Dark Mode Foundation
+   ═══════════════════════════════════════════════════════ */
+
+@theme {
+  --color-background: var(--surface-sunken);
+  --color-foreground: var(--text-primary);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-primary: var(--navy-600);
+  --color-primary-hover: var(--navy-500);
+  --color-muted: var(--gray-100);
+  --color-muted-foreground: var(--gray-500);
+  --radius: 10px;
+}
 
 :root {
-  /* ── Core Palette ── */
-  --navy-950:   #080f1e;
-  --navy-900:   #0d1629;
-  --navy-800:   #132038;
-  --navy-700:   #1a2d4f;
-  --navy-600:   #1F3A5F;   /* primary brand */
-  --navy-500:   #2d5082;
-  --navy-400:   #3d6499;
-  --navy-300:   #5a82b5;
-  --navy-200:   #8fb3d9;
-  --navy-100:   #ccdff0;
-  --navy-50:    #eef5fc;
+  /* Core Palette */
+  --navy-950: #080f1e; --navy-900: #0d1629; --navy-800: #132038;
+  --navy-700: #1a2d4f; --navy-600: #1F3A5F; --navy-500: #2d5082;
+  --navy-400: #3d6499; --navy-300: #5a82b5; --navy-200: #8fb3d9;
+  --navy-100: #ccdff0; --navy-50: #eef5fc;
 
-  /* ── Slate (secondary surfaces) ── */
-  --slate-950:  #0a0e17;
-  --slate-900:  #0f1421;
-  --slate-800:  #161d2e;
-  --slate-700:  #1e2840;
-  --slate-600:  #283452;
-  --slate-500:  #364669;
-  --slate-400:  #4a5d82;
-  --slate-300:  #6b7fa6;
-  --slate-200:  #9baac6;
-  --slate-100:  #c8d3e6;
-  --slate-50:   #f0f3f9;
+  /* Grays */
+  --gray-950: #0c0d0f; --gray-900: #111318; --gray-800: #1c1f27;
+  --gray-700: #2d3240; --gray-600: #404759; --gray-500: #5c6478;
+  --gray-400: #7d889e; --gray-300: #9fa9bc; --gray-200: #c4ccda;
+  --gray-150: #d8dfe9; --gray-100: #e8edf4; --gray-50: #f4f6fa;
+  --gray-25: #f9fafc; --white: #ffffff;
 
-  /* ── Neutral Grays ── */
-  --gray-950:   #0c0d0f;
-  --gray-900:   #111318;
-  --gray-800:   #1c1f27;
-  --gray-700:   #2d3240;
-  --gray-600:   #404759;
-  --gray-500:   #5c6478;
-  --gray-400:   #7d889e;
-  --gray-300:   #9fa9bc;
-  --gray-200:   #c4ccda;
-  --gray-150:   #d8dfe9;
-  --gray-100:   #e8edf4;
-  --gray-50:    #f4f6fa;
-  --gray-25:    #f9fafc;
-  --white:      #ffffff;
+  /* Semantic */
+  --accent: var(--navy-600); --accent-hover: var(--navy-500);
+  --accent-light: var(--navy-50); --text-on-accent: #ffffff;
+  --surface: var(--white); --surface-raised: var(--gray-25);
+  --surface-sunken: var(--gray-50); --border: var(--gray-150);
+  --border-strong: var(--gray-200);
+  --text-primary: var(--gray-900); --text-secondary: var(--gray-500);
+  --text-tertiary: var(--gray-400);
 
-  /* ── Status Accent Colors (precise, not washed) ── */
-  --status-draft-bg:         #f0f3f9;
-  --status-draft-text:       #4a5d82;
-  --status-draft-border:     #c8d3e6;
+  /* Status */
+  --status-draft-bg: #f0f3f9; --status-draft-text: #4a5d82; --status-draft-border: #c8d3e6;
+  --status-pending-bg: #fef9ec; --status-pending-text: #92620a; --status-pending-border: #f5d98a;
+  --status-processing-bg: #eff6ff; --status-processing-text: #1d4ed8; --status-processing-border: #bfdbfe;
+  --status-approved-bg: #f0fdf4; --status-approved-text: #14532d; --status-approved-border: #86efac;
+  --status-admitted-bg: #f0fdfa; --status-admitted-text: #134e4a; --status-admitted-border: #5eead4;
+  --status-rejected-bg: #fff1f2; --status-rejected-text: #881337; --status-rejected-border: #fda4af;
+  --status-revoked-bg: #fff7ed; --status-revoked-text: #9a3412; --status-revoked-border: #fdba74;
+  --status-pre-bg: #faf5ff; --status-pre-text: #581c87; --status-pre-border: #d8b4fe;
 
-  --status-pending-bg:       #fef9ec;
-  --status-pending-text:     #92620a;
-  --status-pending-border:   #f5d98a;
+  /* Typography & Spacing */
+  --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px; --radius-xl: 18px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-6: 24px; --space-8: 32px;
 
-  --status-processing-bg:    #eff6ff;
-  --status-processing-text:  #1d4ed8;
-  --status-processing-border:#bfdbfe;
-
-  --status-approved-bg:      #f0fdf4;
-  --status-approved-text:    #14532d;
-  --status-approved-border:  #86efac;
-
-  --status-admitted-bg:      #f0fdfa;
-  --status-admitted-text:    #134e4a;
-  --status-admitted-border:  #5eead4;
-
-  --status-rejected-bg:      #fff1f2;
-  --status-rejected-text:    #881337;
-  --status-rejected-border:  #fda4af;
-
-  --status-revoked-bg:       #fff7ed;
-  --status-revoked-text:     #9a3412;
-  --status-revoked-border:   #fdba74;
-
-  --status-pre-bg:           #faf5ff;
-  --status-pre-text:         #581c87;
-  --status-pre-border:       #d8b4fe;
-
-  /* ── Semantic ── */
-  --accent:         var(--navy-600);
-  --accent-hover:   var(--navy-500);
-  --accent-light:   var(--navy-50);
-  --surface:        var(--white);
-  --surface-raised: var(--gray-25);
-  --surface-sunken: var(--gray-50);
-  --border:         var(--gray-150);
-  --border-strong:  var(--gray-200);
-  --text-primary:   var(--gray-900);
-  --text-secondary: var(--gray-500);
-  --text-tertiary:  var(--gray-400);
-  --text-on-accent: #ffffff;
-
-  /* ── Typography — Inter everywhere ── */
-  --font-ui:      'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono:    'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-
-  /* ── Spacing scale (8pt grid) ── */
-  --space-1:  4px;
-  --space-2:  8px;
-  --space-3:  12px;
-  --space-4:  16px;
-  --space-5:  20px;
-  --space-6:  24px;
-  --space-8:  32px;
-  --space-10: 40px;
-  --space-12: 48px;
-
-  /* ── Radius ── */
-  --radius-sm:  6px;
-  --radius-md:  10px;
-  --radius-lg:  14px;
-  --radius-xl:  18px;
-
-  /* ── Shadows ── */
-  --shadow-xs:  0 1px 2px rgba(8,15,35,0.05);
-  --shadow-sm:  0 1px 3px rgba(8,15,35,0.08), 0 1px 2px rgba(8,15,35,0.04);
-  --shadow-md:  0 4px 6px rgba(8,15,35,0.07), 0 2px 4px rgba(8,15,35,0.04);
-  --shadow-lg:  0 10px 24px rgba(8,15,35,0.09), 0 4px 8px rgba(8,15,35,0.05);
-  --shadow-xl:  0 20px 48px rgba(8,15,35,0.12), 0 8px 16px rgba(8,15,35,0.06);
-
-  /* ── Premium Shadows (v3) ── */
-  --sh-soft:    0 1px 2px rgba(15,23,42,0.04);
-  --sh-card:
-    0 1px 0 rgba(255,255,255,0.7) inset,
-    0 1px 2px rgba(15,23,42,0.04),
-    0 8px 24px -8px rgba(15,23,42,0.08);
-  --sh-card-hover:
-    0 1px 0 rgba(255,255,255,0.7) inset,
-    0 2px 4px rgba(15,23,42,0.05),
-    0 16px 40px -12px rgba(15,23,42,0.14);
-  --sh-panel:
-    0 1px 0 rgba(255,255,255,0.6) inset,
-    0 4px 12px -4px rgba(15,23,42,0.06),
-    0 24px 48px -24px rgba(15,23,42,0.16);
-  --sh-header:
-    0 1px 0 rgba(255,255,255,0.8) inset,
-    0 1px 12px rgba(15,23,42,0.04),
-    0 12px 28px -16px rgba(15,23,42,0.10);
-  --sh-cta:
-    0 1px 0 rgba(255,255,255,0.18) inset,
-    0 8px 16px -4px rgba(37,99,235,0.32),
-    0 2px 4px rgba(37,99,235,0.20);
+  /* Shadows & Effects */
+  --shadow-xs: 0 1px 2px rgba(8,15,35,0.05);
+  --shadow-sm: 0 1px 3px rgba(8,15,35,0.08), 0 1px 2px rgba(8,15,35,0.04);
+  --sh-card: 0 1px 0 rgba(255,255,255,0.7) inset, 0 1px 2px rgba(15,23,42,0.04), 0 8px 24px -8px rgba(15,23,42,0.08);
+  --sh-header: 0 1px 0 rgba(255,255,255,0.8) inset, 0 1px 12px rgba(15,23,42,0.04), 0 12px 28px -16px rgba(15,23,42,0.10);
   --sh-focus: 0 0 0 3px rgba(59,130,246,0.20);
+  --canvas-mesh: radial-gradient(900px 600px at 8% -12%, rgba(59,130,246,0.10), transparent 55%), radial-gradient(800px 500px at 110% 0%, rgba(245,158,11,0.06), transparent 55%), radial-gradient(700px 700px at 60% 110%, rgba(99,102,241,0.05), transparent 50%), linear-gradient(180deg, #f7f9fc 0%, #eef3fa 100%);
+  --surface-soft: rgba(255,255,255,0.78); --surface-glass: rgba(255,255,255,0.65);
 
-  /* ── Canvas mesh gradient (v3) ── */
-  --canvas-mesh:
-    radial-gradient(900px 600px at 8% -12%, rgba(59,130,246,0.10), transparent 55%),
-    radial-gradient(800px 500px at 110% 0%, rgba(245,158,11,0.06), transparent 55%),
-    radial-gradient(700px 700px at 60% 110%, rgba(99,102,241,0.05), transparent 50%),
-    linear-gradient(180deg, #f7f9fc 0%, #eef3fa 100%);
-
-  /* ── Surface glass ── */
-  --surface-soft:    rgba(255,255,255,0.78);
-  --surface-glass:   rgba(255,255,255,0.65);
-
-  /* ── Transitions ── */
-  --ease:       cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-back:  cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --dur-fast:   120ms;
-  --dur-base:   200ms;
-  --dur-slow:   350ms;
+  /* Transitions */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1); --dur-fast: 120ms; --dur-base: 200ms; --dur-slow: 350ms;
 }
 
-/* ═══════════════════════════════════════════════════════
-   DARK MODE SUPPORT — SAMS
-   Overrides for dark theme using existing palette
-═══════════════════════════════════════════════════════ */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --surface:        var(--navy-950);
-    --surface-raised: var(--navy-900);
-    --surface-sunken: var(--navy-900);
-    --border:         var(--navy-700);
-    --border-strong:  var(--navy-600);
-    --text-primary:   var(--gray-50);
-    --text-secondary: var(--gray-300);
-    --text-tertiary:  var(--gray-400);
-    --text-on-accent: var(--navy-950);
-    
-    /* Dark mode shadows (softer, darker) */
-    --shadow-xs:  0 1px 2px rgba(0,0,0,0.2);
-    --shadow-sm:  0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.15);
-    --shadow-md:  0 4px 6px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.2);
-    --shadow-lg:  0 10px 24px rgba(0,0,0,0.35), 0 4px 8px rgba(0,0,0,0.25);
-    --shadow-xl:  0 20px 48px rgba(0,0,0,0.45), 0 8px 16px rgba(0,0,0,0.3);
-    
-    --sh-soft:    0 1px 2px rgba(0,0,0,0.3);
-    --sh-card:
-      0 1px 0 rgba(255,255,255,0.05) inset,
-      0 1px 2px rgba(0,0,0,0.25),
-      0 8px 24px -8px rgba(0,0,0,0.4);
-    --sh-card-hover:
-      0 1px 0 rgba(255,255,255,0.05) inset,
-      0 2px 4px rgba(0,0,0,0.3),
-      0 16px 40px -12px rgba(0,0,0,0.5);
-    --sh-panel:
-      0 1px 0 rgba(255,255,255,0.04) inset,
-      0 4px 12px -4px rgba(0,0,0,0.35),
-      0 24px 48px -24px rgba(0,0,0,0.6);
-    --sh-header:
-      0 1px 0 rgba(255,255,255,0.06) inset,
-      0 1px 12px rgba(0,0,0,0.25),
-      0 12px 28px -16px rgba(0,0,0,0.4);
-    --sh-focus: 0 0 0 3px rgba(90,130,181,0.35);
-    
-    /* Dark mode canvas mesh */
-    --canvas-mesh:
-      radial-gradient(900px 600px at 8% -12%, rgba(90,130,181,0.12), transparent 55%),
-      radial-gradient(800px 500px at 110% 0%, rgba(154,52,18,0.08), transparent 55%),
-      radial-gradient(700px 700px at 60% 110%, rgba(99,102,241,0.07), transparent 50%),
-      linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 100%);
-    
-    --surface-soft:  rgba(13,22,41,0.85);
-    --surface-glass: rgba(13,22,41,0.7);
-    
-    /* Dark mode status colors (maintain contrast) */
-    --status-draft-bg: #1e293b; --status-draft-text: #94a3b8; --status-draft-border: #334155;
-    --status-pending-bg: #422006; --status-pending-text: #fcd34d; --status-pending-border: #92400e;
-    --status-processing-bg: #1e3a5f; --status-processing-text: #93c5fd; --status-processing-border: #1d4ed8;
-    --status-approved-bg: #052e16; --status-approved-text: #86efac; --status-approved-border: #166534;
-    --status-admitted-bg: #042f2e; --status-admitted-text: #5eead4; --status-admitted-border: #0f766e;
-    --status-rejected-bg: #450a1a; --status-rejected-text: #fca5a5; --status-rejected-border: #9f1239;
-    --status-revoked-bg: #431407; --status-revoked-text: #fdba74; --status-revoked-border: #c2410c;
-    --status-pre-bg: #2e1065; --status-pre-text: #d8b4fe; --status-pre-border: #7e22ce;
-  }
-}
-
-/* Class-based dark mode override (for manual toggle) */
+/* DARK MODE OVERRIDES */
 .dark {
-  --surface:        var(--navy-950);
-  --surface-raised: var(--navy-900);
-  --surface-sunken: var(--navy-900);
-  --border:         var(--navy-700);
-  --border-strong:  var(--navy-600);
-  --text-primary:   var(--gray-50);
-  --text-secondary: var(--gray-300);
-  --text-tertiary:  var(--gray-400);
-  --text-on-accent: var(--navy-950);
-  
-  --shadow-xs:  0 1px 2px rgba(0,0,0,0.2);
-  --shadow-sm:  0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.15);
-  --shadow-md:  0 4px 6px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.2);
-  --shadow-lg:  0 10px 24px rgba(0,0,0,0.35), 0 4px 8px rgba(0,0,0,0.25);
-  --shadow-xl:  0 20px 48px rgba(0,0,0,0.45), 0 8px 16px rgba(0,0,0,0.3);
-  
-  --sh-soft:    0 1px 2px rgba(0,0,0,0.3);
-  --sh-card:
-    0 1px 0 rgba(255,255,255,0.05) inset,
-    0 1px 2px rgba(0,0,0,0.25),
-    0 8px 24px -8px rgba(0,0,0,0.4);
-  --sh-card-hover:
-    0 1px 0 rgba(255,255,255,0.05) inset,
-    0 2px 4px rgba(0,0,0,0.3),
-    0 16px 40px -12px rgba(0,0,0,0.5);
-  --sh-panel:
-    0 1px 0 rgba(255,255,255,0.04) inset,
-    0 4px 12px -4px rgba(0,0,0,0.35),
-    0 24px 48px -24px rgba(0,0,0,0.6);
-  --sh-header:
-    0 1px 0 rgba(255,255,255,0.06) inset,
-    0 1px 12px rgba(0,0,0,0.25),
-    0 12px 28px -16px rgba(0,0,0,0.4);
+  color-scheme: dark;
+  --surface: var(--navy-950); --surface-raised: var(--navy-900);
+  --surface-sunken: var(--navy-900); --border: var(--navy-700);
+  --border-strong: var(--navy-600); --text-primary: var(--gray-50);
+  --text-secondary: var(--gray-300); --text-tertiary: var(--gray-400);
+  --text-on-accent: var(--navy-950); --accent: var(--navy-400);
+  --accent-hover: var(--navy-500); --accent-light: var(--navy-900);
+  --sh-card: 0 1px 0 rgba(255,255,255,0.05) inset, 0 1px 2px rgba(0,0,0,0.25), 0 8px 24px -8px rgba(0,0,0,0.4);
+  --sh-header: 0 1px 0 rgba(255,255,255,0.06) inset, 0 1px 12px rgba(0,0,0,0.25), 0 12px 28px -16px rgba(0,0,0,0.4);
   --sh-focus: 0 0 0 3px rgba(90,130,181,0.35);
-  
-  --canvas-mesh:
-    radial-gradient(900px 600px at 8% -12%, rgba(90,130,181,0.12), transparent 55%),
-    radial-gradient(800px 500px at 110% 0%, rgba(154,52,18,0.08), transparent 55%),
-    radial-gradient(700px 700px at 60% 110%, rgba(99,102,241,0.07), transparent 50%),
-    linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 100%);
-  
-  --surface-soft:  rgba(13,22,41,0.85);
-  --surface-glass: rgba(13,22,41,0.7);
-  
+  --canvas-mesh: radial-gradient(900px 600px at 8% -12%, rgba(90,130,181,0.12), transparent 55%), radial-gradient(800px 500px at 110% 0%, rgba(154,52,18,0.08), transparent 55%), radial-gradient(700px 700px at 60% 110%, rgba(99,102,241,0.07), transparent 50%), linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 100%);
+  --surface-soft: rgba(13,22,41,0.85); --surface-glass: rgba(13,22,41,0.7);
   --status-draft-bg: #1e293b; --status-draft-text: #94a3b8; --status-draft-border: #334155;
   --status-pending-bg: #422006; --status-pending-text: #fcd34d; --status-pending-border: #92400e;
   --status-processing-bg: #1e3a5f; --status-processing-text: #93c5fd; --status-processing-border: #1d4ed8;
@@ -290,570 +94,73 @@
   --status-pre-bg: #2e1065; --status-pre-text: #d8b4fe; --status-pre-border: #7e22ce;
 }
 
-/* Smooth transitions for theme switch */
-body, .card, .input, .button, .modal, .table-row, .badge, .sams-input, .sams-select {
-  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-/* ═══════════════════════════════════════════════════════
-   Base Reset
-═══════════════════════════════════════════════════════ */
+/* BASE RESET & INHERITANCE */
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
-
-  html, body, #root {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
+  html { height: 100%; }
   body {
-    font-family: var(--font-ui);
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--text-primary);
-    background: var(--surface-sunken);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    min-height: 100%; margin: 0; padding: 0;
+    font-family: var(--font-ui); font-size: 14px; line-height: 1.5;
+    color: var(--text-primary); background: var(--canvas-mesh);
+    background-attachment: fixed; -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale; transition: background var(--dur-base), color var(--dur-base);
   }
-
-  /* Refined scrollbar */
-  ::-webkit-scrollbar       { width: 7px; height: 7px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.10); border-radius: 6px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(15,23,42,0.18); }
+  #root { min-height: 100vh; }
   
-  /* Dark mode scrollbar */
-  @media (prefers-color-scheme: dark) {
-    ::-webkit-scrollbar-thumb { background: rgba(90,130,181,0.3); }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(90,130,181,0.5); }
-  }
-
-  ::selection { background: #1e3a5f; color: #93c5fd; }
-  :focus-visible { outline: none; box-shadow: var(--sh-focus); border-radius: 8px; }
-}
-
-/* ── v3 Animations ── */
-@keyframes fadeUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
-@keyframes float  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-@keyframes pulse  { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(0.85); } }
-@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-@keyframes haloPulse { 0% { box-shadow: 0 0 0 0 rgba(59,130,246,0.40); } 100% { box-shadow: 0 0 0 12px rgba(59,130,246,0.00); } }
-
-.fade-up { animation: fadeUp 420ms cubic-bezier(0.22,1,0.36,1) both; }
-.stagger > * { opacity: 0; animation: fadeUp 460ms cubic-bezier(0.22,1,0.36,1) both; }
-.stagger > *:nth-child(1) { animation-delay: 0ms; }
-.stagger > *:nth-child(2) { animation-delay: 55ms; }
-.stagger > *:nth-child(3) { animation-delay: 110ms; }
-.stagger > *:nth-child(4) { animation-delay: 165ms; }
-.stagger > *:nth-child(5) { animation-delay: 220ms; }
-.stagger > *:nth-child(6) { animation-delay: 275ms; }
-.stagger > *:nth-child(7) { animation-delay: 330ms; }
-
-/* ═══════════════════════════════════════════════════════
-   Utility Classes — Design System
-═══════════════════════════════════════════════════════ */
-@layer utilities {
-
-  /* ── Text ── */
-  .text-primary   { color: var(--text-primary); }
-  .text-secondary { color: var(--text-secondary); }
-  .text-tertiary  { color: var(--text-tertiary); }
-
-  /* ── Label caps (section titles, table headers) ── */
-  .label-caps {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--text-tertiary);
-  }
-
-  /* ── Mono data (IDs, numbers, codes) ── */
-  .mono {
-    font-family: var(--font-mono);
-    font-size: 0.875em;
-    letter-spacing: -0.01em;
-  }
-
-  /* ── Status badges ── */
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 2px 9px;
-    border-radius: 20px;
-    font-size: 11.5px;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    border: 1px solid transparent;
-    white-space: nowrap;
-  }
-  .badge::before {
-    content: '';
-    display: block;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: 0.7;
-    flex-shrink: 0;
-  }
-
-  .badge-draft       { background: var(--status-draft-bg);      color: var(--status-draft-text);      border-color: var(--status-draft-border); }
-  .badge-pending     { background: var(--status-pending-bg);    color: var(--status-pending-text);    border-color: var(--status-pending-border); }
-  .badge-processing  { background: var(--status-processing-bg); color: var(--status-processing-text); border-color: var(--status-processing-border); }
-  .badge-approved    { background: var(--status-approved-bg);   color: var(--status-approved-text);   border-color: var(--status-approved-border); }
-  .badge-admitted    { background: var(--status-admitted-bg);   color: var(--status-admitted-text);   border-color: var(--status-admitted-border); }
-  .badge-rejected    { background: var(--status-rejected-bg);   color: var(--status-rejected-text);   border-color: var(--status-rejected-border); }
-  .badge-revoked     { background: var(--status-revoked-bg);    color: var(--status-revoked-text);    border-color: var(--status-revoked-border); }
-  .badge-pre_admission { background: var(--status-pre-bg);      color: var(--status-pre-text);        border-color: var(--status-pre-border); }
-
-  /* ── Priority ── */
-  .priority-high   { color: #f87171; font-weight: 600; font-size: 11.5px; }
-  .priority-normal { color: var(--text-tertiary); font-size: 11.5px; }
-
-  /* ── Card surface ── */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-xs);
-  }
-
-  /* ── Btn primary ── */
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 14px;
-    background: var(--navy-600);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-md);
-    font-family: var(--font-ui);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background var(--dur-base) var(--ease-out),
-                box-shadow var(--dur-base) var(--ease-out),
-                transform var(--dur-fast) var(--ease-out);
-    box-shadow: var(--shadow-sm);
-  }
-  .btn-primary:hover  { background: var(--navy-500); box-shadow: var(--shadow-md); transform: translateY(-1px); }
-  .btn-primary:active { transform: translateY(0); box-shadow: var(--shadow-xs); }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-  /* ── Btn ghost ── */
-  .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 14px;
-    background: transparent;
-    color: var(--text-secondary);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    font-family: var(--font-ui);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background var(--dur-base), border-color var(--dur-base), color var(--dur-base);
-  }
-  .btn-ghost:hover { background: var(--surface-sunken); border-color: var(--border-strong); color: var(--text-primary); }
-  .btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  /* ── Table base ── */
-  .sams-table { width: 100%; border-collapse: collapse; }
-  .sams-table th {
-    padding: 10px 16px;
-    text-align: left;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--text-tertiary);
-    background: var(--gray-50);
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  .sams-table td {
-    padding: 11px 16px;
-    border-bottom: 1px solid var(--gray-100);
-    vertical-align: middle;
-  }
-  .sams-table tbody tr:last-child td { border-bottom: none; }
-  .sams-table tbody tr {
-    transition: background var(--dur-fast);
-  }
-  .sams-table tbody tr:hover { background: var(--gray-25); }
-  
-  /* Dark mode table header */
-  @media (prefers-color-scheme: dark) {
-    .sams-table th { background: var(--navy-800); border-bottom-color: var(--navy-700); }
-    .sams-table td { border-bottom-color: var(--navy-800); }
-    .sams-table tbody tr:hover { background: var(--navy-900); }
-  }
-
-  /* ── Form controls ── */
-  .sams-input {
-    width: 100%;
-    padding: 8px 12px;
-    font-family: var(--font-ui);
-    font-size: 13.5px;
-    color: var(--text-primary);
-    background: var(--surface);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-md);
-    outline: none;
-    transition: border-color var(--dur-base), box-shadow var(--dur-base);
-  }
-  .sams-input::placeholder { color: var(--text-tertiary); }
-  .sams-input:focus {
-    border-color: var(--navy-400);
-    box-shadow: 0 0 0 3px rgba(31,58,95,0.3);
-  }
-  .sams-input:disabled { background: var(--surface-sunken); color: var(--text-tertiary); }
-
-  .sams-select {
-    width: 100%;
-    padding: 8px 12px;
-    font-family: var(--font-ui);
-    font-size: 13.5px;
-    color: var(--text-primary);
-    background: var(--surface);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-md);
-    outline: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239fa9bc' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 30px;
-    transition: border-color var(--dur-base), box-shadow var(--dur-base);
-    cursor: pointer;
-  }
-  .sams-select:focus {
-    border-color: var(--navy-400);
-    box-shadow: 0 0 0 3px rgba(31,58,95,0.3);
-  }
-  
-  /* Dark mode select arrow */
-  @media (prefers-color-scheme: dark) {
-    .sams-select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7fa6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-    }
-  }
-
-  /* ── Page header ── */
-  .page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 24px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-  }
-  .page-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-primary);
-    letter-spacing: -0.01em;
-  }
-  .page-subtitle {
-    font-size: 12.5px;
-    color: var(--text-tertiary);
-    margin-top: 1px;
-  }
-
-  /* ── Section heading inside cards ── */
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-  }
-  .card-title {
-    font-size: 13px;
-    font-weight: 600;
+  /* Force proper inheritance on all elements */
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6,
+  .dark p, .dark span, .dark div, .dark button, .dark a {
     color: var(--text-primary);
   }
-
-  /* ── Divider ── */
-  .divider { height: 1px; background: var(--border); }
-
-  /* ── Skeleton ── */
-  .skeleton {
-    background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-50) 50%, var(--gray-100) 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-    border-radius: var(--radius-sm);
-  }
-  @keyframes shimmer {
-    0%   { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
-  
-  /* Dark mode skeleton */
-  @media (prefers-color-scheme: dark) {
-    .skeleton {
-      background: linear-gradient(90deg, var(--navy-800) 25%, var(--navy-900) 50%, var(--navy-800) 75%);
-    }
-  }
-
-  /* ── Fade in ── */
-  .fade-in {
-    animation: fadeIn var(--dur-slow) var(--ease-out) both;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Line clamp */
-  .line-clamp-1 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-  }
-  .line-clamp-2 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-}
-
-/* ── Spin (used for loading spinner) ── */
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ═══════════════════════════════════════════════════════
-   Phase 4 — Stability & Polish
-═══════════════════════════════════════════════════════ */
-
-@layer utilities {
-
-  /* ── Focus visible (keyboard nav) ── */
-  :focus-visible {
-    outline: 2px solid rgba(31, 58, 95, 0.5);
-    outline-offset: 2px;
-    border-radius: 4px;
-  }
-
-  /* ── Smooth page transitions ── */
-  .page-enter {
-    animation: fadeIn var(--dur-slow) var(--ease-out) both;
-  }
-
-  /* ── Notification pulse (unread dot) ── */
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50%       { opacity: 0.6; transform: scale(0.8); }
-  }
-  .pulse-dot {
-    animation: pulse-dot 2s ease-in-out infinite;
-  }
-
-  /* ── Form section spacing ── */
-  .form-stack > * + * {
-    margin-top: 14px;
-  }
-
-  /* ── Table row click cursor ── */
-  .sams-table tbody tr[style*="cursor: pointer"]:hover td {
-    background: var(--gray-25);
-  }
-
-  /* ── Input group (currency + amount) ── */
-  .input-group {
-    display: flex;
-    gap: 8px;
-  }
-  .input-group > select { flex-shrink: 0; }
-  .input-group > input  { flex: 1; }
-
-  /* ── Empty state ── */
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    text-align: center;
-    color: var(--text-tertiary);
-  }
-  .empty-state svg {
-    margin-bottom: 12px;
-    opacity: 0.4;
-  }
-  .empty-state p {
-    font-size: 13px;
-    margin: 0;
-  }
-
-  /* ── Tooltip base ── */
-  [title] { cursor: default; }
-
-  /* ── Status dot indicator ── */
-  .status-dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    margin-right: 5px;
-    vertical-align: middle;
-  }
-  .status-dot.active   { background: #22c55e; }
-  .status-dot.inactive { background: var(--gray-300); }
-
-  /* ── Truncate ── */
-  .truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* ── Responsive hide ── */
-  @media (max-width: 768px) {
-    .hide-mobile { display: none !important; }
-  }
-}
-/* ─────────────────────────────────────────────
-   Login / Register Hero Title
-   Keep the special serif title only for auth pages.
-───────────────────────────────────────────── */
-
-.rp-hero-title,
-.lp-hero-title,
-.rp-hero-title *,
-.lp-hero-title * {
-  font-family: var(--font-hero) !important;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
-}
-
-/* ─────────────────────────────────────────────
-   SAMS Authenticated App Typography
-   Applies Inter only inside AppShell.
-   Login / Create Account pages are not forced.
-───────────────────────────────────────────── */
-
-.sams-app-font,
-.sams-app-font * {
-  font-family:
-    "Inter",
-    "SF Pro Display",
-    "SF Pro Text",
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    sans-serif !important;
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: geometricPrecision;
-}
-
-.sams-app-font button,
-.sams-app-font input,
-.sams-app-font select,
-.sams-app-font textarea {
-  font-family:
-    "Inter",
-    "SF Pro Display",
-    "SF Pro Text",
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    sans-serif !important;
-}
-
-.sams-app-font table,
-.sams-app-font thead,
-.sams-app-font tbody,
-.sams-app-font tr,
-.sams-app-font th,
-.sams-app-font td {
-  font-family:
-    "Inter",
-    "SF Pro Display",
-    "SF Pro Text",
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    sans-serif !important;
-}
-
-.sams-app-font .mono,
-.sams-app-font code,
-.sams-app-font pre,
-.sams-app-font kbd,
-.sams-app-font samp {
-  font-family:
-    "Inter",
-    "SF Pro Display",
-    "SF Pro Text",
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    sans-serif !important;
-}
-
-/* ═══════════════════════════════════════════════════════
-   APP-WIDE DARK MODE FIX (Global Override Layer)
-   ═══════════════════════════════════════════════════════ */
-
-html { color-scheme: light dark; }
-.dark { color-scheme: dark; }
-
-@layer base {
-  .dark body, .dark #root { background-color: var(--surface-sunken) !important; color: var(--text-primary) !important; }
-
-  .dark .bg-white, .dark [class*="bg-gray-50"], .dark [class*="bg-gray-100"],
-  .dark [class*="bg-slate-50"], .dark [class*="bg-neutral-50"],
-  .dark [style*="background: #fff"], .dark [style*="background: white"] {
-    background-color: var(--surface-raised) !important;
-  }
-  .dark .bg-gray-900, .dark .bg-black, .dark [class*="bg-slate-900"] { background-color: var(--navy-950) !important; }
-
-  .dark .text-black, .dark .text-gray-900, .dark .text-gray-800, .dark [class*="text-slate-900"],
-  .dark [style*="color: #0"], .dark [style*="color: #1"] { color: var(--text-primary) !important; }
-  .dark .text-gray-500, .dark .text-gray-600, .dark [class*="text-slate-500"] { color: var(--text-secondary) !important; }
-  .dark .text-gray-400, .dark [class*="text-slate-400"] { color: var(--text-tertiary) !important; }
-
-  .dark .border-gray-200, .dark .border-gray-300, .dark [class*="border-slate-200"],
-  .dark [class*="border-gray-"], .dark [style*="border-color: #e"], .dark [style*="border-color: #d"] {
-    border-color: var(--border) !important;
-  }
-
-  .dark input, .dark select, .dark textarea, .dark [type="text"], .dark [type="email"], .dark [type="password"], .dark [type="search"], .dark [type="number"] {
-    background-color: var(--surface-raised) !important;
+  .dark input, .dark select, .dark textarea {
+    background: var(--surface-raised) !important;
     color: var(--text-primary) !important;
     border-color: var(--border) !important;
   }
-  .dark input::placeholder, .dark textarea::placeholder, .dark select { color: var(--text-tertiary) !important; }
+  .dark input::placeholder, .dark textarea::placeholder { color: var(--text-tertiary) !important; }
+  
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 7px; height: 7px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.10); border-radius: 6px; }
+  .dark ::-webkit-scrollbar-thumb { background: var(--navy-700) !important; }
+  ::selection { background: #dbeafe; color: #1e40af; }
+  .dark ::selection { background: var(--navy-700) !important; color: var(--gray-50) !important; }
+  :focus-visible { outline: none; box-shadow: var(--sh-focus); border-radius: 8px; }
+}
 
-  .dark table th { background-color: var(--navy-900) !important; border-bottom-color: var(--navy-700) !important; color: var(--text-tertiary) !important; }
-  .dark table td { border-bottom-color: var(--navy-800) !important; color: var(--text-primary) !important; }
-  .dark table tbody tr:hover td { background-color: var(--surface-hover) !important; }
+/* ANIMATIONS */
+@keyframes fadeUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.fade-up { animation: fadeUp 420ms var(--ease) both; }
 
-  .dark .card, .dark [style*="backdrop-filter"], .dark [style*="rgba(255,255,255"] {
-    background-color: var(--surface) !important;
-    border-color: var(--border) !important;
-  }
-
-  .dark ::-webkit-scrollbar-thumb { background: var(--navy-600) !important; }
-  .dark ::-webkit-scrollbar-track { background: transparent !important; }
-
-  .dark ::selection { background: var(--navy-700) !important; color: var(--text-primary) !important; }
+/* UTILITIES */
+@layer utilities {
+  .text-primary   { color: var(--text-primary); }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary  { color: var(--text-tertiary); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); transition: background var(--dur-base), border-color var(--dur-base); }
+  .btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--navy-600); color: var(--text-on-accent); border: none; border-radius: var(--radius-md); font-family: var(--font-ui); font-size: 13px; font-weight: 500; cursor: pointer; transition: background var(--dur-base), box-shadow var(--dur-base); box-shadow: var(--shadow-sm); }
+  .btn-primary:hover { background: var(--navy-500); box-shadow: var(--shadow-md); }
+  .sams-input { width: 100%; padding: 8px 12px; font-family: var(--font-ui); font-size: 13.5px; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-md); outline: none; transition: border-color var(--dur-base), background var(--dur-base); }
+  .sams-input:focus { border-color: var(--navy-400); box-shadow: 0 0 0 3px rgba(31,58,95,0.1); }
+  .sams-table { width: 100%; border-collapse: collapse; }
+  .sams-table th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); background: var(--gray-50); border-bottom: 1px solid var(--border); transition: background var(--dur-base), color var(--dur-base), border-color var(--dur-base); }
+  .dark .sams-table th { background: var(--navy-800); color: var(--gray-400); border-bottom-color: var(--navy-700); }
+  .sams-table td { padding: 11px 16px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; transition: background var(--dur-fast), border-color var(--dur-fast); }
+  .dark .sams-table td { border-bottom-color: var(--navy-800); }
+  .sams-table tbody tr:hover { background: var(--gray-25); }
+  .dark .sams-table tbody tr:hover { background: var(--navy-900); }
+  .badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 20px; font-size: 11.5px; font-weight: 500; border: 1px solid transparent; }
+  .badge::before { content: ''; display: block; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.7; }
+  .badge-draft { background: var(--status-draft-bg); color: var(--status-draft-text); border-color: var(--status-draft-border); }
+  .badge-pending { background: var(--status-pending-bg); color: var(--status-pending-text); border-color: var(--status-pending-border); }
+  .badge-processing { background: var(--status-processing-bg); color: var(--status-processing-text); border-color: var(--status-processing-border); }
+  .badge-approved { background: var(--status-approved-bg); color: var(--status-approved-text); border-color: var(--status-approved-border); }
+  .badge-admitted { background: var(--status-admitted-bg); color: var(--status-admitted-text); border-color: var(--status-admitted-border); }
+  .badge-rejected { background: var(--status-rejected-bg); color: var(--status-rejected-text); border-color: var(--status-rejected-border); }
+  .badge-revoked { background: var(--status-revoked-bg); color: var(--status-revoked-text); border-color: var(--status-revoked-border); }
+  .badge-pre_admission { background: var(--status-pre-bg); color: var(--status-pre-text); border-color: var(--status-pre-border); }
+  .skeleton { background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-50) 50%, var(--gray-100) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-sm); }
+  .dark .skeleton { background: linear-gradient(90deg, var(--navy-800) 25%, var(--navy-900) 50%, var(--navy-800) 75%); }
 }
