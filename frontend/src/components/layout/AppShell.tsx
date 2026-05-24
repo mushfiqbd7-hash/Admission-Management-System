@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 
 import HeaderRealtimeActions from '@/components/layout/HeaderRealtimeActions';
+import { ThemeToggle } from "../components/ui/ThemeToggle";
 import { useAuthStore } from '@/store/authStore';
 
 const WORKSPACE_ITEMS = [
@@ -343,7 +344,7 @@ export default function AppShell() {
               </p>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
               <form onSubmit={handleTopSearch} className="hidden lg:block" style={{ position: 'relative' }}>
                 <Search style={{
                   position: 'absolute', left: 14, top: '50%',
@@ -361,6 +362,7 @@ export default function AppShell() {
                   }}
                 />
               </form>
+              <ThemeToggle />
               <HeaderRealtimeActions />
             </div>
           </div>

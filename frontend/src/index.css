@@ -171,6 +171,131 @@
 }
 
 /* ═══════════════════════════════════════════════════════
+   DARK MODE SUPPORT — SAMS
+   Overrides for dark theme using existing palette
+═══════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface:        var(--navy-950);
+    --surface-raised: var(--navy-900);
+    --surface-sunken: var(--navy-900);
+    --border:         var(--navy-700);
+    --border-strong:  var(--navy-600);
+    --text-primary:   var(--gray-50);
+    --text-secondary: var(--gray-300);
+    --text-tertiary:  var(--gray-400);
+    --text-on-accent: var(--navy-950);
+    
+    /* Dark mode shadows (softer, darker) */
+    --shadow-xs:  0 1px 2px rgba(0,0,0,0.2);
+    --shadow-sm:  0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.15);
+    --shadow-md:  0 4px 6px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.2);
+    --shadow-lg:  0 10px 24px rgba(0,0,0,0.35), 0 4px 8px rgba(0,0,0,0.25);
+    --shadow-xl:  0 20px 48px rgba(0,0,0,0.45), 0 8px 16px rgba(0,0,0,0.3);
+    
+    --sh-soft:    0 1px 2px rgba(0,0,0,0.3);
+    --sh-card:
+      0 1px 0 rgba(255,255,255,0.05) inset,
+      0 1px 2px rgba(0,0,0,0.25),
+      0 8px 24px -8px rgba(0,0,0,0.4);
+    --sh-card-hover:
+      0 1px 0 rgba(255,255,255,0.05) inset,
+      0 2px 4px rgba(0,0,0,0.3),
+      0 16px 40px -12px rgba(0,0,0,0.5);
+    --sh-panel:
+      0 1px 0 rgba(255,255,255,0.04) inset,
+      0 4px 12px -4px rgba(0,0,0,0.35),
+      0 24px 48px -24px rgba(0,0,0,0.6);
+    --sh-header:
+      0 1px 0 rgba(255,255,255,0.06) inset,
+      0 1px 12px rgba(0,0,0,0.25),
+      0 12px 28px -16px rgba(0,0,0,0.4);
+    --sh-focus: 0 0 0 3px rgba(90,130,181,0.35);
+    
+    /* Dark mode canvas mesh */
+    --canvas-mesh:
+      radial-gradient(900px 600px at 8% -12%, rgba(90,130,181,0.12), transparent 55%),
+      radial-gradient(800px 500px at 110% 0%, rgba(154,52,18,0.08), transparent 55%),
+      radial-gradient(700px 700px at 60% 110%, rgba(99,102,241,0.07), transparent 50%),
+      linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 100%);
+    
+    --surface-soft:  rgba(13,22,41,0.85);
+    --surface-glass: rgba(13,22,41,0.7);
+    
+    /* Dark mode status colors (maintain contrast) */
+    --status-draft-bg: #1e293b; --status-draft-text: #94a3b8; --status-draft-border: #334155;
+    --status-pending-bg: #422006; --status-pending-text: #fcd34d; --status-pending-border: #92400e;
+    --status-processing-bg: #1e3a5f; --status-processing-text: #93c5fd; --status-processing-border: #1d4ed8;
+    --status-approved-bg: #052e16; --status-approved-text: #86efac; --status-approved-border: #166534;
+    --status-admitted-bg: #042f2e; --status-admitted-text: #5eead4; --status-admitted-border: #0f766e;
+    --status-rejected-bg: #450a1a; --status-rejected-text: #fca5a5; --status-rejected-border: #9f1239;
+    --status-revoked-bg: #431407; --status-revoked-text: #fdba74; --status-revoked-border: #c2410c;
+    --status-pre-bg: #2e1065; --status-pre-text: #d8b4fe; --status-pre-border: #7e22ce;
+  }
+}
+
+/* Class-based dark mode override (for manual toggle) */
+.dark {
+  --surface:        var(--navy-950);
+  --surface-raised: var(--navy-900);
+  --surface-sunken: var(--navy-900);
+  --border:         var(--navy-700);
+  --border-strong:  var(--navy-600);
+  --text-primary:   var(--gray-50);
+  --text-secondary: var(--gray-300);
+  --text-tertiary:  var(--gray-400);
+  --text-on-accent: var(--navy-950);
+  
+  --shadow-xs:  0 1px 2px rgba(0,0,0,0.2);
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.15);
+  --shadow-md:  0 4px 6px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.2);
+  --shadow-lg:  0 10px 24px rgba(0,0,0,0.35), 0 4px 8px rgba(0,0,0,0.25);
+  --shadow-xl:  0 20px 48px rgba(0,0,0,0.45), 0 8px 16px rgba(0,0,0,0.3);
+  
+  --sh-soft:    0 1px 2px rgba(0,0,0,0.3);
+  --sh-card:
+    0 1px 0 rgba(255,255,255,0.05) inset,
+    0 1px 2px rgba(0,0,0,0.25),
+    0 8px 24px -8px rgba(0,0,0,0.4);
+  --sh-card-hover:
+    0 1px 0 rgba(255,255,255,0.05) inset,
+    0 2px 4px rgba(0,0,0,0.3),
+    0 16px 40px -12px rgba(0,0,0,0.5);
+  --sh-panel:
+    0 1px 0 rgba(255,255,255,0.04) inset,
+    0 4px 12px -4px rgba(0,0,0,0.35),
+    0 24px 48px -24px rgba(0,0,0,0.6);
+  --sh-header:
+    0 1px 0 rgba(255,255,255,0.06) inset,
+    0 1px 12px rgba(0,0,0,0.25),
+    0 12px 28px -16px rgba(0,0,0,0.4);
+  --sh-focus: 0 0 0 3px rgba(90,130,181,0.35);
+  
+  --canvas-mesh:
+    radial-gradient(900px 600px at 8% -12%, rgba(90,130,181,0.12), transparent 55%),
+    radial-gradient(800px 500px at 110% 0%, rgba(154,52,18,0.08), transparent 55%),
+    radial-gradient(700px 700px at 60% 110%, rgba(99,102,241,0.07), transparent 50%),
+    linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 100%);
+  
+  --surface-soft:  rgba(13,22,41,0.85);
+  --surface-glass: rgba(13,22,41,0.7);
+  
+  --status-draft-bg: #1e293b; --status-draft-text: #94a3b8; --status-draft-border: #334155;
+  --status-pending-bg: #422006; --status-pending-text: #fcd34d; --status-pending-border: #92400e;
+  --status-processing-bg: #1e3a5f; --status-processing-text: #93c5fd; --status-processing-border: #1d4ed8;
+  --status-approved-bg: #052e16; --status-approved-text: #86efac; --status-approved-border: #166534;
+  --status-admitted-bg: #042f2e; --status-admitted-text: #5eead4; --status-admitted-border: #0f766e;
+  --status-rejected-bg: #450a1a; --status-rejected-text: #fca5a5; --status-rejected-border: #9f1239;
+  --status-revoked-bg: #431407; --status-revoked-text: #fdba74; --status-revoked-border: #c2410c;
+  --status-pre-bg: #2e1065; --status-pre-text: #d8b4fe; --status-pre-border: #7e22ce;
+}
+
+/* Smooth transitions for theme switch */
+body, .card, .input, .button, .modal, .table-row, .badge, .sams-input, .sams-select {
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* ═══════════════════════════════════════════════════════
    Base Reset
 ═══════════════════════════════════════════════════════ */
 @layer base {
@@ -197,8 +322,14 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.10); border-radius: 6px; }
   ::-webkit-scrollbar-thumb:hover { background: rgba(15,23,42,0.18); }
+  
+  /* Dark mode scrollbar */
+  @media (prefers-color-scheme: dark) {
+    ::-webkit-scrollbar-thumb { background: rgba(90,130,181,0.3); }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(90,130,181,0.5); }
+  }
 
-  ::selection { background: #dbeafe; color: #1e40af; }
+  ::selection { background: #1e3a5f; color: #93c5fd; }
   :focus-visible { outline: none; box-shadow: var(--sh-focus); border-radius: 8px; }
 }
 
@@ -279,7 +410,7 @@
   .badge-pre_admission { background: var(--status-pre-bg);      color: var(--status-pre-text);        border-color: var(--status-pre-border); }
 
   /* ── Priority ── */
-  .priority-high   { color: #b91c1c; font-weight: 600; font-size: 11.5px; }
+  .priority-high   { color: #f87171; font-weight: 600; font-size: 11.5px; }
   .priority-normal { color: var(--text-tertiary); font-size: 11.5px; }
 
   /* ── Card surface ── */
@@ -356,6 +487,13 @@
     transition: background var(--dur-fast);
   }
   .sams-table tbody tr:hover { background: var(--gray-25); }
+  
+  /* Dark mode table header */
+  @media (prefers-color-scheme: dark) {
+    .sams-table th { background: var(--navy-800); border-bottom-color: var(--navy-700); }
+    .sams-table td { border-bottom-color: var(--navy-800); }
+    .sams-table tbody tr:hover { background: var(--navy-900); }
+  }
 
   /* ── Form controls ── */
   .sams-input {
@@ -373,7 +511,7 @@
   .sams-input::placeholder { color: var(--text-tertiary); }
   .sams-input:focus {
     border-color: var(--navy-400);
-    box-shadow: 0 0 0 3px rgba(31,58,95,0.1);
+    box-shadow: 0 0 0 3px rgba(31,58,95,0.3);
   }
   .sams-input:disabled { background: var(--surface-sunken); color: var(--text-tertiary); }
 
@@ -397,7 +535,14 @@
   }
   .sams-select:focus {
     border-color: var(--navy-400);
-    box-shadow: 0 0 0 3px rgba(31,58,95,0.1);
+    box-shadow: 0 0 0 3px rgba(31,58,95,0.3);
+  }
+  
+  /* Dark mode select arrow */
+  @media (prefers-color-scheme: dark) {
+    .sams-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7fa6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    }
   }
 
   /* ── Page header ── */
@@ -448,6 +593,13 @@
   @keyframes shimmer {
     0%   { background-position: 200% 0; }
     100% { background-position: -200% 0; }
+  }
+  
+  /* Dark mode skeleton */
+  @media (prefers-color-scheme: dark) {
+    .skeleton {
+      background: linear-gradient(90deg, var(--navy-800) 25%, var(--navy-900) 50%, var(--navy-800) 75%);
+    }
   }
 
   /* ── Fade in ── */
@@ -554,7 +706,7 @@
     margin-right: 5px;
     vertical-align: middle;
   }
-  .status-dot.active   { background: #16a34a; }
+  .status-dot.active   { background: #22c55e; }
   .status-dot.inactive { background: var(--gray-300); }
 
   /* ── Truncate ── */
