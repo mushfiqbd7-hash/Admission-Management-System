@@ -159,13 +159,13 @@ function StatCard({
       style={statCardStyle}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.boxShadow = '0 18px 36px rgba(15,23,42,0.09)';
-        e.currentTarget.style.borderColor = '#cbd5e1';
+        e.currentTarget.style.boxShadow = '0 1px 0 rgba(255,255,255,0.7) inset, 0 2px 4px rgba(15,23,42,0.05), 0 16px 40px -12px rgba(15,23,42,0.14)';
+        e.currentTarget.style.borderColor = 'rgba(15,23,42,0.10)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = '0 10px 24px rgba(15,23,42,0.055)';
-        e.currentTarget.style.borderColor = '#e5eaf2';
+        e.currentTarget.style.boxShadow = 'var(--sh-card)';
+        e.currentTarget.style.borderColor = 'rgba(15,23,42,0.06)';
       }}
     >
       <div
@@ -447,9 +447,46 @@ export default function DashboardPage() {
   const hasFilters =
     search || statusFilter !== 'all' || submittedByFilter !== 'all' || intakeFilter !== 'all';
 
+  /* time-of-day greeting */
+  const greeting = useMemo(() => {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
+  }, []);
+
+  const firstName = useMemo(() => {
+    const raw = user?.full_name || (user as any)?.name || '';
+    if (user?.role === 'admin' && raw === 'System Administrator') return 'Admin';
+    return raw.split(' ')[0] || 'there';
+  }, [user]);
+
+  const pendingCount = n(stats?.pending);
+
   return (
     <div style={dashboardPageStyle}>
       <div style={dashboardSoftGlowStyle} />
+
+      {/* Greeting */}
+      <div style={{ padding: '20px 0 4px', flexShrink: 0, position: 'relative', zIndex: 1 }}>
+        <h2 style={{
+          margin: 0,
+          fontFamily: 'var(--font-display, inherit)',
+          fontSize: 22,
+          fontWeight: 700,
+          letterSpacing: '-0.03em',
+          color: '#0a0e1a',
+        }}>
+          {greeting}, {firstName} 👋
+        </h2>
+        <p style={{ margin: '4px 0 0', fontSize: 13, color: '#64748b' }}>
+          {isLoading
+            ? 'Loading your dashboard...'
+            : pendingCount > 0
+              ? `You have ${pendingCount} pending application${pendingCount !== 1 ? 's' : ''} waiting for review.`
+              : 'Everything looks good — no pending applications right now.'}
+        </p>
+      </div>
 
       {/* Stats */}
       <div style={statsGridStyle}>
@@ -928,9 +965,9 @@ const dashboardPageStyle: React.CSSProperties = {
   position: 'relative',
   height: '100%',
   minHeight: 0,
-  background:
-    'radial-gradient(circle at top left, rgba(37,99,235,0.08), transparent 34%), linear-gradient(180deg, #f7f9fc 0%, #eef3f9 100%)',
-  padding: '14px 16px 16px',
+  background: 'var(--canvas-mesh, linear-gradient(180deg, #f7f9fc 0%, #eef3fa 100%))',
+  backgroundAttachment: 'fixed',
+  padding: '0 18px 16px',
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
@@ -960,19 +997,18 @@ const statsGridStyle: React.CSSProperties = {
 
 const statCardStyle: React.CSSProperties = {
   position: 'relative',
-  background:
-    'linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(248,250,252,0.96) 100%)',
-  border: '1px solid #e5eaf2',
+  background: 'rgba(255,255,255,0.88)',
+  border: '1px solid rgba(15,23,42,0.06)',
   borderRadius: 20,
   padding: 0,
   height: 132,
   textAlign: 'left',
   cursor: 'pointer',
   fontFamily: 'inherit',
-  boxShadow: '0 10px 24px rgba(15,23,42,0.055)',
+  boxShadow: 'var(--sh-card)',
   transition: 'transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease',
   overflow: 'hidden',
-  backdropFilter: 'blur(12px)',
+  backdropFilter: 'blur(16px)',
 };
 
 const statGlowStyle: React.CSSProperties = {
@@ -1071,14 +1107,14 @@ const statAccentPillStyle: React.CSSProperties = {
 
 const panelStyle: React.CSSProperties = {
   minHeight: 0,
-  background: 'rgba(255,255,255,0.92)',
-  border: '1px solid #e5eaf2',
+  background: 'rgba(255,255,255,0.88)',
+  border: '1px solid rgba(15,23,42,0.06)',
   borderRadius: 22,
   overflow: 'hidden',
-  boxShadow: '0 16px 38px rgba(15,23,42,0.075)',
+  boxShadow: 'var(--sh-panel)',
   display: 'flex',
   flexDirection: 'column',
-  backdropFilter: 'blur(14px)',
+  backdropFilter: 'blur(16px)',
 };
 
 const panelHeaderStyle: React.CSSProperties = {

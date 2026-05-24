@@ -21,213 +21,377 @@ import {
 import HeaderRealtimeActions from '@/components/layout/HeaderRealtimeActions';
 import { useAuthStore } from '@/store/authStore';
 
+/* ---------- nav config ---------- */
+const WORKSPACE_ITEMS = [
+  { label: 'Dashboard',       path: '/dashboard',         icon: LayoutDashboard },
+  { label: 'New Application', path: '/students/new',      icon: PlusCircle },
+  { label: 'Applications',    path: '/students',          icon: FileText },
+  { label: 'Documents',       path: '/documents',         icon: Folder },
+  { label: 'Work Station',    path: '/workstation',       icon: Briefcase, adminStaff: true },
+  { label: 'Messages',        path: '/inbox',             icon: MessageSquare },
+];
+
+const ADMIN_ITEMS = [
+  { label: 'User Management',    path: '/users',              icon: Users,    adminOnly: true },
+  { label: 'Application Links',  path: '/application-links',  icon: Link2,    agentPlus: true },
+  { label: 'Settings',           path: '/settings',           icon: Settings },
+];
+
+/* ---------- sidebar nav item ---------- */
+function NavItem({ label, path, icon: Icon, end: forceEnd }: {
+  label: string; path: string; icon: React.ElementType; end?: boolean;
+}) {
+  return (
+    <NavLink
+      to={path}
+      end={forceEnd ?? path === '/students'}
+      title={label}
+      style={({ isActive }) => ({
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        padding: '8px 10px',
+        marginBottom: 2,
+        borderRadius: 9,
+        border: 'none',
+        background: isActive
+          ? 'linear-gradient(180deg, #3b82f6 0%, #2563eb 100%)'
+          : 'transparent',
+        color: isActive ? '#fff' : 'rgba(255,255,255,0.62)',
+        cursor: 'pointer',
+        fontFamily: 'inherit',
+        textDecoration: 'none',
+        fontSize: 13,
+        fontWeight: isActive ? 600 : 500,
+        letterSpacing: '-0.005em',
+        boxShadow: isActive
+          ? '0 1px 0 rgba(255,255,255,0.18) inset, 0 6px 16px -6px rgba(37,99,235,0.55), 0 2px 4px rgba(37,99,235,0.20)'
+          : 'none',
+        transition: 'background 140ms ease, color 140ms ease, box-shadow 140ms ease',
+      })}
+      className="sams-nav-item"
+    >
+      <Icon size={15} strokeWidth={1.9} />
+      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {label}
+      </span>
+    </NavLink>
+  );
+}
+
+/* ---------- section label ---------- */
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{
+      padding: '6px 10px',
+      fontSize: 10.5,
+      fontWeight: 700,
+      color: 'rgba(255,255,255,0.36)',
+      letterSpacing: '0.08em',
+      textTransform: 'uppercase',
+      marginTop: 16,
+      marginBottom: 2,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+/* ========== AppShell ========== */
 export default function AppShell() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
   const [topSearch, setTopSearch] = useState('');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarHover, setSidebarHover] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const isAdmin = user?.role === 'admin';
+  const isAdmin        = user?.role === 'admin';
   const isAdminOrStaff = user?.role === 'admin' || user?.role === 'staff';
+  const isAgentPlus    = ['admin', 'staff', 'agent'].includes(user?.role || '');
 
+  /* page title / subtitle */
   const pageMeta = useMemo(() => {
     if (location.pathname.startsWith('/students/new'))
-      return { title: 'New Application', subtitle: 'Create and submit a new student admission application.' };
+      return { title: 'New Application',    subtitle: 'Create and submit a new student admission application.' };
     if (location.pathname.startsWith('/students'))
-      return { title: 'Applications', subtitle: 'Manage applications, track status, and review submissions.' };
+      return { title: 'Applications',       subtitle: 'Manage applications, track status, and review submissions.' };
     if (location.pathname.startsWith('/documents'))
-      return { title: 'Documents', subtitle: 'Organize, review, and manage uploaded student documents.' };
+      return { title: 'Documents',          subtitle: 'Organize, review, and manage uploaded student documents.' };
     if (location.pathname.startsWith('/workstation'))
-      return { title: 'Work Station', subtitle: 'Handle approved applications and manage processing workflow.' };
+      return { title: 'Work Station',       subtitle: 'Handle approved applications and manage processing workflow.' };
     if (location.pathname.startsWith('/inbox'))
-      return { title: 'Messages', subtitle: 'Stay updated with inbox messages and system notifications.' };
+      return { title: 'Messages',           subtitle: 'Stay updated with inbox messages and system notifications.' };
     if (location.pathname.startsWith('/users'))
-      return { title: 'User Management', subtitle: 'Manage system users, permissions, and roles.' };
+      return { title: 'User Management',    subtitle: 'Manage system users, permissions, and roles.' };
     if (location.pathname.startsWith('/application-links'))
-      return { title: 'Application Links', subtitle: 'Generate and manage shareable application invite links.' };
+      return { title: 'Application Links',  subtitle: 'Generate and manage shareable application invite links.' };
     if (location.pathname.startsWith('/settings'))
-      return { title: 'Settings', subtitle: 'Configure platform preferences and system behavior.' };
-    return { title: 'Dashboard', subtitle: 'Monitor applications, progress, and latest activity.' };
+      return { title: 'Settings',           subtitle: 'Configure platform preferences and system behavior.' };
+    return { title: 'Dashboard',            subtitle: 'Monitor applications, progress, and latest activity.' };
   }, [location.pathname]);
-
-  const navItems = [
-    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { label: 'New Application', path: '/students/new', icon: PlusCircle },
-    { label: 'Applications', path: '/students', icon: FileText },
-    { label: 'Documents', path: '/documents', icon: Folder },
-    { label: 'Work Station', path: '/workstation', icon: Briefcase, adminStaff: true },
-    { label: 'Messages', path: '/inbox', icon: MessageSquare },
-    ...(isAdmin ? [{ label: 'User Management', path: '/users', icon: Users }] : []),
-    ...(['admin', 'staff', 'agent'].includes(user?.role || '')
-      ? [{ label: 'Application Links', path: '/application-links', icon: Link2 }]
-      : []),
-    { label: 'Settings', path: '/settings', icon: Settings },
-  ];
 
   const handleTopSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const q = topSearch.trim();
-    if (q) {
-      navigate(`/students?search=${encodeURIComponent(q)}&t=${Date.now()}`, { replace: false });
-    } else {
-      navigate('/students', { replace: false });
-    }
+    navigate(q ? `/students?search=${encodeURIComponent(q)}&t=${Date.now()}` : '/students', { replace: false });
     setTopSearch('');
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login', { replace: true });
-  };
-
-  const handleNavClick = () => {
-    setSidebarOpen(false);
-  };
+  const handleLogout = () => { logout(); navigate('/login', { replace: true }); };
 
   const rawDisplayName = user?.full_name || (user as any)?.name || 'User';
-  const displayName =
-    user?.role === 'admin' && rawDisplayName === 'System Administrator'
-      ? 'Admin'
-      : rawDisplayName;
+  const displayName = user?.role === 'admin' && rawDisplayName === 'System Administrator'
+    ? 'Admin' : rawDisplayName;
 
-  const SidebarContent = ({ collapsed = false }: { collapsed?: boolean }) => (
-    <>
-      <div className={`flex shrink-0 items-center ${collapsed ? 'justify-center px-3 py-5' : 'gap-3 px-6 py-6'}`}>
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-blue-600">
-          <GraduationCap size={24} />
-        </div>
-        <div className={collapsed ? 'hidden' : 'min-w-0'}>
-          <div className="text-[20px] font-extrabold">Admission</div>
-          <div className="text-[12px] text-slate-300">Management System</div>
+  /* ---- Sidebar ---- */
+  const Sidebar = () => (
+    <aside style={{
+      width: 248,
+      minWidth: 248,
+      height: '100%',
+      flexShrink: 0,
+      background: 'linear-gradient(180deg, #081428 0%, #050e1f 100%)',
+      color: '#fff',
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'relative',
+      borderRight: '1px solid rgba(255,255,255,0.04)',
+      overflowY: 'auto',
+      overflowX: 'hidden',
+    }}>
+      {/* Atmospheric top glow */}
+      <div style={{
+        position: 'absolute', top: -100, left: -40, right: -40, height: 240,
+        background: 'radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.22), transparent 65%)',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }} />
+
+      {/* Brand */}
+      <div style={{
+        padding: '18px 16px 14px', flexShrink: 0, position: 'relative', zIndex: 1,
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
+          <div style={{
+            width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+            background: 'linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
+            boxShadow: '0 1px 0 rgba(255,255,255,0.30) inset, 0 6px 14px -4px rgba(37,99,235,0.50)',
+          }}>
+            <GraduationCap size={18} strokeWidth={2.2} />
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 15.5, fontWeight: 700, letterSpacing: '-0.02em' }}>
+              Admission
+            </div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              Management System
+            </div>
+          </div>
         </div>
       </div>
 
-      <nav className={`min-h-0 flex-1 space-y-1.5 overflow-y-auto ${collapsed ? 'px-3 pt-3' : 'px-4 pt-3'}`}>
-        {navItems
-          .filter((item) => {
-          if ((item as any).adminStaff && !isAdminOrStaff) return false;
-          if ((item as any).adminOnly && !isAdmin) return false;
-          return true;
-        })
-          .map((item) => {
-            const Icon = item.icon;
-            return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.path === '/students'}
-                onClick={handleNavClick}
-                title={collapsed ? item.label : undefined}
-                className={({ isActive }) =>
-                  `flex items-center rounded-xl py-[14px] text-[14px] font-semibold transition ${
-                    collapsed ? 'justify-center px-0' : 'gap-3 px-4'
-                  } ${
-                    isActive
-                      ? 'bg-[#0f5bff] text-white shadow-[0_10px_24px_rgba(15,91,255,0.28)]'
-                      : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                  }`
-                }
-              >
-                <Icon size={20} />
-                <span className={collapsed ? 'hidden' : ''}>{item.label}</span>
-              </NavLink>
-            );
-          })}
-      </nav>
-
-      <div className={`shrink-0 border-t border-white/10 ${collapsed ? 'px-3 py-4' : 'px-5 py-5'}`}>
-        <div className={`mb-4 flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white font-extrabold text-slate-900">
-            {user?.avatar_url
-              ? <img src={user.avatar_url} alt="" className="h-full w-full object-cover" />
-              : displayName.charAt(0).toUpperCase()}
-          </div>
-          <div className={collapsed ? 'hidden' : 'min-w-0 flex-1'}>
-            <div className="truncate text-[15px] font-extrabold">{displayName}</div>
-            <div className="text-[12px] capitalize text-slate-300">{user?.role}</div>
-          </div>
-        </div>
+      {/* Search button */}
+      <div style={{ padding: '12px 12px 4px', flexShrink: 0, position: 'relative', zIndex: 1 }}>
         <button
-          onClick={handleLogout}
-          title={collapsed ? 'Sign Out' : undefined}
-          className={`flex w-full items-center rounded-xl py-3 text-[14px] text-slate-300 transition hover:bg-white/10 hover:text-white ${
-            collapsed ? 'justify-center px-0' : 'gap-3 px-4'
-          }`}
+          onClick={() => navigate('/students')}
+          style={{
+            width: '100%', height: 34, display: 'flex', alignItems: 'center', gap: 9,
+            padding: '0 10px', borderRadius: 10, cursor: 'pointer', fontFamily: 'inherit', fontSize: 12.5,
+            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.06)',
+            color: 'rgba(255,255,255,0.55)', transition: 'background 120ms ease, color 120ms ease',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; e.currentTarget.style.color = '#fff'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(255,255,255,0.55)'; }}
         >
-          <LogOut size={18} />
-          <span className={collapsed ? 'hidden' : ''}>Sign Out</span>
+          <Search size={13} />
+          <span style={{ flex: 1, textAlign: 'left' }}>Search...</span>
+          <kbd style={{
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            minWidth: 18, height: 18, padding: '0 5px',
+            fontFamily: 'var(--font-ui)', fontSize: 10.5, fontWeight: 600, color: 'rgba(255,255,255,0.5)',
+            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 5,
+          }}>⌘K</kbd>
         </button>
       </div>
-    </>
+
+      {/* Nav */}
+      <nav style={{ flex: 1, padding: '4px 10px 12px', overflowY: 'auto', position: 'relative', zIndex: 1 }}
+           onClick={() => setMobileOpen(false)}>
+
+        <SectionLabel>Workspace</SectionLabel>
+        {WORKSPACE_ITEMS.filter(item => {
+          if ((item as any).adminStaff && !isAdminOrStaff) return false;
+          return true;
+        }).map(item => (
+          <NavItem key={item.path} label={item.label} path={item.path} icon={item.icon} />
+        ))}
+
+        {(isAdmin || isAgentPlus) && (
+          <>
+            <SectionLabel>Admin</SectionLabel>
+            {ADMIN_ITEMS.filter(item => {
+              if ((item as any).adminOnly && !isAdmin) return false;
+              if ((item as any).agentPlus && !isAgentPlus) return false;
+              return true;
+            }).map(item => (
+              <NavItem key={item.path} label={item.label} path={item.path} icon={item.icon} />
+            ))}
+          </>
+        )}
+      </nav>
+
+      {/* User block */}
+      <div style={{
+        padding: '12px', borderTop: '1px solid rgba(255,255,255,0.06)', flexShrink: 0,
+        background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.28))',
+        position: 'relative', zIndex: 1,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {/* Avatar */}
+          <div style={{
+            width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+            background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 13, fontWeight: 700, color: '#fff', overflow: 'hidden',
+            boxShadow: '0 0 0 2px rgba(59,130,246,0.45)',
+          }}>
+            {user?.avatar_url
+              ? <img src={user.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              : displayName.charAt(0).toUpperCase()}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 12.5, fontWeight: 700, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {displayName}
+            </div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'capitalize' }}>
+              {user?.role}
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            title="Sign out"
+            style={{
+              width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'transparent', border: 'none', borderRadius: 8,
+              color: 'rgba(255,255,255,0.45)', cursor: 'pointer',
+              transition: 'background 120ms ease, color 120ms ease',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#fff'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.45)'; }}
+          >
+            <LogOut size={14} />
+          </button>
+        </div>
+      </div>
+    </aside>
   );
 
   return (
-    <div className="sams-app-font flex h-screen w-screen overflow-hidden bg-[#f4f7fb]">
-
-      {/* MOBILE OVERLAY */}
-      {sidebarOpen && (
+    <div style={{
+      display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden',
+      background: 'var(--canvas-mesh, #f4f7fb)',
+      backgroundAttachment: 'fixed',
+    }}>
+      {/* Mobile overlay */}
+      {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
+          onClick={() => setMobileOpen(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 40, background: 'rgba(0,0,0,0.55)',
+            backdropFilter: 'blur(2px)',
+          }}
         />
       )}
 
-      {/* SIDEBAR - hover-expand desktop rail, mobile drawer */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[260px] min-w-[260px] flex-col overflow-hidden bg-[#061a33] text-white transition-all duration-300 lg:relative lg:translate-x-0 ${
-          sidebarHover ? 'lg:w-[260px] lg:min-w-[260px]' : 'lg:w-[84px] lg:min-w-[84px]'
-        } ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-        onMouseEnter={() => setSidebarHover(true)}
-        onMouseLeave={() => setSidebarHover(false)}
-      >
-        {/* Close button mobile only */}
-        <button
-          onClick={() => setSidebarOpen(false)}
-          className="absolute right-4 top-4 rounded-lg p-1 text-slate-400 hover:text-white lg:hidden"
-        >
-          <X size={20} />
-        </button>
+      {/* Desktop sidebar */}
+      <div className="hidden lg:flex" style={{ height: '100%', flexShrink: 0 }}>
+        <Sidebar />
+      </div>
 
-        <SidebarContent collapsed={!sidebarHover} />
-      </aside>
+      {/* Mobile drawer */}
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 50, pointerEvents: mobileOpen ? 'auto' : 'none',
+      }}>
+        <div style={{
+          position: 'absolute', left: 0, top: 0, bottom: 0, width: 248,
+          transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 280ms cubic-bezier(0.22,1,0.36,1)',
+        }}>
+          <Sidebar />
+          <button
+            onClick={() => setMobileOpen(false)}
+            style={{
+              position: 'absolute', top: 12, right: -40, width: 32, height: 32,
+              borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none',
+              color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            <X size={16} />
+          </button>
+        </div>
+      </div>
 
-      {/* MAIN */}
-      <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden bg-transparent">
-        <header className="shrink-0 px-3 pb-3 pt-3 sm:px-5 sm:pt-4">
-          <div className="flex h-[72px] items-center justify-between gap-3 rounded-[20px] border border-white/70 bg-[rgba(255,255,255,0.82)] px-4 shadow-[0_12px_30px_rgba(15,23,42,0.06)] backdrop-blur-xl sm:h-[88px] sm:gap-6 sm:rounded-[24px] sm:px-6">
-
-            {/* Sidebar controls */}
+      {/* Main area */}
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+        {/* Glass header */}
+        <header style={{ flexShrink: 0, padding: '14px 20px 0' }}>
+          <div style={{
+            height: 64, padding: '0 20px',
+            borderRadius: 16,
+            background: 'var(--surface-soft, rgba(255,255,255,0.82))',
+            backdropFilter: 'blur(24px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+            border: '1px solid rgba(15,23,42,0.06)',
+            boxShadow: 'var(--sh-header)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+          }}>
+            {/* Mobile menu btn */}
             <button
-              onClick={() => setSidebarOpen(true)}
-              className="shrink-0 rounded-xl p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
-              title="Open sidebar"
+              onClick={() => setMobileOpen(true)}
+              className="flex lg:hidden"
+              style={{
+                flexShrink: 0, borderRadius: 10, padding: 8,
+                background: 'transparent', border: 'none', cursor: 'pointer', color: '#475569',
+              }}
             >
               <Menu size={22} />
             </button>
 
             {/* Title */}
-            <div className="min-w-0 flex-1">
-              <h1 className="truncate text-[16px] font-extrabold leading-tight tracking-[-0.03em] text-slate-950 sm:text-[18px] md:text-[22px]">
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <h1 style={{
+                margin: 0, fontFamily: 'var(--font-display, inherit)',
+                fontSize: 18, fontWeight: 700, letterSpacing: '-0.025em', color: '#0a0e1a',
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              }}>
                 {pageMeta.title}
               </h1>
-              <p className="mt-0.5 hidden truncate text-[12.5px] font-medium text-slate-500 sm:block md:text-[13.5px]">
+              <p style={{
+                margin: '2px 0 0', fontSize: 12.5, color: '#64748b',
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              }}>
                 {pageMeta.subtitle}
               </p>
             </div>
 
             {/* Right side */}
-            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-              <form onSubmit={handleTopSearch} className="relative hidden lg:block">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+              <form onSubmit={handleTopSearch} className="hidden lg:block" style={{ position: 'relative' }}>
+                <Search style={{
+                  position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8',
+                }} size={16} />
                 <input
                   value={topSearch}
                   onChange={(e) => setTopSearch(e.target.value)}
-                  placeholder="Search..."
-                  className="h-[50px] w-[300px] rounded-2xl border border-slate-200/80 bg-white/80 pl-11 pr-4 text-[14px] text-slate-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 xl:w-[420px]"
+                  placeholder="Search applications..."
+                  style={{
+                    height: 40, width: 280, paddingLeft: 40, paddingRight: 14,
+                    borderRadius: 12, border: '1px solid #e3eaf3',
+                    background: '#fff', fontSize: 13.5, color: '#334155',
+                    outline: 'none', fontFamily: 'inherit',
+                  }}
                 />
               </form>
               <HeaderRealtimeActions />
@@ -235,12 +399,11 @@ export default function AppShell() {
           </div>
         </header>
 
-        <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-0 pb-4">
+        {/* Page content */}
+        <main style={{ flex: 1, minWidth: 0, overflowY: 'auto', overflowX: 'hidden' }}>
           <Outlet />
         </main>
       </div>
     </div>
   );
 }
-
-
