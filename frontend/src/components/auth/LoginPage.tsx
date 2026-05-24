@@ -18,9 +18,18 @@ const STATS = [
   { v: '42',   l: 'countries served' },
 ];
 
+const inputBase: React.CSSProperties = {
+  height: 42, width: '100%', borderRadius: 11,
+  border: '1px solid rgba(255,255,255,0.10)',
+  background: 'rgba(255,255,255,0.05)', color: '#fff', outline: 'none',
+  fontSize: 13.5, fontWeight: 500, fontFamily: 'inherit',
+  boxSizing: 'border-box',
+  transition: 'border-color 160ms ease, background-color 160ms ease',
+};
+
 export default function LoginPage() {
-  const navigate   = useNavigate();
-  const setAuth    = useAuthStore((s) => s.setAuth);
+  const navigate = useNavigate();
+  const setAuth  = useAuthStore((s) => s.setAuth);
 
   const [showPw,          setShowPw]          = useState(false);
   const [error,           setError]           = useState('');
@@ -64,6 +73,10 @@ export default function LoginPage() {
       toast.error('Failed to resend. Please try again.');
     }
   };
+
+  // Destructure register results so we can chain onBlur
+  const emailReg    = register('email',    { required: 'Email is required',    pattern: { value: /^\S+@\S+\.\S+$/, message: 'Invalid email address' } });
+  const passwordReg = register('password', { required: 'Password is required' });
 
   return (
     <div style={{
@@ -278,30 +291,21 @@ export default function LoginPage() {
                 autoComplete="email"
                 placeholder="you@company.com"
                 style={{
-                  height: 42, width: '100%', borderRadius: 11,
+                  ...inputBase,
                   paddingLeft: 40, paddingRight: 14,
-                  border: errors.email
-                    ? '1px solid rgba(248,113,113,0.45)'
-                    : '1px solid rgba(255,255,255,0.10)',
-                  background: 'rgba(255,255,255,0.05)', color: '#fff', outline: 'none',
-                  fontSize: 13.5, fontWeight: 500, fontFamily: 'inherit',
-                  boxSizing: 'border-box',
-                  transition: 'border-color 160ms ease, background-color 160ms ease',
+                  borderColor: errors.email ? 'rgba(248,113,113,0.45)' : 'rgba(255,255,255,0.10)',
                 }}
+                {...emailReg}
                 onFocus={(e) => {
                   e.target.style.borderColor = 'rgba(96,165,250,0.6)';
                   e.target.style.background  = 'rgba(255,255,255,0.08)';
                 }}
                 onBlur={(e) => {
+                  void emailReg.onBlur(e);
                   e.target.style.borderColor = errors.email
-                    ? 'rgba(248,113,113,0.45)'
-                    : 'rgba(255,255,255,0.10)';
+                    ? 'rgba(248,113,113,0.45)' : 'rgba(255,255,255,0.10)';
                   e.target.style.background = 'rgba(255,255,255,0.05)';
                 }}
-                {...register('email', {
-                  required: 'Email is required',
-                  pattern: { value: /^\S+@\S+\.\S+$/, message: 'Invalid email address' },
-                })}
               />
             </div>
             {errors.email && (
@@ -336,27 +340,21 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 placeholder="••••••••"
                 style={{
-                  height: 42, width: '100%', borderRadius: 11,
+                  ...inputBase,
                   paddingLeft: 40, paddingRight: 42,
-                  border: errors.password
-                    ? '1px solid rgba(248,113,113,0.45)'
-                    : '1px solid rgba(255,255,255,0.10)',
-                  background: 'rgba(255,255,255,0.05)', color: '#fff', outline: 'none',
-                  fontSize: 13.5, fontWeight: 500, fontFamily: 'inherit',
-                  boxSizing: 'border-box',
-                  transition: 'border-color 160ms ease, background-color 160ms ease',
+                  borderColor: errors.password ? 'rgba(248,113,113,0.45)' : 'rgba(255,255,255,0.10)',
                 }}
+                {...passwordReg}
                 onFocus={(e) => {
                   e.target.style.borderColor = 'rgba(96,165,250,0.6)';
                   e.target.style.background  = 'rgba(255,255,255,0.08)';
                 }}
                 onBlur={(e) => {
+                  void passwordReg.onBlur(e);
                   e.target.style.borderColor = errors.password
-                    ? 'rgba(248,113,113,0.45)'
-                    : 'rgba(255,255,255,0.10)';
+                    ? 'rgba(248,113,113,0.45)' : 'rgba(255,255,255,0.10)';
                   e.target.style.background = 'rgba(255,255,255,0.05)';
                 }}
-                {...register('password', { required: 'Password is required' })}
               />
               <button
                 type="button"
@@ -376,7 +374,7 @@ export default function LoginPage() {
               </p>
             )}
 
-            {/* Submit button */}
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
