@@ -55,7 +55,7 @@ function NavItem({ label, path, icon: Icon, end: forceEnd }: {
         background: isActive
           ? 'linear-gradient(180deg, #3b82f6 0%, #2563eb 100%)'
           : 'transparent',
-        color: isActive ? '#fff' : 'rgba(255,255,255,0.62)',
+        color: isActive ? '#fff' : 'var(--text-secondary)',
         cursor: 'pointer',
         fontFamily: 'inherit',
         textDecoration: 'none',
@@ -83,7 +83,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
       padding: '6px 10px',
       fontSize: 10.5,
       fontWeight: 700,
-      color: 'rgba(255,255,255,0.32)',
+      color: 'var(--text-tertiary)',
       letterSpacing: '0.09em',
       textTransform: 'uppercase',
       marginTop: 18,
@@ -141,21 +141,25 @@ export default function AppShell() {
   const Sidebar = () => (
     <aside style={{
       width: 248, minWidth: 248, height: '100%', flexShrink: 0,
-      background: 'linear-gradient(180deg, #081428 0%, #050e1f 100%)',
-      color: '#fff', display: 'flex', flexDirection: 'column',
+      background: 'linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 100%)',
+      color: '#f8fafc', display: 'flex', flexDirection: 'column',
       position: 'relative',
-      borderRight: '1px solid rgba(255,255,255,0.04)',
+      borderRight: '1px solid var(--navy-700)',
       overflowY: 'auto', overflowX: 'hidden',
+      transition: 'background 0.25s ease, border-color 0.25s ease',
     }}>
+      {/* Atmospheric glow */}
       <div style={{
         position: 'absolute', top: -100, left: -40, right: -40, height: 240,
         background: 'radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.22), transparent 65%)',
         pointerEvents: 'none', zIndex: 0,
       }} />
 
+      {/* Brand */}
       <div style={{
         padding: '20px 16px 16px', flexShrink: 0, position: 'relative', zIndex: 1,
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        borderBottom: '1px solid var(--navy-700)',
+        transition: 'border-color 0.25s ease',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{
@@ -168,16 +172,17 @@ export default function AppShell() {
             A
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff' }}>
+            <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em', color: '#f8fafc' }}>
               Admission
             </div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 1 }}>
+            <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>
               Management System
             </div>
           </div>
         </div>
       </div>
 
+      {/* Nav */}
       <nav
         style={{ flex: 1, padding: '6px 10px 12px', overflowY: 'auto', position: 'relative', zIndex: 1 }}
         onClick={() => setMobileOpen(false)}
@@ -204,10 +209,12 @@ export default function AppShell() {
         )}
       </nav>
 
+      {/* User block */}
       <div style={{
-        padding: '12px 14px', borderTop: '1px solid rgba(255,255,255,0.07)', flexShrink: 0,
+        padding: '12px 14px', borderTop: '1px solid var(--navy-700)', flexShrink: 0,
         background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.30))',
         position: 'relative', zIndex: 1,
+        transition: 'border-color 0.25s ease',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
@@ -222,10 +229,10 @@ export default function AppShell() {
               : displayName.charAt(0).toUpperCase()}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#f8fafc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {displayName}
             </div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.42)', textTransform: 'capitalize', marginTop: 1 }}>
+            <div style={{ fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'capitalize', marginTop: 1 }}>
               {user?.role}
             </div>
           </div>
@@ -235,11 +242,11 @@ export default function AppShell() {
             style={{
               width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: 'transparent', border: 'none', borderRadius: 8,
-              color: 'rgba(255,255,255,0.40)', cursor: 'pointer',
+              color: 'var(--text-tertiary)', cursor: 'pointer',
               transition: 'background 120ms ease, color 120ms ease',
             }}
             onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#fff'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.40)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-tertiary)'; }}
           >
             <LogOut size={14} />
           </button>
@@ -253,7 +260,9 @@ export default function AppShell() {
       display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden',
       background: 'var(--canvas-mesh, #f4f7fb)',
       backgroundAttachment: 'fixed',
+      transition: 'background 0.25s ease',
     }}>
+      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           onClick={() => setMobileOpen(false)}
@@ -264,10 +273,12 @@ export default function AppShell() {
         />
       )}
 
+      {/* Desktop sidebar */}
       <div className="hidden lg:flex" style={{ height: '100%', flexShrink: 0 }}>
         <Sidebar />
       </div>
 
+      {/* Mobile drawer */}
       <div style={{
         position: 'fixed', inset: 0, zIndex: 50,
         pointerEvents: mobileOpen ? 'auto' : 'none',
@@ -278,6 +289,7 @@ export default function AppShell() {
           transition: 'transform 280ms cubic-bezier(0.22,1,0.36,1)',
         }}>
           <Sidebar />
+          {/* X only exists in DOM when drawer is open */}
           {mobileOpen && (
             <button
               onClick={() => setMobileOpen(false)}
@@ -295,23 +307,26 @@ export default function AppShell() {
         </div>
       </div>
 
+      {/* Main area */}
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+        {/* Glass header */}
         <header style={{ flexShrink: 0, padding: '14px 20px 0' }}>
           <div style={{
             height: 64, padding: '0 20px', borderRadius: 16,
             background: 'var(--surface-soft, rgba(255,255,255,0.82))',
             backdropFilter: 'blur(24px) saturate(180%)',
             WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-            border: '1px solid rgba(15,23,42,0.06)',
+            border: '1px solid var(--border)',
             boxShadow: 'var(--sh-header)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+            transition: 'background 0.25s ease, border-color 0.25s ease',
           }}>
             <button
               onClick={() => setMobileOpen(true)}
               className="flex lg:hidden"
               style={{
                 flexShrink: 0, borderRadius: 10, padding: 8,
-                background: 'transparent', border: 'none', cursor: 'pointer', color: '#475569',
+                background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)',
               }}
             >
               <Menu size={22} />
@@ -320,14 +335,16 @@ export default function AppShell() {
             <div style={{ minWidth: 0, flex: 1 }}>
               <h1 style={{
                 margin: 0, fontSize: 18, fontWeight: 700,
-                letterSpacing: '-0.025em', color: '#0a0e1a',
+                letterSpacing: '-0.025em', color: 'var(--text-primary)',
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                transition: 'color 0.25s ease',
               }}>
                 {pageMeta.title}
               </h1>
               <p style={{
-                margin: '2px 0 0', fontSize: 12.5, color: '#64748b',
+                margin: '2px 0 0', fontSize: 12.5, color: 'var(--text-secondary)',
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                transition: 'color 0.25s ease',
               }}>
                 {pageMeta.subtitle}
               </p>
@@ -337,7 +354,8 @@ export default function AppShell() {
               <form onSubmit={handleTopSearch} className="hidden lg:block" style={{ position: 'relative' }}>
                 <Search style={{
                   position: 'absolute', left: 14, top: '50%',
-                  transform: 'translateY(-50%)', color: '#94a3b8',
+                  transform: 'translateY(-50%)', color: 'var(--text-tertiary)',
+                  transition: 'color 0.25s ease',
                 }} size={16} />
                 <input
                   value={topSearch}
@@ -345,9 +363,10 @@ export default function AppShell() {
                   placeholder="Search applications..."
                   style={{
                     height: 40, width: 280, paddingLeft: 40, paddingRight: 14,
-                    borderRadius: 12, border: '1px solid #e3eaf3',
-                    background: '#fff', fontSize: 13.5, color: '#334155',
+                    borderRadius: 12, border: '1px solid var(--border)',
+                    background: 'var(--surface)', fontSize: 13.5, color: 'var(--text-primary)',
                     outline: 'none', fontFamily: 'inherit',
+                    transition: 'background 0.25s ease, border-color 0.25s ease, color 0.25s ease',
                   }}
                 />
               </form>
@@ -357,7 +376,7 @@ export default function AppShell() {
           </div>
         </header>
 
-        <main style={{ flex: 1, minWidth: 0, overflowY: 'auto', overflowX: 'hidden' }}>
+        <main style={{ flex: 1, minWidth: 0, overflowY: 'auto', overflowX: 'hidden', background: 'var(--surface-sunken)', transition: 'background 0.25s ease' }}>
           <Outlet />
         </main>
       </div>
