@@ -209,14 +209,15 @@ export default function AppShell() {
         )}
       </nav>
 
-      {/* User block */}
+      {/* User block + Theme Toggle */}
       <div style={{
         padding: '12px 14px', borderTop: '1px solid var(--navy-700)', flexShrink: 0,
         background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.30))',
         position: 'relative', zIndex: 1,
         transition: 'border-color 0.25s ease',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        {/* User Info */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
           <div style={{
             width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
             background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
@@ -236,12 +237,20 @@ export default function AppShell() {
               {user?.role}
             </div>
           </div>
+        </div>
+
+        {/* Controls: Theme Toggle + Sign Out */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+           {/* Theme Toggle Moved Here */}
+          <ThemeToggle />
+          
           <button
             onClick={handleLogout}
             title="Sign out"
             style={{
-              width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'transparent', border: 'none', borderRadius: 8,
+              flexShrink: 0,
+              width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
               color: 'var(--text-tertiary)', cursor: 'pointer',
               transition: 'background 120ms ease, color 120ms ease',
             }}
@@ -289,7 +298,6 @@ export default function AppShell() {
           transition: 'transform 280ms cubic-bezier(0.22,1,0.36,1)',
         }}>
           <Sidebar />
-          {/* X only exists in DOM when drawer is open */}
           {mobileOpen && (
             <button
               onClick={() => setMobileOpen(false)}
@@ -309,7 +317,7 @@ export default function AppShell() {
 
       {/* Main area */}
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-        {/* Glass header */}
+        {/* Glass header (Cleaned: No toggle here anymore) */}
         <header style={{ flexShrink: 0, padding: '14px 20px 0' }}>
           <div style={{
             height: 64, padding: '0 20px', borderRadius: 16,
@@ -370,7 +378,6 @@ export default function AppShell() {
                   }}
                 />
               </form>
-              <ThemeToggle />
               <HeaderRealtimeActions />
             </div>
           </div>

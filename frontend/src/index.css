@@ -164,3 +164,48 @@
   .skeleton { background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-50) 50%, var(--gray-100) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-sm); }
   .dark .skeleton { background: linear-gradient(90deg, var(--navy-800) 25%, var(--navy-900) 50%, var(--navy-800) 75%); }
 }
+
+/* ═══════════════════════════════════════════════════════
+   DASHBOARD & CARD FIX FOR DARK MODE
+   ═══════════════════════════════════════════════════════ */
+
+/* Force all standard cards to use dark variables */
+.dark .card, .dark [class*="bg-white"], .dark [class*="bg-gray-50"], .dark [class*="bg-slate-50"] {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Fix table headers in dark mode */
+.dark .sams-table th, .dark table th {
+  background-color: var(--navy-900) !important;
+  color: var(--text-secondary) !important;
+  border-bottom-color: var(--border) !important;
+}
+
+/* Fix table rows */
+.dark .sams-table td, .dark table td {
+  border-bottom-color: var(--navy-800) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Fix search bar & inputs in dark mode */
+.dark input, .dark select, .dark textarea {
+  background-color: var(--surface-raised) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-strong) !important;
+}
+.dark input::placeholder, .dark textarea::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+/* Fix Sidebar Brand & Text */
+.dark .sams-nav-item span { color: rgba(255,255,255,0.8) !important; }
+.dark .sams-nav-item[aria-current="page"] span { color: #fff !important; }
+
+/* Fix Header Title */
+.dark header h1 { color: #f8fafc !important; }
+.dark header p { color: #94a3b8 !important; }
+
+/* Fix Search Icon */
+.dark svg { stroke: var(--text-tertiary) !important; }
