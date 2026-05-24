@@ -1,7 +1,7 @@
 // src/components/auth/RegisterPage.tsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Eye, EyeOff, AlertCircle, MailCheck } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, MailCheck, User, Mail, Lock } from 'lucide-react';
 import { authApi } from '@/api/client';
 
 interface RegisterForm {
@@ -10,18 +10,23 @@ interface RegisterForm {
   password: string;
 }
 
+const inputBase: React.CSSProperties = {
+  height: 42, width: '100%', borderRadius: 11,
+  border: '1px solid rgba(255,255,255,0.10)',
+  background: 'rgba(255,255,255,0.05)', color: '#fff', outline: 'none',
+  fontSize: 13.5, fontWeight: 500, fontFamily: 'inherit',
+  boxSizing: 'border-box',
+  transition: 'border-color 160ms ease, background-color 160ms ease',
+};
+
 export default function RegisterPage() {
-  const [showPw, setShowPw] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [registered, setRegistered] = useState(false);
+  const [showPw,          setShowPw]          = useState(false);
+  const [loading,         setLoading]         = useState(false);
+  const [error,           setError]           = useState('');
+  const [registered,      setRegistered]      = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState('');
 
-  const [form, setForm] = useState<RegisterForm>({
-    full_name: '',
-    email: '',
-    password: '',
-  });
+  const [form, setForm] = useState<RegisterForm>({ full_name: '', email: '', password: '' });
 
   const set = (field: keyof RegisterForm) =>
     (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -40,190 +45,330 @@ export default function RegisterPage() {
     setLoading(true);
     setError('');
     try {
-      // Public registration is always for applicants (student role).
-      // Agent / staff / admin accounts are provisioned by an admin
-      // from the User Management screen.
       await authApi.register(form);
       setRegisteredEmail(form.email.trim());
       setRegistered(true);
     } catch (err: unknown) {
       const resData = (err as {
-        response?: {
-          data?: {
-            error?: string;
-            details?: Array<{ field?: string; message?: string }>;
-          };
-        };
+        response?: { data?: { error?: string; details?: Array<{ message?: string }> } };
       })?.response?.data;
       const detail = resData?.details?.find((d) => d.message)?.message;
-      const msg = detail || resData?.error || 'Registration failed. Please try again.';
-      setError(msg);
+      setError(detail || resData?.error || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      
-      <style>{`
-        .rp-root *, .rp-root *::before, .rp-root *::after { box-sizing: border-box; }
-        .rp-root {
-          --navy: #0b1120; --navy-mid: #101827; --blue: #2563eb; --blue-hover: #1d4ed8;
-          --blue-glow: rgba(37,99,235,0.28); --glass-bg: rgba(255,255,255,0.042);
-          --glass-bdr: rgba(255,255,255,0.082); --text-hi: #f0f4ff;
-          --text-mid: rgba(255,255,255,0.52); --text-lo: rgba(255,255,255,0.26);
-          --serif: 'Inter', system-ui, sans-serif; --sans: 'Inter', system-ui, sans-serif;
-          display: flex; height: 100vh; width: 100vw; overflow: hidden;
-          font-family: var(--sans); background: var(--navy);
-        }
-        .rp-hero { flex: 1 1 0; position: relative; overflow: hidden; display: flex; flex-direction: column; }
-        .rp-hero-photo { position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600&q=88&auto=format&fit=crop&crop=center'); background-size: cover; background-position: center 20%; animation: rp-pan 30s ease-in-out infinite alternate; }
-        @keyframes rp-pan { from { transform: scale(1.06) translateX(0); } to { transform: scale(1.12) translateX(-2%); } }
-        .rp-hero-veil { position: absolute; inset: 0; background: linear-gradient(175deg, rgba(8,15,35,0.18) 0%, rgba(8,15,35,0.42) 35%, rgba(8,15,35,0.76) 68%, rgba(8,15,35,0.97) 100%); }
-        .rp-wordmark { position: relative; z-index: 2; display: flex; align-items: center; gap: 0.9rem; padding: 2.4rem 2.8rem; animation: rp-fade-down 0.9s cubic-bezier(.22,1,.36,1) both; }
-        .rp-monogram { width: 46px; height: 46px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.28); background: rgba(255,255,255,0.06); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .rp-monogram-letter { font-family: var(--sans); font-size: 1.45rem; font-weight: 500; color: #fff; line-height: 1; }
-        .rp-wordmark-text { display: flex; flex-direction: column; gap: 1px; }
-        .rp-wordmark-name { font-family: var(--sans); font-size: 1rem; font-weight: 400; color: rgba(255,255,255,0.92); letter-spacing: 0.12em; text-transform: uppercase; }
-        .rp-wordmark-sub { font-size: 0.62rem; font-weight: 300; letter-spacing: 0.08em; color: rgba(255,255,255,0.38); text-transform: uppercase; }
-        .rp-hero-spacer { flex: 1; }
-        .rp-hero-copy { position: relative; z-index: 2; padding: 0 2.8rem 3rem; animation: rp-fade-up 1s cubic-bezier(.22,1,.36,1) 0.25s both; }
-        .rp-hero-title { font-family: var(--sans); font-size: clamp(2.6rem, 4.2vw, 4rem); font-weight: 400; line-height: 1.06; color: var(--text-hi); letter-spacing: -0.02em; margin-bottom: 1.4rem; }
-        .rp-hero-title em { font-style: italic; color: rgba(255,255,255,0.62); }
-        .rp-auth { width: 500px; flex-shrink: 0; background: var(--navy-mid); position: relative; overflow: hidden; overflow-y: auto; display: flex; align-items: center; justify-content: center; padding: 2rem 1.75rem; }
-        .rp-auth::before { content: ''; position: absolute; inset: 0; opacity: 0.028; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 180px; pointer-events: none; }
-        .rp-auth-edge { position: absolute; left: 0; top: 15%; bottom: 15%; width: 1px; background: linear-gradient(to bottom, transparent, rgba(37,99,235,0.35) 40%, rgba(37,99,235,0.35) 60%, transparent); }
-        .rp-auth-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 420px; height: 420px; background: radial-gradient(circle, rgba(37,99,235,0.09) 0%, transparent 68%); pointer-events: none; }
-        .rp-card { position: relative; z-index: 1; width: 100%; max-width: 372px; background: var(--glass-bg); border: 1px solid var(--glass-bdr); border-radius: 22px; padding: 2.2rem 2.25rem; backdrop-filter: blur(28px); box-shadow: 0 0 0 1px rgba(255,255,255,0.035) inset, 0 24px 72px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.3); animation: rp-fade-up 0.75s cubic-bezier(.22,1,.36,1) 0.1s both; }
-        .rp-card::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.14) 50%, transparent); }
-        .rp-card-heading { font-family: var(--sans); font-size: 2rem; font-weight: 400; color: var(--text-hi); letter-spacing: -0.025em; margin-bottom: 1.6rem; line-height: 1.1; }
-        .rp-error { display: flex; align-items: flex-start; gap: 0.6rem; background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.22); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.2rem; font-size: 0.8rem; line-height: 1.45; color: #fca5a5; }
-        .rp-success-box { display:flex; flex-direction:column; align-items:center; text-align:center; gap:1rem; padding: 1.5rem 0; }
-        .rp-success-icon { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.25); border-radius: 50%; width: 64px; height: 64px; display:flex; align-items:center; justify-content:center; color: #4ade80; }
-        .rp-success-title { font-family: var(--sans); font-size: 1.5rem; color: var(--text-hi); }
-        .rp-success-msg { font-size: 0.85rem; color: var(--text-mid); line-height: 1.6; }
-        .rp-success-email { color: #93c5fd; font-weight: 600; }
-        .rp-field-wrap { margin-bottom: 0.9rem; }
-        .rp-label { display: block; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-lo); margin-bottom: 0.4rem; }
-        .rp-label-hint { font-size: 0.62rem; color: rgba(251,191,36,0.7); margin-left: 0.4rem; text-transform: none; letter-spacing: 0; font-weight: 400; }
-        .rp-input-row { position: relative; }
-        .rp-input { width: 100%; font-family: var(--sans); font-size: 0.875rem; color: var(--text-hi); background: rgba(255,255,255,0.046); border: 1px solid rgba(255,255,255,0.09); border-radius: 11px; padding: 0.75rem 1rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
-        .rp-input::placeholder { color: rgba(255,255,255,0.17); }
-        .rp-input:focus { border-color: rgba(59,130,246,0.52); box-shadow: 0 0 0 3.5px rgba(37,99,235,0.14); }
-        .rp-input.rp-select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
-        .rp-input.rp-select option { background: #101827; color: #f0f4ff; }
-        .rp-input[readonly] { opacity: 0.5; cursor: not-allowed; }
-        .rp-pw-toggle { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.22); padding: 0; display: flex; transition: color 0.2s; }
-        .rp-pw-toggle:hover { color: rgba(255,255,255,0.52); }
-        .rp-btn { width: 100%; font-family: var(--sans); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.025em; color: #fff; background: linear-gradient(135deg, #2563eb 0%, #1a45c8 100%); border: none; border-radius: 11px; padding: 0.86rem 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.55rem; transition: transform 0.22s, box-shadow 0.22s; box-shadow: 0 5px 22px var(--blue-glow), 0 1px 4px rgba(0,0,0,0.3); margin-top: 1.4rem; }
-        .rp-btn:hover:not(:disabled) { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 8px 32px rgba(37,99,235,0.42); transform: translateY(-1.5px); }
-        .rp-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .rp-spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.28); border-top-color: #fff; border-radius: 50%; animation: rp-spin 0.65s linear infinite; }
-        .rp-footer { text-align: center; margin-top: 1.4rem; font-size: 0.78rem; font-weight: 300; color: var(--text-lo); }
-        .rp-footer a { color: rgba(99,154,255,0.82); text-decoration: none; font-weight: 500; }
-        .rp-footer a:hover { color: #93c5fd; }
-        @keyframes rp-fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes rp-fade-down { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes rp-spin { to { transform: rotate(360deg); } }
-        @media (max-width: 820px) { .rp-root { flex-direction: column; } .rp-hero { flex: none; min-height: 200px; } .rp-auth { width: 100%; flex: 1; } }
-      `}</style>
+    <div style={{
+      minHeight: '100vh',
+      background: '#050e1f',
+      display: 'grid',
+      gridTemplateColumns: 'minmax(0,1fr) 520px',
+      color: '#fff',
+      fontFamily: 'Inter, sans-serif',
+    }}>
+      {/* LEFT hero */}
+      <div style={{ position: 'relative', overflow: 'hidden' }}
+           className="hidden md:block">
 
-      <div className="rp-root">
-        <div className="rp-hero">
-          <div className="rp-hero-photo" />
-          <div className="rp-hero-veil" />
-          <div className="rp-wordmark">
-            <div className="rp-monogram">
-              <span className="rp-monogram-letter">S</span>
+        {/* Orb 1 */}
+        <div style={{
+          position: 'absolute', top: '-10%', left: '-5%',
+          width: 580, height: 580, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(99,102,241,0.45), transparent 60%)',
+          filter: 'blur(40px)',
+          animation: 'float 10s ease-in-out infinite',
+        }} />
+        {/* Orb 2 */}
+        <div style={{
+          position: 'absolute', bottom: '-15%', left: '25%',
+          width: 480, height: 480, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.35), transparent 60%)',
+          filter: 'blur(50px)',
+          animation: 'float 12s ease-in-out infinite reverse',
+        }} />
+        {/* Orb 3 */}
+        <div style={{
+          position: 'absolute', top: '35%', right: '-8%',
+          width: 380, height: 380, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(168,85,247,0.20), transparent 60%)',
+          filter: 'blur(40px)',
+          animation: 'float 14s ease-in-out infinite',
+        }} />
+
+        {/* Grid overlay */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),' +
+            'linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
+          backgroundSize: '48px 48px',
+        }} />
+
+        <div style={{
+          position: 'relative', zIndex: 1, height: '100%', padding: 48,
+          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+        }}>
+          {/* Brand mark */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div style={{
+              width: 48, height: 48, borderRadius: 14,
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06))',
+              border: '1px solid rgba(255,255,255,0.20)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              backdropFilter: 'blur(20px)',
+              boxShadow: '0 1px 0 rgba(255,255,255,0.20) inset, 0 8px 20px -4px rgba(0,0,0,0.40)',
+              fontSize: 20, fontWeight: 700, color: '#fff',
+            }}>
+              S
             </div>
-            <div className="rp-wordmark-text">
-              <span className="rp-wordmark-name">SAMS</span>
-              <span className="rp-wordmark-sub">Admission System</span>
+            <div>
+              <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>SAMS</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>Student Admission Management</div>
             </div>
           </div>
-          <div className="rp-hero-spacer" />
-          <div className="rp-hero-copy">
-            <h1 className="rp-hero-title">
-              Join the<br />Admission<br /><em>Team</em>
+
+          {/* Hero text */}
+          <div style={{ maxWidth: 560, paddingBottom: 40 }} className="fade-up">
+            <h1 style={{
+              margin: 0,
+              fontSize: 64, fontWeight: 700, lineHeight: 1.0, letterSpacing: '-0.045em',
+              color: '#fff',
+            }}>
+              Join the team
+              <br />
+              shaping student{' '}
+              <span style={{
+                background: 'linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #f0abfc 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}>futures.</span>
             </h1>
-          </div>
-        </div>
-
-        <div className="rp-auth">
-          <div className="rp-auth-edge" />
-          <div className="rp-auth-glow" />
-
-          <div className="rp-card">
-            {registered ? (
-              <div className="rp-success-box">
-                <div className="rp-success-icon">
-                  <MailCheck size={28} />
-                </div>
-                <h2 className="rp-success-title">Check your email</h2>
-                <p className="rp-success-msg">
-                  We sent a verification link to<br />
-                  <span className="rp-success-email">{registeredEmail}</span><br /><br />
-                  Click the link in the email to activate your account.
-                  The link expires in 24 hours.
-                </p>
-                <p className="rp-footer">
-                  <Link to="/login">Back to sign in</Link>
-                </p>
-              </div>
-            ) : (
-              <>
-                <h2 className="rp-card-heading">Create account</h2>
-
-                {error && (
-                  <div className="rp-error">
-                    <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
-                    {error}
-                  </div>
-                )}
-
-                <form onSubmit={handleSubmit} noValidate>
-                  <div className="rp-field-wrap">
-                    <label className="rp-label">Full Name</label>
-                    <input type="text" value={form.full_name} onChange={set('full_name')}
-                      placeholder="Your full name" className="rp-input" required />
-                  </div>
-
-                  <div className="rp-field-wrap">
-                    <label className="rp-label">
-                      Email Address
-                      <span className="rp-label-hint">⚠ cannot be changed after registration</span>
-                    </label>
-                    <input type="email" value={form.email} onChange={set('email')}
-                      placeholder="you@example.com" className="rp-input" required />
-                  </div>
-
-                  <div className="rp-field-wrap">
-                    <label className="rp-label">Password <span className="rp-label-hint">minimum 8 characters</span></label>
-                    <div className="rp-input-row">
-                      <input type={showPw ? 'text' : 'password'} value={form.password}
-                        onChange={set('password')} placeholder="••••••••••"
-                        className="rp-input" style={{ paddingRight: '2.8rem' }} required />
-                      <button type="button" className="rp-pw-toggle" onClick={() => setShowPw(v => !v)}>
-                        {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <button type="submit" disabled={loading} className="rp-btn">
-                    {loading ? <><span className="rp-spinner" />Creating account…</> : 'Create Account'}
-                  </button>
-                </form>
-
-                <p className="rp-footer">
-                  Already have an account? <Link to="/login">Sign in</Link>
-                </p>
-              </>
-            )}
+            <p style={{
+              marginTop: 20, maxWidth: 480, fontSize: 16, fontWeight: 400,
+              lineHeight: 1.55, color: 'rgba(255,255,255,0.65)',
+              letterSpacing: '-0.005em',
+            }}>
+              Create your account to start managing applications,
+              <br />
+              tracking progress, and supporting students on their journey.
+            </p>
           </div>
         </div>
       </div>
-    </>
+
+      {/* RIGHT form panel */}
+      <div style={{
+        position: 'relative',
+        background: '#070f23',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '40px',
+        borderLeft: '1px solid rgba(255,255,255,0.06)',
+      }}>
+        {/* Ambient glow */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(ellipse at 50% 20%, rgba(99,102,241,0.16), transparent 50%)',
+          pointerEvents: 'none',
+        }} />
+
+        {/* Glass card */}
+        <div
+          className="fade-up"
+          style={{
+            position: 'relative', width: '100%', maxWidth: 380,
+            padding: '34px 36px', borderRadius: 20,
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.10)',
+            backdropFilter: 'blur(40px) saturate(140%)',
+            boxShadow:
+              '0 1px 0 rgba(255,255,255,0.10) inset,' +
+              '0 30px 80px -20px rgba(0,0,0,0.55)',
+          }}
+        >
+          {registered ? (
+            /* ── Success state ── */
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 16, padding: '12px 0' }}>
+              <div style={{
+                width: 64, height: 64, borderRadius: '50%',
+                background: 'rgba(34,197,94,0.12)',
+                border: '1px solid rgba(34,197,94,0.25)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#4ade80',
+              }}>
+                <MailCheck size={28} />
+              </div>
+              <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, letterSpacing: '-0.03em', color: '#fff' }}>
+                Check your email
+              </h2>
+              <p style={{ margin: 0, fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.65 }}>
+                We sent a verification link to<br />
+                <span style={{ color: '#93c5fd', fontWeight: 600 }}>{registeredEmail}</span><br /><br />
+                Click the link to activate your account.
+                The link expires in 24 hours.
+              </p>
+              <Link
+                to="/login"
+                style={{ fontSize: 12.5, color: 'rgba(147,197,253,0.9)', textDecoration: 'none', fontWeight: 500, marginTop: 4 }}
+              >
+                Back to sign in
+              </Link>
+            </div>
+          ) : (
+            <>
+              {/* Card header */}
+              <div style={{ marginBottom: 24 }}>
+                <h2 style={{ margin: 0, fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', color: '#fff' }}>
+                  Create account
+                </h2>
+                <p style={{ marginTop: 6, fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>
+                  Join SAMS to manage student admissions.
+                </p>
+              </div>
+
+              {/* Error banner */}
+              {error && (
+                <div style={{
+                  marginBottom: 18, display: 'flex', gap: 9, alignItems: 'flex-start',
+                  padding: '10px 12px', borderRadius: 10,
+                  border: '1px solid rgba(248,113,113,0.25)',
+                  background: 'rgba(239,68,68,0.10)',
+                  color: '#fca5a5', fontSize: 12.5,
+                }}>
+                  <AlertCircle size={14} style={{ marginTop: 1, flexShrink: 0 }} />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} noValidate>
+                {/* Full name */}
+                <label style={{
+                  display: 'block', marginBottom: 7, fontSize: 11.5, fontWeight: 600,
+                  color: 'rgba(255,255,255,0.65)', letterSpacing: '-0.005em',
+                }}>Full name</label>
+                <div style={{ position: 'relative', marginBottom: 14 }}>
+                  <User size={15} style={{
+                    position: 'absolute', left: 14, top: '50%',
+                    transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.32)',
+                  }} />
+                  <input
+                    type="text"
+                    autoComplete="name"
+                    placeholder="Your full name"
+                    value={form.full_name}
+                    onChange={set('full_name')}
+                    required
+                    style={{ ...inputBase, paddingLeft: 40, paddingRight: 14 }}
+                    onFocus={(e) => { e.target.style.borderColor = 'rgba(96,165,250,0.6)'; e.target.style.background = 'rgba(255,255,255,0.08)'; }}
+                    onBlur={(e)  => { e.target.style.borderColor = 'rgba(255,255,255,0.10)'; e.target.style.background = 'rgba(255,255,255,0.05)'; }}
+                  />
+                </div>
+
+                {/* Email */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 7 }}>
+                  <label style={{ fontSize: 11.5, fontWeight: 600, color: 'rgba(255,255,255,0.65)', letterSpacing: '-0.005em' }}>
+                    Email address
+                  </label>
+                  <span style={{ fontSize: 11, color: 'rgba(251,191,36,0.75)', fontWeight: 500 }}>
+                    ⚠ cannot be changed later
+                  </span>
+                </div>
+                <div style={{ position: 'relative', marginBottom: 14 }}>
+                  <Mail size={15} style={{
+                    position: 'absolute', left: 14, top: '50%',
+                    transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.32)',
+                  }} />
+                  <input
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@company.com"
+                    value={form.email}
+                    onChange={set('email')}
+                    required
+                    style={{ ...inputBase, paddingLeft: 40, paddingRight: 14 }}
+                    onFocus={(e) => { e.target.style.borderColor = 'rgba(96,165,250,0.6)'; e.target.style.background = 'rgba(255,255,255,0.08)'; }}
+                    onBlur={(e)  => { e.target.style.borderColor = 'rgba(255,255,255,0.10)'; e.target.style.background = 'rgba(255,255,255,0.05)'; }}
+                  />
+                </div>
+
+                {/* Password */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 7 }}>
+                  <label style={{ fontSize: 11.5, fontWeight: 600, color: 'rgba(255,255,255,0.65)', letterSpacing: '-0.005em' }}>
+                    Password
+                  </label>
+                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontWeight: 400 }}>
+                    min. 8 characters
+                  </span>
+                </div>
+                <div style={{ position: 'relative', marginBottom: 22 }}>
+                  <Lock size={15} style={{
+                    position: 'absolute', left: 14, top: '50%',
+                    transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.32)',
+                  }} />
+                  <input
+                    type={showPw ? 'text' : 'password'}
+                    autoComplete="new-password"
+                    placeholder="••••••••"
+                    value={form.password}
+                    onChange={set('password')}
+                    required
+                    style={{ ...inputBase, paddingLeft: 40, paddingRight: 42 }}
+                    onFocus={(e) => { e.target.style.borderColor = 'rgba(96,165,250,0.6)'; e.target.style.background = 'rgba(255,255,255,0.08)'; }}
+                    onBlur={(e)  => { e.target.style.borderColor = 'rgba(255,255,255,0.10)'; e.target.style.background = 'rgba(255,255,255,0.05)'; }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPw((v) => !v)}
+                    style={{
+                      position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                      background: 'transparent', border: 'none', cursor: 'pointer',
+                      color: 'rgba(255,255,255,0.40)', padding: 4,
+                    }}
+                  >
+                    {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    height: 44, width: '100%', borderRadius: 12, border: 'none',
+                    background: 'linear-gradient(180deg, #3b82f6 0%, #2563eb 100%)',
+                    color: '#fff', fontSize: 13.5, fontWeight: 700, letterSpacing: '-0.005em',
+                    boxShadow:
+                      '0 1px 0 rgba(255,255,255,0.18) inset,' +
+                      '0 10px 20px -4px rgba(37,99,235,0.45),' +
+                      '0 2px 4px rgba(37,99,235,0.20)',
+                    cursor: loading ? 'wait' : 'pointer',
+                    opacity: loading ? 0.6 : 1,
+                    transition: 'all 200ms ease',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  {loading ? 'Creating account…' : 'Create account'}
+                </button>
+              </form>
+
+              <p style={{
+                marginTop: 22, fontSize: 11.5, color: 'rgba(255,255,255,0.35)', textAlign: 'center',
+              }}>
+                Already have an account?{' '}
+                <Link
+                  to="/login"
+                  style={{ color: 'rgba(147,197,253,0.95)', fontWeight: 600, textDecoration: 'none' }}
+                >
+                  Sign in
+                </Link>
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
