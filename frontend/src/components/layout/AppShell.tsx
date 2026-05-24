@@ -9,7 +9,6 @@ import {
   MessageSquare,
   Users,
   Settings,
-  GraduationCap,
   LogOut,
   Search,
   Briefcase,
@@ -21,7 +20,6 @@ import {
 import HeaderRealtimeActions from '@/components/layout/HeaderRealtimeActions';
 import { useAuthStore } from '@/store/authStore';
 
-/* ---------- nav config ---------- */
 const WORKSPACE_ITEMS = [
   { label: 'Dashboard',       path: '/dashboard',         icon: LayoutDashboard },
   { label: 'New Application', path: '/students/new',      icon: PlusCircle },
@@ -32,12 +30,11 @@ const WORKSPACE_ITEMS = [
 ];
 
 const ADMIN_ITEMS = [
-  { label: 'User Management',    path: '/users',             icon: Users,    adminOnly: true },
-  { label: 'Application Links',  path: '/application-links', icon: Link2,    agentPlus: true },
-  { label: 'Settings',           path: '/settings',          icon: Settings },
+  { label: 'User Management',   path: '/users',             icon: Users,   adminOnly: true },
+  { label: 'Application Links', path: '/application-links', icon: Link2,   agentPlus: true },
+  { label: 'Settings',          path: '/settings',          icon: Settings },
 ];
 
-/* ---------- sidebar nav item ---------- */
 function NavItem({ label, path, icon: Icon, end: forceEnd }: {
   label: string; path: string; icon: React.ElementType; end?: boolean;
 }) {
@@ -79,7 +76,6 @@ function NavItem({ label, path, icon: Icon, end: forceEnd }: {
   );
 }
 
-/* ---------- section label ---------- */
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div style={{
@@ -97,7 +93,6 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ========== AppShell ========== */
 export default function AppShell() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
@@ -109,25 +104,24 @@ export default function AppShell() {
   const isAdminOrStaff = user?.role === 'admin' || user?.role === 'staff';
   const isAgentPlus    = ['admin', 'staff', 'agent'].includes(user?.role || '');
 
-  /* page title / subtitle */
   const pageMeta = useMemo(() => {
     if (location.pathname.startsWith('/students/new'))
-      return { title: 'New Application',    subtitle: 'Create and submit a new student admission application.' };
+      return { title: 'New Application',   subtitle: 'Create and submit a new student admission application.' };
     if (location.pathname.startsWith('/students'))
-      return { title: 'Applications',       subtitle: 'Manage applications, track status, and review submissions.' };
+      return { title: 'Applications',      subtitle: 'Manage applications, track status, and review submissions.' };
     if (location.pathname.startsWith('/documents'))
-      return { title: 'Documents',          subtitle: 'Organize, review, and manage uploaded student documents.' };
+      return { title: 'Documents',         subtitle: 'Organize, review, and manage uploaded student documents.' };
     if (location.pathname.startsWith('/workstation'))
-      return { title: 'Work Station',       subtitle: 'Handle approved applications and manage processing workflow.' };
+      return { title: 'Work Station',      subtitle: 'Handle approved applications and manage processing workflow.' };
     if (location.pathname.startsWith('/inbox'))
-      return { title: 'Messages',           subtitle: 'Stay updated with inbox messages and system notifications.' };
+      return { title: 'Messages',          subtitle: 'Stay updated with inbox messages and system notifications.' };
     if (location.pathname.startsWith('/users'))
-      return { title: 'User Management',    subtitle: 'Manage system users, permissions, and roles.' };
+      return { title: 'User Management',   subtitle: 'Manage system users, permissions, and roles.' };
     if (location.pathname.startsWith('/application-links'))
-      return { title: 'Application Links',  subtitle: 'Generate and manage shareable application invite links.' };
+      return { title: 'Application Links', subtitle: 'Generate and manage shareable application invite links.' };
     if (location.pathname.startsWith('/settings'))
-      return { title: 'Settings',           subtitle: 'Configure platform preferences and system behavior.' };
-    return { title: 'Dashboard',            subtitle: 'Monitor applications, progress, and latest activity.' };
+      return { title: 'Settings',          subtitle: 'Configure platform preferences and system behavior.' };
+    return   { title: 'Dashboard',         subtitle: 'Monitor applications, progress, and latest activity.' };
   }, [location.pathname]);
 
   const handleTopSearch = (e: React.FormEvent) => {
@@ -143,28 +137,20 @@ export default function AppShell() {
   const displayName = user?.role === 'admin' && rawDisplayName === 'System Administrator'
     ? 'Admin' : rawDisplayName;
 
-  /* ---- Sidebar ---- */
   const Sidebar = () => (
     <aside style={{
-      width: 248,
-      minWidth: 248,
-      height: '100%',
-      flexShrink: 0,
+      width: 248, minWidth: 248, height: '100%', flexShrink: 0,
       background: 'linear-gradient(180deg, #081428 0%, #050e1f 100%)',
-      color: '#fff',
-      display: 'flex',
-      flexDirection: 'column',
+      color: '#fff', display: 'flex', flexDirection: 'column',
       position: 'relative',
       borderRight: '1px solid rgba(255,255,255,0.04)',
-      overflowY: 'auto',
-      overflowX: 'hidden',
+      overflowY: 'auto', overflowX: 'hidden',
     }}>
-      {/* Atmospheric top glow */}
+      {/* Atmospheric glow */}
       <div style={{
         position: 'absolute', top: -100, left: -40, right: -40, height: 240,
         background: 'radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.22), transparent 65%)',
-        pointerEvents: 'none',
-        zIndex: 0,
+        pointerEvents: 'none', zIndex: 0,
       }} />
 
       {/* Brand */}
@@ -173,14 +159,15 @@ export default function AppShell() {
         borderBottom: '1px solid rgba(255,255,255,0.06)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {/* Brand icon — graduation cap at proper size */}
+          {/* Letter mark — no icon, no cross */}
           <div style={{
             width: 40, height: 40, borderRadius: 12, flexShrink: 0,
             background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#fff', fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em',
             boxShadow: '0 1px 0 rgba(255,255,255,0.30) inset, 0 6px 14px -4px rgba(37,99,235,0.50)',
           }}>
-            <GraduationCap size={22} strokeWidth={1.8} />
+            A
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff' }}>
@@ -193,10 +180,11 @@ export default function AppShell() {
         </div>
       </div>
 
-      {/* Nav — no search bar */}
-      <nav style={{ flex: 1, padding: '6px 10px 12px', overflowY: 'auto', position: 'relative', zIndex: 1 }}
-           onClick={() => setMobileOpen(false)}>
-
+      {/* Nav */}
+      <nav
+        style={{ flex: 1, padding: '6px 10px 12px', overflowY: 'auto', position: 'relative', zIndex: 1 }}
+        onClick={() => setMobileOpen(false)}
+      >
         <SectionLabel>Workspace</SectionLabel>
         {WORKSPACE_ITEMS.filter(item => {
           if ((item as any).adminStaff && !isAdminOrStaff) return false;
@@ -226,7 +214,6 @@ export default function AppShell() {
         position: 'relative', zIndex: 1,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {/* Avatar */}
           <div style={{
             width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
             background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
@@ -276,8 +263,8 @@ export default function AppShell() {
         <div
           onClick={() => setMobileOpen(false)}
           style={{
-            position: 'fixed', inset: 0, zIndex: 40, background: 'rgba(0,0,0,0.55)',
-            backdropFilter: 'blur(2px)',
+            position: 'fixed', inset: 0, zIndex: 40,
+            background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)',
           }}
         />
       )}
@@ -287,9 +274,10 @@ export default function AppShell() {
         <Sidebar />
       </div>
 
-      {/* Mobile drawer — X button floats outside, only visible on mobile */}
+      {/* Mobile drawer */}
       <div style={{
-        position: 'fixed', inset: 0, zIndex: 50, pointerEvents: mobileOpen ? 'auto' : 'none',
+        position: 'fixed', inset: 0, zIndex: 50,
+        pointerEvents: mobileOpen ? 'auto' : 'none',
       }}>
         <div style={{
           position: 'absolute', left: 0, top: 0, bottom: 0, width: 248,
@@ -297,18 +285,21 @@ export default function AppShell() {
           transition: 'transform 280ms cubic-bezier(0.22,1,0.36,1)',
         }}>
           <Sidebar />
-          {/* Mobile close — floats to the right of drawer, never visible on desktop */}
-          <button
-            onClick={() => setMobileOpen(false)}
-            className="lg:hidden"
-            style={{
-              position: 'absolute', top: 14, right: -44, width: 32, height: 32,
-              borderRadius: '50%', background: 'rgba(0,0,0,0.55)', border: 'none',
-              color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
-          >
-            <X size={16} />
-          </button>
+          {/* X only exists in DOM when drawer is open */}
+          {mobileOpen && (
+            <button
+              onClick={() => setMobileOpen(false)}
+              style={{
+                position: 'absolute', top: 14, right: -44,
+                width: 32, height: 32, borderRadius: '50%',
+                background: 'rgba(0,0,0,0.55)', border: 'none',
+                color: '#fff', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -317,8 +308,7 @@ export default function AppShell() {
         {/* Glass header */}
         <header style={{ flexShrink: 0, padding: '14px 20px 0' }}>
           <div style={{
-            height: 64, padding: '0 20px',
-            borderRadius: 16,
+            height: 64, padding: '0 20px', borderRadius: 16,
             background: 'var(--surface-soft, rgba(255,255,255,0.82))',
             backdropFilter: 'blur(24px) saturate(180%)',
             WebkitBackdropFilter: 'blur(24px) saturate(180%)',
@@ -326,7 +316,6 @@ export default function AppShell() {
             boxShadow: 'var(--sh-header)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
           }}>
-            {/* Mobile menu btn */}
             <button
               onClick={() => setMobileOpen(true)}
               className="flex lg:hidden"
@@ -338,11 +327,10 @@ export default function AppShell() {
               <Menu size={22} />
             </button>
 
-            {/* Title */}
             <div style={{ minWidth: 0, flex: 1 }}>
               <h1 style={{
-                margin: 0,
-                fontSize: 18, fontWeight: 700, letterSpacing: '-0.025em', color: '#0a0e1a',
+                margin: 0, fontSize: 18, fontWeight: 700,
+                letterSpacing: '-0.025em', color: '#0a0e1a',
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
               }}>
                 {pageMeta.title}
@@ -355,11 +343,11 @@ export default function AppShell() {
               </p>
             </div>
 
-            {/* Right side — header search stays */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
               <form onSubmit={handleTopSearch} className="hidden lg:block" style={{ position: 'relative' }}>
                 <Search style={{
-                  position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8',
+                  position: 'absolute', left: 14, top: '50%',
+                  transform: 'translateY(-50%)', color: '#94a3b8',
                 }} size={16} />
                 <input
                   value={topSearch}
@@ -378,7 +366,6 @@ export default function AppShell() {
           </div>
         </header>
 
-        {/* Page content */}
         <main style={{ flex: 1, minWidth: 0, overflowY: 'auto', overflowX: 'hidden' }}>
           <Outlet />
         </main>
