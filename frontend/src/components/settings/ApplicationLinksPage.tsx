@@ -146,7 +146,7 @@ export default function ApplicationLinksPage() {
 
       {/* Hint */}
       <p style={{ margin: '12px 0 0', fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.6 }}>
-        Links expire after 7 days or after one submission — whichever comes first.
+        Links expire after 7 days or after one submission - whichever comes first.
       </p>
 
       {/* Generated link modal */}
@@ -182,7 +182,7 @@ export default function ApplicationLinksPage() {
   );
 }
 
-// ── Styles ────────────────────────────────────────────────────────────────────
+// -- Styles --------------------------------------------------------------------
 
 const thStyle: React.CSSProperties = {
   fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)',

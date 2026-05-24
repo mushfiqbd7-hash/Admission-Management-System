@@ -1,5 +1,5 @@
 // src/socket.js
-// Socket.IO server — attach to existing HTTP server, authenticate via JWT
+// Socket.IO server - attach to existing HTTP server, authenticate via JWT
 
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
@@ -15,7 +15,7 @@ export function initSocket(httpServer) {
     },
   });
 
-  // ── Auth middleware ────────────────────────────────────────
+  // -- Auth middleware ----------------------------------------
   io.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth?.token ||
@@ -36,7 +36,7 @@ export function initSocket(httpServer) {
     }
   });
 
-  // ── Connection ────────────────────────────────────────────
+  // -- Connection --------------------------------------------
   io.on('connection', (socket) => {
     const { id: userId, role } = socket.user;
 
@@ -54,7 +54,7 @@ export function initSocket(httpServer) {
   return io;
 }
 
-// ── Emit helpers (called from controllers) ──────────────────
+// -- Emit helpers (called from controllers) ------------------
 export function emitToUser(userId, event, data) {
   if (!io) return;
   io.to(`user:${userId}`).emit(event, data);

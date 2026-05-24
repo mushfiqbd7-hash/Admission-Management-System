@@ -121,11 +121,11 @@ function getSubmitter(s: WorkStudent) {
     return s.submitted_by_role.charAt(0).toUpperCase() + s.submitted_by_role.slice(1);
   }
 
-  return '—';
+  return '-';
 }
 
 function getDegreeLabel(value?: string) {
-  if (!value) return '—';
+  if (!value) return '-';
   return (DEGREE_LABELS as Record<string, string>)[value] || value;
 }
 
@@ -546,7 +546,7 @@ export default function WorkStationPage() {
                     </td>
 
                     <td style={centerTdStyle}>
-                      <span style={appNoStyle}>{student.application_number || '—'}</span>
+                      <span style={appNoStyle}>{student.application_number || '-'}</span>
                     </td>
 
                     <td style={centerTdStyle}>
@@ -554,11 +554,11 @@ export default function WorkStationPage() {
                     </td>
 
                     <td style={centerTdStyle}>
-                      <div style={mutedTextStyle}>{student.passport_number || '—'}</div>
+                      <div style={mutedTextStyle}>{student.passport_number || '-'}</div>
                     </td>
 
                     <td style={centerTdStyle}>
-                      <div style={mutedTextStyle}>{student.nationality || '—'}</div>
+                      <div style={mutedTextStyle}>{student.nationality || '-'}</div>
                     </td>
 
                     <td style={centerTdStyle}>
@@ -568,11 +568,11 @@ export default function WorkStationPage() {
                     </td>
 
                     <td style={centerTdStyle}>
-                      <div style={mutedTextStyle}>{student.intended_major || '—'}</div>
+                      <div style={mutedTextStyle}>{student.intended_major || '-'}</div>
                     </td>
 
                     <td style={centerTdStyle}>
-                      <div style={mutedTextStyle}>{student.scholarship_type || '—'}</div>
+                      <div style={mutedTextStyle}>{student.scholarship_type || '-'}</div>
                     </td>
 
                     <td style={centerTdStyle}>
@@ -758,7 +758,7 @@ export default function WorkStationPage() {
   );
 }
 
-/* ───────────────────────── Styles ───────────────────────── */
+/* ------------------------- Styles ------------------------- */
 
 const pageStyle: CSSProperties = {
   display: 'flex',

@@ -275,12 +275,18 @@ export const markRead = async (req, res) => {
 export const deleteMessage = async (req, res) => {
   try {
     const { id } = req.params;
+    // Soft-flag the deletion for this user's side
     await query(`
       UPDATE messages
       SET deleted_by_sender    = CASE WHEN sender_id    = $2 THEN TRUE ELSE deleted_by_sender    END,
           deleted_by_recipient = CASE WHEN recipient_id = $2 THEN TRUE ELSE deleted_by_recipient END
       WHERE id = $1 AND (sender_id = $2 OR recipient_id = $2)
     `, [id, req.user.id]);
+    // Hard delete once both sides have flagged - frees DB storage
+    await query(`
+      DELETE FROM messages
+      WHERE id = $1 AND deleted_by_sender = TRUE AND deleted_by_recipient = TRUE
+    `, [id]);
     res.json({ ok: true });
   } catch (err) {
     console.error('deleteMessage error:', err);
@@ -363,10 +369,4 @@ export const markNotifRead = async (req, res) => {
 
 export const markAllNotifsRead = async (req, res) => {
   try {
-    await query('UPDATE notifications SET is_read = TRUE WHERE user_id = $1', [req.user.id]);
-    res.json({ ok: true });
-  } catch (err) {
-    console.error('markAllNotifsRead error:', err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
+ 

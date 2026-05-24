@@ -1,4 +1,4 @@
-﻿// src/components/students/StudentsPage.tsx
+// src/components/students/StudentsPage.tsx
 import { useState, useEffect, type CSSProperties, type ReactNode } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -34,7 +34,7 @@ type StudentExtra = Student & {
 };
 
 function statusLabel(status?: string) {
-  if (!status) return '—';
+  if (!status) return '-';
   return STATUS_LABELS[status as ApplicationStatus] || status.replace(/_/g, ' ');
 }
 
@@ -483,12 +483,12 @@ export default function StudentsPage() {
                   return (
                     <tr key={student.id} style={rowStyle}>
                       <td style={firstTdStyle}>
-                        <span style={appNoStyle}>{student.application_number || '—'}</span>
+                        <span style={appNoStyle}>{student.application_number || '-'}</span>
                       </td>
 
                       {canSeeAll && (
                         <td style={bodyTdStyle}>
-                          <div style={strongTextStyle}>{sAny.submitted_by_name || '—'}</div>
+                          <div style={strongTextStyle}>{sAny.submitted_by_name || '-'}</div>
 
                           {sAny.submitted_by_role && (
                             <div style={smallMutedStyle}>
@@ -505,7 +505,7 @@ export default function StudentsPage() {
                       )}
 
                       <td style={bodyTdStyle}>
-                        <span style={monoTextStyle}>{student.passport_number || '—'}</span>
+                        <span style={monoTextStyle}>{student.passport_number || '-'}</span>
                       </td>
 
                       <td style={bodyTdStyle}>
@@ -527,12 +527,12 @@ export default function StudentsPage() {
                       </td>
 
                       <td style={bodyTdStyle}>
-                        <span style={normalTextStyle}>{student.nationality || '—'}</span>
+                        <span style={normalTextStyle}>{student.nationality || '-'}</span>
                       </td>
 
                       <td style={bodyTdStyle}>
-                        <div style={lineClampStyle} title={student.target_university || '—'}>
-                          {student.target_university || '—'}
+                        <div style={lineClampStyle} title={student.target_university || '-'}>
+                          {student.target_university || '-'}
                         </div>
                       </td>
 
@@ -541,7 +541,7 @@ export default function StudentsPage() {
                           <GraduationCap size={15} style={{ color: '#94a3b8', flexShrink: 0 }} />
 
                           <span style={normalTextStyle}>
-                            {student.degree_level ? DEGREE_LABELS[student.degree_level] : '—'}
+                            {student.degree_level ? DEGREE_LABELS[student.degree_level] : '-'}
                           </span>
                         </div>
                       </td>
@@ -621,7 +621,7 @@ export default function StudentsPage() {
         {data && totalPages > 1 && (
           <div style={paginationStyle}>
             <div style={paginationTextStyle}>
-              Showing {(page - 1) * limit + 1}–{Math.min(page * limit, total)} of{' '}
+              Showing {(page - 1) * limit + 1}-{Math.min(page * limit, total)} of{' '}
               {total.toLocaleString()} records
             </div>
 

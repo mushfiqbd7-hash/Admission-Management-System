@@ -4,7 +4,7 @@ import { query } from '../config/database.js';
 import { createStudent, updateStudent } from './studentsController.js';
 import { uploadBuffer } from '../utils/azureStorage.js';
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 const lookupToken = async (token) => {
   const { rows } = await query(
@@ -15,7 +15,7 @@ const lookupToken = async (token) => {
   return rows[0] || null;
 };
 
-// ── Middleware ────────────────────────────────────────────────────────────────
+// -- Middleware ----------------------------------------------------------------
 
 /** Validate invite token, inject req.user = token owner, attach req.tokenRecord */
 export const requireToken = async (req, res, next) => {
@@ -44,9 +44,9 @@ export const requireTokenStudent = (req, res, next) => {
   next();
 };
 
-// ── Authenticated endpoints ───────────────────────────────────────────────────
+// -- Authenticated endpoints ---------------------------------------------------
 
-/** POST /api/invite-tokens — generate a new single-use link */
+/** POST /api/invite-tokens - generate a new single-use link */
 export const generateToken = async (req, res) => {
   try {
     if (!['admin', 'staff', 'agent'].includes(req.user.role)) {
@@ -69,7 +69,7 @@ export const generateToken = async (req, res) => {
   }
 };
 
-/** GET /api/invite-tokens — list own active (unused, non-expired) tokens */
+/** GET /api/invite-tokens - list own active (unused, non-expired) tokens */
 export const listTokens = async (req, res) => {
   try {
     const isAdminStaff = ['admin', 'staff'].includes(req.user.role);
@@ -90,9 +90,9 @@ export const listTokens = async (req, res) => {
   }
 };
 
-// ── Public endpoints (no auth required) ──────────────────────────────────────
+// -- Public endpoints (no auth required) --------------------------------------
 
-/** GET /api/apply/:token — validate token */
+/** GET /api/apply/:token - validate token */
 export const validateToken = async (req, res) => {
   try {
     const rec = await lookupToken(req.params.token);
@@ -104,7 +104,7 @@ export const validateToken = async (req, res) => {
   }
 };
 
-/** POST /api/apply/:token/students — create student draft, bind to token */
+/** POST /api/apply/:token/students - create student draft, bind to token */
 export const publicCreateStudent = async (req, res) => {
   // Intercept res.json so we can save student_id on the token record
   const origJson = res.json.bind(res);
@@ -125,12 +125,12 @@ export const publicCreateStudent = async (req, res) => {
   await createStudent(req, res);
 };
 
-/** PUT /api/apply/:token/students/:id — update student draft */
+/** PUT /api/apply/:token/students/:id - update student draft */
 export const publicUpdateStudent = async (req, res) => {
   await updateStudent(req, res);
 };
 
-/** POST /api/apply/:token/students/:id/submit — finalize: push docs → Azure, set pending, mark token used */
+/** POST /api/apply/:token/students/:id/submit - finalize: push docs -> Azure, set pending, mark token used */
 export const publicSubmit = async (req, res) => {
   try {
     const { id } = req.params;

@@ -69,7 +69,7 @@ const timeAgo = (dt?: string) => {
 };
 
 const fmtDate = (dt?: string) => {
-  if (!dt) return '—';
+  if (!dt) return '-';
 
   return new Date(dt).toLocaleString('en-US', {
     month: 'short',
@@ -1105,7 +1105,7 @@ export default function InboxPage() {
   );
 }
 
-/* ───────────────────────── Styles ───────────────────────── */
+/* ------------------------- Styles ------------------------- */
 
 const pageStyle: CSSProperties = {
   height: '100%',

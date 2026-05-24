@@ -21,11 +21,11 @@ import {
 
 const router = express.Router();
 
-// ── Authenticated (admin / staff / agent) ────────────────────────────────────
+// -- Authenticated (admin / staff / agent) ------------------------------------
 router.post('/invite-tokens',    authenticate, generateToken);
 router.get('/invite-tokens',     authenticate, listTokens);
 
-// ── Public (no auth — token in URL path) ─────────────────────────────────────
+// -- Public (no auth - token in URL path) -------------------------------------
 router.get('/apply/:token',                                               validateToken);
 router.post('/apply/:token/students',                   requireToken,     publicCreateStudent);
 router.put('/apply/:token/students/:id',                requireToken, requireTokenStudent, publicUpdateStudent);

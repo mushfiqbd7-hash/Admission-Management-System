@@ -1,4 +1,4 @@
-﻿// src/utils/emailService.js
+// src/utils/emailService.js
 export async function sendVerificationEmail(email, token) {
   const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
   const link = `${baseUrl}/verify-email?token=${token}`;
@@ -12,7 +12,7 @@ export async function sendVerificationEmail(email, token) {
     body: JSON.stringify({
       sender: { name: 'SAMS Admission System', email: process.env.SMTP_USER },
       to: [{ email }],
-      subject: 'Verify your email – SAMS',
+      subject: 'Verify your email - SAMS',
       htmlContent: `
         <div style="font-family:sans-serif;max-width:480px;margin:auto">
           <h2 style="color:#0b1120">Verify your email address</h2>

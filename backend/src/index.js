@@ -61,7 +61,7 @@ const parseEnvFloat = (value, fallback) => {
 const maxFileSizeMb = parseEnvFloat(process.env.MAX_FILE_SIZE_MB, 20);
 const maxUploadBytes = Math.round(maxFileSizeMb * 1024 * 1024);
 
-/* Shared document upload config — memory storage, files go to Azure Blob */
+/* Shared document upload config - memory storage, files go to Azure Blob */
 const sharedDocumentFileFilter = (_req, file, cb) => {
   const allowedExt = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx', '.xls', '.xlsx'];
   const originalName = file.originalname || '';
@@ -176,7 +176,7 @@ app.use('/api/students', studentsRoutes);
 app.use('/api/students', docsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/workstation', workstationRoutes);
-// Public invite routes MUST come before messagesRoutes (which has router.use(authenticate) — blocks all /api/* without a token)
+// Public invite routes MUST come before messagesRoutes (which has router.use(authenticate) - blocks all /api/* without a token)
 app.use('/api', inviteTokensRoutes);
 app.use('/api', messagesRoutes);
 

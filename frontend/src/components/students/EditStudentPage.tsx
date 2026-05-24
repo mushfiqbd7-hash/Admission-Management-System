@@ -1,4 +1,4 @@
-// src/components/students/EditStudentPage.tsx — Phase 4
+// src/components/students/EditStudentPage.tsx - Phase 4
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft } from 'lucide-react';
@@ -40,7 +40,7 @@ export default function EditStudentPage() {
             Edit: {s.given_name} {s.family_name}
           </div>
           <div style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>
-            Passport: <span style={{ fontFamily: 'var(--font-mono)' }}>{s.passport_number || '—'}</span>
+            Passport: <span style={{ fontFamily: 'var(--font-mono)' }}>{s.passport_number || '-'}</span>
           </div>
         </div>
       </div>

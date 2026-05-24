@@ -125,7 +125,7 @@ export default function SettingsPage() {
       const res = await api.post('/users/me/avatar', form, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      // avatar_url is now a base64 data URL — safe to use directly as img src
+      // avatar_url is now a base64 data URL - safe to use directly as img src
       setUser({ ...user!, ...res.data.user });
       toast.success('Profile picture updated!');
     } catch (err: any) {
@@ -147,7 +147,7 @@ export default function SettingsPage() {
     .join('')
     .toUpperCase();
 
-  // avatar_url is a base64 data URL stored in DB — use directly
+  // avatar_url is a base64 data URL stored in DB - use directly
   const avatarSrc = user?.avatar_url || null;
 
   return (

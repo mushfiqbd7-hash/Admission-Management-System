@@ -70,15 +70,11 @@ async function runMigrations() {
         `DELETE FROM application_invite_tokens WHERE used_at IS NULL AND expires_at <= NOW()`
       );
       if (rowCount > 0) console.log(`  CLEANUP Deleted ${rowCount} expired invite token(s).`);
-    } catch (_) { /* table may not exist yet on first run — ignore */ }
+    } catch (_) { /* table may not exist yet on first run - ignore */ }
 
-  } catch (err) {
-    console.error('Fatal migration error:', err.message);
-    process.exit(1);
-  } finally {
-    client.release();
-    await pool.end();
-  }
-}
-
-runMigrations();
+    // Prune expired refresh tokens
+    try {
+      const { rowCount } = await client.query(
+        `DELETE FROM refresh_tokens WHERE expires_at <= NOW()`
+      );
+      if (rowCo

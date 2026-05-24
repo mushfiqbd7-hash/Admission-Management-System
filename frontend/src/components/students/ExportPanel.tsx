@@ -41,7 +41,7 @@ const STATUSES: StatusConfig[] = [
 ];
 
 function statusLabel(s: string) {
-  return STATUSES.find((x) => x.key === s)?.label || s || '—';
+  return STATUSES.find((x) => x.key === s)?.label || s || '-';
 }
 
 function getYear(d?: string) {
@@ -297,7 +297,7 @@ function doExcel(
   URL.revokeObjectURL(url);
 
   toast.dismiss(toastId);
-toast.success(`Excel exported — ${data.length} records`);
+toast.success(`Excel exported - ${data.length} records`);
 }
 
 function doPDF(
@@ -348,7 +348,7 @@ function doPDF(
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.text('SAMS — Student Admission Management System', 14, 11);
+  doc.text('SAMS - Student Admission Management System', 14, 11);
 
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
@@ -381,18 +381,18 @@ function doPDF(
       ],
     ],
     body: data.map((r) => [
-      r.application_number || '—',
-      `${r.given_name || ''} ${r.family_name || ''}`.trim() || '—',
-      r.passport_number || '—',
-      r.nationality || '—',
-      getExportUniversityText(r, university) || '—',
-      r.intended_major || '—',
-      r.degree_level || '—',
-      r.intended_start_term || '—',
-      getYear(r.created_at) || '—',
-      statusLabel(r.application_status || '—'),
-      r.priority || '—',
-      r.submitted_by_name || r.submitted_by_role || '—',
+      r.application_number || '-',
+      `${r.given_name || ''} ${r.family_name || ''}`.trim() || '-',
+      r.passport_number || '-',
+      r.nationality || '-',
+      getExportUniversityText(r, university) || '-',
+      r.intended_major || '-',
+      r.degree_level || '-',
+      r.intended_start_term || '-',
+      getYear(r.created_at) || '-',
+      statusLabel(r.application_status || '-'),
+      r.priority || '-',
+      r.submitted_by_name || r.submitted_by_role || '-',
       new Date(r.created_at).toLocaleDateString('en-CA'),
     ]),
     theme: 'striped',
@@ -434,7 +434,7 @@ function doPDF(
 
   doc.save(fileName);
   toast.dismiss(toastId);
-  toast.success(`PDF exported — ${data.length} records`);
+  toast.success(`PDF exported - ${data.length} records`);
 }
 
 export default function ExportPanel({ sourceRows = [] }: ExportPanelProps) {

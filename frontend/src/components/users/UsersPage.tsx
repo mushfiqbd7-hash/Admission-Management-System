@@ -1,4 +1,4 @@
-﻿import type { LucideIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 // src/components/users/UsersPage.tsx
 import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -530,7 +530,7 @@ export default function UsersPage() {
 
                           <div style={{ minWidth: 0 }}>
                             <div style={nameTextStyle}>{displayUserName(u)}</div>
-                            <div style={idTextStyle}>ID: {u.id?.slice(0, 8) || 'â€”'}</div>
+                            <div style={idTextStyle}>ID: {u.id?.slice(0, 8) || '-'}</div>
                           </div>
                         </div>
                       </td>
@@ -778,7 +778,7 @@ export default function UsersPage() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ------------------------- Styles ------------------------- */
 
 const pageStyle: CSSProperties = {
   height: '100%',

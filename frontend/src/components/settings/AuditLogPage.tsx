@@ -114,7 +114,7 @@ export default function AuditLogPage() {
                       {format(new Date(entry.created_at), 'dd MMM yyyy HH:mm')}
                     </td>
                     <td className="px-4 py-3 font-medium text-slate-700">
-                      {entry.user_name ?? '—'}
+                      {entry.user_name ?? '-'}
                     </td>
                     <td className="px-4 py-3">
                       <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
@@ -124,7 +124,7 @@ export default function AuditLogPage() {
                     <td className="px-4 py-3 text-slate-600">
                       {entry.entity_type}
                     </td>
-                    <td className="px-4 py-3 text-slate-400">{entry.ip_address ?? '—'}</td>
+                    <td className="px-4 py-3 text-slate-400">{entry.ip_address ?? '-'}</td>
                   </tr>
                 ))}
           </tbody>
@@ -139,7 +139,7 @@ export default function AuditLogPage() {
       {totalPages > 1 && (
         <div className="mt-4 flex items-center justify-between">
           <span className="text-sm text-slate-500">
-            Page {page} of {totalPages} — {data?.total} total entries
+            Page {page} of {totalPages} - {data?.total} total entries
           </span>
           <div className="flex gap-2">
             <button

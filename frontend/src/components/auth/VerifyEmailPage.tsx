@@ -1,4 +1,4 @@
-﻿// src/components/auth/VerifyEmailPage.tsx
+// src/components/auth/VerifyEmailPage.tsx
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { CheckCircle, XCircle, Loader } from 'lucide-react';

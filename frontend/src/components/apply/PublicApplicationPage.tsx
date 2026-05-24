@@ -79,7 +79,7 @@ export default function PublicApplicationPage() {
   );
 }
 
-// ── Styles ────────────────────────────────────────────────────────────────────
+// -- Styles --------------------------------------------------------------------
 
 const centeredPage: React.CSSProperties = {
   display: 'flex', flexDirection: 'column', alignItems: 'center',

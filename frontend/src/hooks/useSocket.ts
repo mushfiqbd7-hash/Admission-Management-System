@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client';
 import { useAuthStore } from '@/store/authStore';
 import { useQueryClient } from '@tanstack/react-query';
 
-// In dev, Vite proxies /socket.io → localhost:5000 (same origin, no CORS needed)
+// In dev, Vite proxies /socket.io -> localhost:5000 (same origin, no CORS needed)
 // In prod, set VITE_SOCKET_URL to your backend host
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || window.location.origin;
 

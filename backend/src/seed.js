@@ -1,4 +1,4 @@
-﻿// backend/src/seed.js
+// backend/src/seed.js
 // Run with: node src/seed.js
 //
 // Required environment variables:

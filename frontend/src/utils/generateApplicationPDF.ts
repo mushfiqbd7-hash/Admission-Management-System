@@ -1,6 +1,6 @@
 // src/utils/generateApplicationPDF.ts
 // Generates a professional PDF of a student application using jsPDF.
-// No backend needed — runs entirely in the browser.
+// No backend needed - runs entirely in the browser.
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -9,9 +9,9 @@ import type { StudentDetail } from '@/types';
 import { DEGREE_LABELS, STATUS_LABELS } from '@/types';
 import { formatDate } from '@/utils/dateFormat';
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// -- Helpers ------------------------------------------------------------------
 const fmt = (v: unknown): string => {
-  if (v === null || v === undefined || v === '') return '—';
+  if (v === null || v === undefined || v === '') return '-';
   return String(v);
 };
 
@@ -22,14 +22,14 @@ const fmtDate = (d: string | null | undefined): string => {
 const sanitize = (s: string): string =>
   s.replace(/[/\\:*?"<>|]/g, '').replace(/\s+/g, '_').trim();
 
-// ── Brand colour ──────────────────────────────────────────────────────────────
+// -- Brand colour --------------------------------------------------------------
 const NAVY: [number, number, number] = [31, 58, 95];
 const LIGHT_GRAY: [number, number, number] = [245, 246, 249];
 const MID_GRAY: [number, number, number] = [156, 163, 175];
 const DARK: [number, number, number] = [17, 24, 39];
 const WHITE: [number, number, number] = [255, 255, 255];
 
-// ── Main export ───────────────────────────────────────────────────────────────
+// -- Main export ---------------------------------------------------------------
 export function generateApplicationPDF(data: StudentDetail): void {
   const s    = data.student;
   const p    = data.passport;
@@ -46,13 +46,13 @@ export function generateApplicationPDF(data: StudentDetail): void {
   const permAddr = addr.find(a => a.address_type === 'permanent');
   const currAddr = addr.find(a => a.address_type === 'current');
 
-  // ── Filename ────────────────────────────────────────────────────────────────
+  // -- Filename ----------------------------------------------------------------
   const passport  = sanitize(s.passport_number || 'NoPassport');
   const name      = sanitize(`${s.given_name || ''} ${s.family_name || ''}`.trim());
   const major     = sanitize(s.intended_major || 'NoMajor');
   const filename  = `${passport}-${name}-${major}.pdf`;
 
-  // ── PDF setup ───────────────────────────────────────────────────────────────
+  // -- PDF setup ---------------------------------------------------------------
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
@@ -61,7 +61,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
   const contentW = pageW - marginL - marginR;
   let y = 0;
 
-  // ── Page header (drawn on every page via header hook) ──────────────────────
+  // -- Page header (drawn on every page via header hook) ----------------------
   const addPageHeader = () => {
     // Navy bar
     doc.setFillColor(...NAVY);
@@ -82,7 +82,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   };
 
-  // ── Section heading helper ──────────────────────────────────────────────────
+  // -- Section heading helper --------------------------------------------------
   const addSection = (title: string): number => {
     // If near bottom, new page
     if (y > pageH - 40) {
@@ -101,7 +101,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     return y;
   };
 
-  // ── Two-column field row helper ─────────────────────────────────────────────
+  // -- Two-column field row helper ---------------------------------------------
   const col = contentW / 2 - 2;
 
   const addFields = (fields: [string, string][]) => {
@@ -148,7 +148,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     y += 3;
   };
 
-  // ── Single full-width text field ────────────────────────────────────────────
+  // -- Single full-width text field --------------------------------------------
   const addFullField = (label: string, value: string) => {
     if (y > pageH - 20) { doc.addPage(); addPageHeader(); y = 28; }
     doc.setFillColor(...LIGHT_GRAY);
@@ -170,7 +170,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
   addPageHeader();
   y = 28;
 
-  // ── Application summary banner ──────────────────────────────────────────────
+  // -- Application summary banner ----------------------------------------------
   if (s.application_number) {
     doc.setFillColor(239, 246, 255);
     doc.rect(marginL, y, contentW, 8, 'F');
@@ -183,13 +183,13 @@ export function generateApplicationPDF(data: StudentDetail): void {
     y += 10;
   }
 
-  // ── 1. Personal Info ────────────────────────────────────────────────────────
+  // -- 1. Personal Info --------------------------------------------------------
   addSection('1. Personal Information');
   addFields([
     ['Full Name',       `${fmt(s.given_name)} ${fmt(s.family_name)}`],
     ['Chinese Name',    fmt(s.chinese_name)],
     ['Date of Birth',   fmtDate(s.date_of_birth)],
-    ['Gender',          s.gender ? s.gender.charAt(0).toUpperCase() + s.gender.slice(1) : '—'],
+    ['Gender',          s.gender ? s.gender.charAt(0).toUpperCase() + s.gender.slice(1) : '-'],
     ['Nationality',     fmt(s.nationality)],
     ['Passport No.',    fmt(s.passport_number)],
     ['Email',           fmt(s.email)],
@@ -198,7 +198,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     ['WeChat ID',       fmt(s.wechat_id)],
   ]);
 
-  // ── 2. Address ──────────────────────────────────────────────────────────────
+  // -- 2. Address --------------------------------------------------------------
   addSection('2. Address');
   if (permAddr) {
     doc.setFontSize(8);
@@ -238,7 +238,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   }
 
-  // ── 3. Passport & Visa ──────────────────────────────────────────────────────
+  // -- 3. Passport & Visa ------------------------------------------------------
   addSection('3. Passport & Visa');
   if (p) {
     addFields([
@@ -263,7 +263,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   }
 
-  // ── 4. Education ────────────────────────────────────────────────────────────
+  // -- 4. Education ------------------------------------------------------------
   addSection('4. Education');
   if (edu.length > 0) {
     autoTable(doc, {
@@ -288,7 +288,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   }
 
-  // ── 5. China Experience ─────────────────────────────────────────────────────
+  // -- 5. China Experience -----------------------------------------------------
   addSection('5. China Experience');
   if (china && china.has_experience) {
     addFields([
@@ -303,7 +303,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     addFields([['Has China Experience', 'No'], ['', '']]);
   }
 
-  // ── 6. Financial Supporter ──────────────────────────────────────────────────
+  // -- 6. Financial Supporter --------------------------------------------------
   addSection('6. Financial Supporter');
   if (f) {
     addFields([
@@ -312,12 +312,12 @@ export function generateApplicationPDF(data: StudentDetail): void {
       ['Occupation',        fmt(f.occupation)],
       ['Annual Income',     f.annual_income_amount
         ? `${f.annual_income_currency || 'USD'} ${Number(f.annual_income_amount).toLocaleString()}`
-        : '—'],
+        : '-'],
       ['Phone',             fmt(f.phone)],
       ['Email',             fmt(f.email)],
       ['Bank Name',         fmt(f.bank_name)],
       ['Account Holder',    fmt(f.account_holder_name)],
-      ['Current Balance',   f.current_balance ? `${f.annual_income_currency || 'USD'} ${Number(f.current_balance).toLocaleString()}` : '—'],
+      ['Current Balance',   f.current_balance ? `${f.annual_income_currency || 'USD'} ${Number(f.current_balance).toLocaleString()}` : '-'],
       ['', ''],
     ]);
   } else {
@@ -326,7 +326,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   }
 
-  // ── 7. Language Proficiency ─────────────────────────────────────────────────
+  // -- 7. Language Proficiency -------------------------------------------------
   addSection('7. Language Proficiency');
   if (lang.length > 0) {
     autoTable(doc, {
@@ -348,7 +348,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   }
 
-  // ── 8. Work Experience ──────────────────────────────────────────────────────
+  // -- 8. Work Experience ------------------------------------------------------
   addSection('8. Work Experience');
   if (work.length > 0) {
     autoTable(doc, {
@@ -373,24 +373,24 @@ export function generateApplicationPDF(data: StudentDetail): void {
     doc.setTextColor(...DARK);
   }
 
-  // ── 9. Application Details ──────────────────────────────────────────────────
+  // -- 9. Application Details --------------------------------------------------
   addSection('9. Application Details');
   addFields([
     ['Target University', fmt(s.target_university)],
     ['Intended Major',    fmt(s.intended_major)],
     ['Scholarship Type', fmt((s as unknown as {scholarship_type?:string}).scholarship_type)],
-    ['Degree Level',      s.degree_level ? DEGREE_LABELS[s.degree_level] : '—'],
+    ['Degree Level',      s.degree_level ? DEGREE_LABELS[s.degree_level] : '-'],
     ['Start Term',        fmt(s.intended_start_term)],
     ['Status',            STATUS_LABELS[s.application_status] ?? s.application_status],
-    ['Priority',          s.priority ? s.priority.charAt(0).toUpperCase() + s.priority.slice(1) : '—'],
+    ['Priority',          s.priority ? s.priority.charAt(0).toUpperCase() + s.priority.slice(1) : '-'],
   ]);
 
-  // ── 10. Documents Checklist ─────────────────────────────────────────────────
+  // -- 10. Documents Checklist -------------------------------------------------
   addSection('10. Documents Checklist');
   const docRows = DOCUMENTS_LIST.map(doc => {
     const uploaded = docsMap[doc.key];
     return [
-      uploaded ? '✓' : '',
+      uploaded ? '[ok]' : '',
       doc.label,
       doc.required ? 'Required' : 'Optional',
     ];
@@ -421,7 +421,7 @@ export function generateApplicationPDF(data: StudentDetail): void {
 
   y = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 8;
 
-  // ── Signature block ─────────────────────────────────────────────────────────
+  // -- Signature block ---------------------------------------------------------
   if (y > pageH - 35) { doc.addPage(); addPageHeader(); y = 28; }
   const sigY = y + 20;
   doc.setDrawColor(...MID_GRAY);
@@ -432,20 +432,20 @@ export function generateApplicationPDF(data: StudentDetail): void {
   doc.text('Applicant Signature & Date', marginL, sigY + 5);
   doc.text('Authorised Staff Signature & Date', marginL + 90, sigY + 5);
 
-  // ── Footer on every page ────────────────────────────────────────────────────
+  // -- Footer on every page ----------------------------------------------------
   const totalPages = doc.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
     doc.setFontSize(7);
     doc.setTextColor(...MID_GRAY);
     doc.text(
-      `Generated by SAMS – Student Admission Management System   |   ${formatDate(new Date())}`,
+      `Generated by SAMS - Student Admission Management System   |   ${formatDate(new Date())}`,
       marginL, pageH - 6
     );
     doc.text(`Page ${i} of ${totalPages}`, pageW - marginR, pageH - 6, { align: 'right' });
   }
 
-  // ── Save ────────────────────────────────────────────────────────────────────
+  // -- Save --------------------------------------------------------------------
   doc.save(filename);
 }
 

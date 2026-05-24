@@ -84,23 +84,23 @@ const CAT_COLORS: Record<string, { bg: string; color: string; border: string }> 
 };
 
 function formatSize(bytes: number): string {
-  if (!bytes) return '—';
+  if (!bytes) return '-';
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function formatDate(value: string): string {
-  if (!value) return '—';
+  if (!value) return '-';
 
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '—';
+  if (Number.isNaN(date.getTime())) return '-';
 
   return date.toLocaleDateString('en-CA');
 }
 
 function getMimeLabel(mime: string): string {
-  if (!mime) return '—';
+  if (!mime) return '-';
   if (mime === 'application/pdf') return 'PDF';
   if (mime.startsWith('image/')) return mime.split('/')[1]?.toUpperCase() || 'IMAGE';
   if (mime.includes('word')) return 'DOCX';
@@ -701,8 +701,8 @@ export default function DocumentsPage() {
                     </td>
 
                     <td>
-                      <div className="docs-uploaded-name" title={doc.uploaded_by_name || '—'}>
-                        {doc.uploaded_by_name || '—'}
+                      <div className="docs-uploaded-name" title={doc.uploaded_by_name || '-'}>
+                        {doc.uploaded_by_name || '-'}
                       </div>
 
                       {doc.uploaded_by_role && (

@@ -1,5 +1,5 @@
 // backend/src/utils/azureStorage.js
-// Azure Blob Storage utility — upload, delete, stream-to-response
+// Azure Blob Storage utility - upload, delete, stream-to-response
 
 import { BlobServiceClient } from '@azure/storage-blob';
 
@@ -13,7 +13,7 @@ const getContainerClient = () => {
 
 /**
  * Upload a Buffer to Azure Blob Storage.
- * @param {string} blobName  — path inside container e.g. "documents/123/passport_1234.pdf"
+ * @param {string} blobName  - path inside container e.g. "documents/123/passport_1234.pdf"
  * @param {Buffer} buffer
  * @param {string} mimeType
  * @returns {string} blobName
@@ -43,8 +43,8 @@ export const deleteBlob = async (blobName) => {
 /**
  * Stream a blob directly to an Express response.
  * @param {string} blobName
- * @param {object} res       — Express response object
- * @param {string} fileName  — original file name for Content-Disposition
+ * @param {object} res       - Express response object
+ * @param {string} fileName  - original file name for Content-Disposition
  * @param {string} mimeType
  */
 export const streamBlobToResponse = async (blobName, res, fileName, mimeType) => {

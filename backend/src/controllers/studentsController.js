@@ -1,5 +1,5 @@
-﻿// src/controllers/studentsController.js
-// VERSION: 2026-FIXED — Applications + Work Station visibility fixed
+// src/controllers/studentsController.js
+// VERSION: 2026-FIXED - Applications + Work Station visibility fixed
 
 import { query, getClient } from '../config/database.js';
 import { createNotification, notifyAdminsAndStaff, statusLabel } from '../utils/notifications.js';
@@ -37,7 +37,7 @@ const syncWorkstationEntry = async (studentId, status) => {
       [studentId]
     );
   } catch (_) {
-    // Non-fatal — Work Station will self-heal on next page load
+    // Non-fatal - Work Station will self-heal on next page load
   }
 };
 
@@ -918,7 +918,7 @@ export const updateStudent = async (req, res) => {
 
     await client.query('COMMIT');
 
-    // Draft → pending: push held bytea docs to Azure
+    // Draft -> pending: push held bytea docs to Azure
     if (existing.application_status === 'draft' && req.body.application_status === 'pending') {
       const { rows: draftDocs } = await query(
         'SELECT id, file_name, file_data, mime_type FROM student_documents WHERE student_id = $1 AND file_data IS NOT NULL',
@@ -1081,7 +1081,7 @@ export const updateStatus = async (req, res) => {
 
     await syncWorkstationEntry(id, status);
 
-    // Draft → pending (submit): push held bytes from DB to Azure, clear bytea
+    // Draft -> pending (submit): push held bytes from DB to Azure, clear bytea
     if (existing.application_status === 'draft' && status === 'pending') {
       const { rows: docs } = await query(
         'SELECT id, file_name, file_data, mime_type FROM student_documents WHERE student_id = $1 AND file_data IS NOT NULL',
@@ -1102,7 +1102,7 @@ export const updateStatus = async (req, res) => {
       }
     }
 
-    // Reverted to draft → delete Azure blobs + wipe all document records
+    // Reverted to draft -> delete Azure blobs + wipe all document records
     // User must re-upload fresh after re-submitting
     if (status === 'draft' && existing.application_status !== 'draft') {
       const { rows: docs } = await query(

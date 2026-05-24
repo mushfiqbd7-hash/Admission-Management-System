@@ -1,4 +1,4 @@
-﻿// src/components/layout/AppShell.tsx
+// src/components/layout/AppShell.tsx
 import { useMemo, useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -174,7 +174,7 @@ export default function AppShell() {
         />
       )}
 
-      {/* SIDEBAR — hover-expand desktop rail, mobile drawer */}
+      {/* SIDEBAR - hover-expand desktop rail, mobile drawer */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[260px] min-w-[260px] flex-col overflow-hidden bg-[#061a33] text-white transition-all duration-300 lg:relative lg:translate-x-0 ${
           sidebarHover ? 'lg:w-[260px] lg:min-w-[260px]' : 'lg:w-[84px] lg:min-w-[84px]'

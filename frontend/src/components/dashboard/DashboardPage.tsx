@@ -1,4 +1,4 @@
-﻿// src/components/dashboard/DashboardPage.tsx
+// src/components/dashboard/DashboardPage.tsx
 import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -457,7 +457,7 @@ export default function DashboardPage() {
           <StatCard
             key={item.label}
             label={item.label}
-            value={isLoading ? 'â€”' : item.value}
+            value={isLoading ? '-' : item.value}
             icon={item.icon}
             color={item.color}
             bg={item.bg}
@@ -655,7 +655,7 @@ export default function DashboardPage() {
                         }}
                       >
                         <td style={tdStyle}>
-                          <span style={appNoBadgeStyle}>{s.application_number || 'â€”'}</span>
+                          <span style={appNoBadgeStyle}>{s.application_number || '-'}</span>
                         </td>
 
                         <td style={tdStyle}>
@@ -670,7 +670,7 @@ export default function DashboardPage() {
                         </td>
 
                         <td style={tdStyle}>
-                          <div style={mutedTruncateStyle}>{s.target_university || 'â€”'}</div>
+                          <div style={mutedTruncateStyle}>{s.target_university || '-'}</div>
                         </td>
 
                         <td style={tdStyle}>
@@ -714,7 +714,7 @@ export default function DashboardPage() {
             <span style={{ fontSize: 11.5, color: '#94a3b8', fontWeight: 800 }}>
               {filteredRows.length === 0
                 ? '0 entries'
-                : `${(safePage - 1) * pageSize + 1}â€“${Math.min(
+                : `${(safePage - 1) * pageSize + 1}-${Math.min(
                     safePage * pageSize,
                     filteredRows.length
                   )} of ${filteredRows.length}`}
@@ -792,7 +792,7 @@ export default function DashboardPage() {
                               {s.given_name} {s.family_name}
                             </div>
 
-                            <div style={sideAppNoStyle}>{s.application_number || 'â€”'}</div>
+                            <div style={sideAppNoStyle}>{s.application_number || '-'}</div>
 
                             <span
                               style={{
@@ -832,7 +832,7 @@ export default function DashboardPage() {
 
             <Panel
               title="Notifications"
-              subtitle={`${unreadNotifs} unread Â· latest 2 shown`}
+              subtitle={`${unreadNotifs} unread . latest 2 shown`}
               icon={Bell}
               action={
                 <button onClick={() => navigate('/inbox?tab=notifications')} style={linkBtn}>
@@ -922,7 +922,7 @@ export default function DashboardPage() {
   );
 }
 
-/*â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*------------------------- Styles ------------------------- */
 
 const dashboardPageStyle: React.CSSProperties = {
   position: 'relative',

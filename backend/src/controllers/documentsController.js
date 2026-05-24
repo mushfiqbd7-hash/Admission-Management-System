@@ -6,7 +6,7 @@ import { uploadBuffer, deleteBlob, streamBlobToResponse, downloadBlobToBuffer } 
 import dotenv from 'dotenv';
 dotenv.config();
 
-// Use memory storage — files go to Azure Blob, not local disk
+// Use memory storage - files go to Azure Blob, not local disk
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
@@ -24,7 +24,7 @@ export const upload = multer({
 
 const canManageAllDocuments = (role) => ['admin', 'staff'].includes(role);
 
-// Returns student row or null — caller checks fields
+// Returns student row or null - caller checks fields
 const getStudentForDocAccess = async (studentId) => {
   const { rows: [student] } = await query(
     'SELECT id, created_by, application_status FROM students WHERE id = $1',
@@ -82,10 +82,10 @@ export const uploadDocument = async (req, res) => {
     let fileData  = null;
 
     if (isDraft) {
-      // Draft → hold bytes in DB, nothing goes to Azure yet
+      // Draft -> hold bytes in DB, nothing goes to Azure yet
       fileData = req.file.buffer;
     } else {
-      // Submitted → push directly to Azure
+      // Submitted -> push directly to Azure
       blobName = `documents/${id}/${doc_key}_${Date.now()}${ext}`;
       await uploadBuffer(blobName, req.file.buffer, req.file.mimetype);
     }
@@ -144,7 +144,7 @@ export const getDocuments = async (req, res) => {
     if (!hasAccess) return res.status(403).json({ error: 'Access denied' });
 
     // For draft applications, only return docs already in Azure (file_path set).
-    // Docs held temporarily in file_data bytea are invisible — user must re-upload on return.
+    // Docs held temporarily in file_data bytea are invisible - user must re-upload on return.
     const student = await getStudentForDocAccess(id);
     const isDraft = student?.application_status === 'draft';
 
@@ -177,7 +177,7 @@ export const viewDocument = async (req, res) => {
     const doc = rows[0];
     if (!doc) return res.status(404).json({ error: 'Document not found' });
 
-    // Draft doc stored in bytea — serve directly from DB
+    // Draft doc stored in bytea - serve directly from DB
     if (!doc.file_path && doc.file_data) {
       const safeName = (doc.file_name || 'document').replace(/["\r\n]/g, '_');
       res.setHeader('Content-Type', doc.mime_type || 'application/octet-stream');
@@ -197,7 +197,7 @@ export const viewDocument = async (req, res) => {
   }
 };
 
-// ── Export all documents as ZIP ───────────────────────────────────────────────
+// -- Export all documents as ZIP -----------------------------------------------
 const DOCUMENTS_ORDER = [
   { key: 'passport',          label: 'Passport' },
   { key: 'visa-scan',         label: 'Visa_Scan_Copy' },

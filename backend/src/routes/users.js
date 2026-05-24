@@ -76,7 +76,7 @@ router.put(
 // Admin only.
 router.delete('/:id', requireAdmin, deleteUser);
 
-// POST /api/users/me/avatar — upload profile picture (max 200 KB)
+// POST /api/users/me/avatar - upload profile picture (max 200 KB)
 router.post(
   '/me/avatar',
   (req, res, next) => {
@@ -91,7 +91,7 @@ router.post(
   uploadAvatar
 );
 
-// GET /api/users/me/avatar — stream avatar image
+// GET /api/users/me/avatar - stream avatar image
 router.get('/me/avatar', getAvatar);
 
 export default router;

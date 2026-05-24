@@ -1,4 +1,4 @@
-﻿// src/controllers/workstationController.js
+// src/controllers/workstationController.js
 import { query, getClient } from '../config/database.js';
 
 const WORKSTATION_STATUSES = [

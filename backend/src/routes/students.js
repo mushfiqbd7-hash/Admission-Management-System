@@ -20,14 +20,14 @@ const router = Router();
 
 router.use(authenticate);
 
-// ── Stats and list ────────────────────────────────────────────
+// -- Stats and list --------------------------------------------
 router.get('/stats', getStats);
 router.get('/', listStudents);
 
-// ── Create student/application ────────────────────────────────
+// -- Create student/application --------------------------------
 // Validation rules are conditional on application_status:
-//   - status='draft'  → no required fields (Save Draft / auto-save)
-//   - anything else   → family_name and given_name are required (submit)
+//   - status='draft'  -> no required fields (Save Draft / auto-save)
+//   - anything else   -> family_name and given_name are required (submit)
 router.post(
   '/',
   [
@@ -42,7 +42,7 @@ router.post(
   createStudent
 );
 
-// ── Status update ─────────────────────────────────────────────
+// -- Status update ---------------------------------------------
 // PATCH is the main route used by the app.
 router.patch(
   '/:id/status',
@@ -59,7 +59,7 @@ router.put(
   updateStatus
 );
 
-// ── Notes ─────────────────────────────────────────────────────
+// -- Notes -----------------------------------------------------
 router.post(
   '/:id/notes',
   requireRole('admin', 'staff'),
@@ -68,7 +68,7 @@ router.post(
   addNote
 );
 
-// ── Single student / update / delete ──────────────────────────
+// -- Single student / update / delete --------------------------
 router.get('/:id', getStudent);
 router.put('/:id', updateStudent);
 router.delete('/:id', deleteStudent);

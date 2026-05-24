@@ -1,4 +1,4 @@
-﻿// src/controllers/usersController.js
+// src/controllers/usersController.js
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import { query } from '../config/database.js';
@@ -19,9 +19,9 @@ const userSelectFields = `
   created_at
 `;
 
-// â”€â”€ POST /api/auth/register  (public) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- POST /api/auth/register  (public) --------------------------------------
 // Public sign-up is reserved for applicants. The role is hardcoded server-side
-// to 'student' â€” any role value supplied by the client is ignored.
+// to 'student' - any role value supplied by the client is ignored.
 // Agent / staff / admin accounts must be provisioned by an admin via
 // User Management (POST /api/users) or by editing an existing user's role.
 export const register = async (req, res) => {
@@ -92,7 +92,7 @@ export const register = async (req, res) => {
   }
 };
 
-// â”€â”€ GET /api/users â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- GET /api/users ----------------------------------------------------------
 // -- POST /api/auth/resend-verification --------------------------------------
 // -- GET /api/auth/verify-email ------------------------------------------------
 export const verifyEmail = async (req, res) => {
@@ -231,7 +231,7 @@ export const listUsers = async (req, res) => {
   }
 };
 
-// â”€â”€ POST /api/users  (Admin only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- POST /api/users  (Admin only) -------------------------------------------
 export const createUser = async (req, res) => {
   try {
     const { email, password, full_name, role } = req.body;
@@ -281,7 +281,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-// â”€â”€ PUT /api/users/:id â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- PUT /api/users/:id -------------------------------------------------------
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -378,7 +378,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
-// â”€â”€ DELETE /api/users/:id  (Admin only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- DELETE /api/users/:id  (Admin only) -------------------------------------
 export const deleteUser = async (req, res) => {
   if (req.params.id === req.user.id) {
     return res.status(400).json({ error: 'Cannot delete your own account' });
@@ -394,9 +394,9 @@ export const deleteUser = async (req, res) => {
 
 
 
-// ── POST /api/users/me/avatar ─────────────────────────────────────────────────
+// -- POST /api/users/me/avatar -------------------------------------------------
 // Stores avatar as a base64 data URL in the DB column so the frontend
-// can use it directly as <img src> — no auth-gated streaming endpoint needed.
+// can use it directly as <img src> - no auth-gated streaming endpoint needed.
 export const uploadAvatar = async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   try {
@@ -414,13 +414,13 @@ export const uploadAvatar = async (req, res) => {
   }
 };
 
-// ── GET /api/users/me/avatar ──────────────────────────────────────────────────
+// -- GET /api/users/me/avatar --------------------------------------------------
 // Kept for completeness; frontend uses the data URL from user object directly.
 export const getAvatar = async (req, res) => {
   try {
     const { rows: [user] } = await query('SELECT avatar_url FROM users WHERE id = $1', [req.user.id]);
     if (!user?.avatar_url) return res.status(404).json({ error: 'No avatar set' });
-    // avatar_url is now a data URL — redirect the browser to it
+    // avatar_url is now a data URL - redirect the browser to it
     res.redirect(user.avatar_url);
   } catch (err) {
     console.error('getAvatar error:', err);

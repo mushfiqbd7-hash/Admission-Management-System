@@ -11,13 +11,13 @@ import { authenticate } from '../middleware/auth.js';
 const router = Router();
 router.use(authenticate);
 
-// ── Specific message sub-routes BEFORE /:id routes ───────────
+// -- Specific message sub-routes BEFORE /:id routes -----------
 router.get('/messages/applications',             getApplicationsForDropdown);
 router.get('/messages/attachments/:attId',       downloadAttachment);
 router.get('/messages/inbox',                    getInbox);
 router.get('/messages/sent',                     getSent);
 
-// ── Message CRUD ──────────────────────────────────────────────
+// -- Message CRUD ----------------------------------------------
 router.post('/messages',
   uploadAttachment.array('attachments', 5),
   sendMessage
@@ -25,7 +25,7 @@ router.post('/messages',
 router.patch('/messages/:id/read',               markRead);
 router.delete('/messages/:id',                   deleteMessage);
 
-// ── Notifications ─────────────────────────────────────────────
+// -- Notifications ---------------------------------------------
 router.get('/notifications',                     getNotifications);
 router.get('/notifications/unread-count',        getUnreadCount);
 router.patch('/notifications/read-all',          markAllNotifsRead);

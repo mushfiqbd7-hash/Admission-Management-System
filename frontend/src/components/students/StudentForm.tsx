@@ -1,4 +1,4 @@
-// src/components/students/StudentForm.tsx — Phase 3
+// src/components/students/StudentForm.tsx - Phase 3
 // ALL logic, mutations, buildPayload, handleSave, handleDocUpload, handleDeleteDoc,
 // handleAddNote, handleSubmitConfirmed are 100% identical to original.
 import { useState, useRef, useEffect, useMemo } from 'react';
@@ -295,7 +295,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
   };
 
   const handleNext = async () => {
-    try { await handleSaveDraft(true); } catch { /* swallow — advance anyway */ }
+    try { await handleSaveDraft(true); } catch { /* swallow - advance anyway */ }
     setStep(s => s + 1);
   };
 
@@ -683,10 +683,10 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
                     <FormField label="Visa Type" required>
                       <Select value={passport.visa_type} onChange={e => setPassport(p => ({...p, visa_type: e.target.value}))}>
                         <option value="">Select type</option>
-                        <option value="X1">X1 – Long-term Study</option>
-                        <option value="X2">X2 – Short-term Study</option>
-                        <option value="F">F – Non-commercial Visit</option>
-                        <option value="M">M – Business</option>
+                        <option value="X1">X1 - Long-term Study</option>
+                        <option value="X2">X2 - Short-term Study</option>
+                        <option value="F">F - Non-commercial Visit</option>
+                        <option value="M">M - Business</option>
                         <option value="Tourist">Tourist</option>
                       </Select>
                     </FormField>
@@ -785,7 +785,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
               <FormField label="Annual Income" required>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <Select style={{ width: 130 }} value={financial.annual_income_currency} onChange={e => setFinancial(p=>({...p,annual_income_currency:e.target.value}))}>
-                    {ALL_CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} – {c.name}</option>)}
+                    {ALL_CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} - {c.name}</option>)}
                   </Select>
                   <Input type="number" placeholder="Amount" value={String(financial.annual_income_amount)} onChange={e => setFinancial(p=>({...p,annual_income_amount:e.target.value}))} />
                 </div>
@@ -857,7 +857,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
             </p>
           </div>
 
-          <FormSection title={`Documents Checklist — ${Object.keys(uploadedDocs).length}/${DOCUMENTS_LIST.length} uploaded`}>
+          <FormSection title={`Documents Checklist - ${Object.keys(uploadedDocs).length}/${DOCUMENTS_LIST.length} uploaded`}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {DOCUMENTS_LIST.map((doc, idx) => {
                 const uploaded = uploadedDocs[doc.key];
@@ -921,9 +921,9 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
           <FormSection title="Application Summary">
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 18 }}>
               {[
-                { label: 'Passport No.', value: passport.passport_number || '—', mono: true },
-                { label: 'Student Name', value: `${personal.given_name} ${personal.family_name}`.trim() || '—' },
-                { label: 'University', value: personal.target_university || '—' },
+                { label: 'Passport No.', value: passport.passport_number || '-', mono: true },
+                { label: 'Student Name', value: `${personal.given_name} ${personal.family_name}`.trim() || '-' },
+                { label: 'University', value: personal.target_university || '-' },
               ].map(({ label, value, mono }) => (
                 <div key={label} style={{ background: 'var(--surface-sunken)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '12px 14px' }}>
                   <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 5, fontWeight: 500 }}>{label}</div>
@@ -941,7 +941,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
               ].map(([l, v]) => (
                 <div key={l} style={{ display: 'flex', gap: 8, fontSize: 13 }}>
                   <span style={{ width: 140, color: 'var(--text-tertiary)', flexShrink: 0, fontWeight: 500 }}>{l}:</span>
-                  <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{v || '—'}</span>
+                  <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{v || '-'}</span>
                 </div>
               ))}
             </div>

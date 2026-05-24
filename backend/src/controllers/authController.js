@@ -71,6 +71,9 @@ export const login = async (req, res) => {
 
     await query('UPDATE users SET last_login = NOW() WHERE id = $1', [user.id]);
 
+    // Prune this user's expired refresh tokens on each login
+    await query('DELETE FROM refresh_tokens WHERE user_id = $1 AND expires_at <= NOW()', [user.id]);
+
     const accessToken  = signAccessToken(user.id, user.role);
     const refreshToken = signRefreshToken();
     const refreshHash  = crypto.createHash('sha256').update(refreshToken).digest('hex');
@@ -184,10 +187,4 @@ export const changePassword = async (req, res) => {
     );
 
     await query('DELETE FROM refresh_tokens WHERE user_id = $1', [req.user.id]);
-    res.json({ message: 'Password changed successfully' });
-  } catch (err) {
-    console.error('Change password error:', err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
+    res.json({ message: 'Password 
