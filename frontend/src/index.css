@@ -808,3 +808,52 @@ body, .card, .input, .button, .modal, .table-row, .badge, .sams-input, .sams-sel
     Arial,
     sans-serif !important;
 }
+
+/* ═══════════════════════════════════════════════════════
+   APP-WIDE DARK MODE FIX (Global Override Layer)
+   ═══════════════════════════════════════════════════════ */
+
+html { color-scheme: light dark; }
+.dark { color-scheme: dark; }
+
+@layer base {
+  .dark body, .dark #root { background-color: var(--surface-sunken) !important; color: var(--text-primary) !important; }
+
+  .dark .bg-white, .dark [class*="bg-gray-50"], .dark [class*="bg-gray-100"],
+  .dark [class*="bg-slate-50"], .dark [class*="bg-neutral-50"],
+  .dark [style*="background: #fff"], .dark [style*="background: white"] {
+    background-color: var(--surface-raised) !important;
+  }
+  .dark .bg-gray-900, .dark .bg-black, .dark [class*="bg-slate-900"] { background-color: var(--navy-950) !important; }
+
+  .dark .text-black, .dark .text-gray-900, .dark .text-gray-800, .dark [class*="text-slate-900"],
+  .dark [style*="color: #0"], .dark [style*="color: #1"] { color: var(--text-primary) !important; }
+  .dark .text-gray-500, .dark .text-gray-600, .dark [class*="text-slate-500"] { color: var(--text-secondary) !important; }
+  .dark .text-gray-400, .dark [class*="text-slate-400"] { color: var(--text-tertiary) !important; }
+
+  .dark .border-gray-200, .dark .border-gray-300, .dark [class*="border-slate-200"],
+  .dark [class*="border-gray-"], .dark [style*="border-color: #e"], .dark [style*="border-color: #d"] {
+    border-color: var(--border) !important;
+  }
+
+  .dark input, .dark select, .dark textarea, .dark [type="text"], .dark [type="email"], .dark [type="password"], .dark [type="search"], .dark [type="number"] {
+    background-color: var(--surface-raised) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border) !important;
+  }
+  .dark input::placeholder, .dark textarea::placeholder, .dark select { color: var(--text-tertiary) !important; }
+
+  .dark table th { background-color: var(--navy-900) !important; border-bottom-color: var(--navy-700) !important; color: var(--text-tertiary) !important; }
+  .dark table td { border-bottom-color: var(--navy-800) !important; color: var(--text-primary) !important; }
+  .dark table tbody tr:hover td { background-color: var(--surface-hover) !important; }
+
+  .dark .card, .dark [style*="backdrop-filter"], .dark [style*="rgba(255,255,255"] {
+    background-color: var(--surface) !important;
+    border-color: var(--border) !important;
+  }
+
+  .dark ::-webkit-scrollbar-thumb { background: var(--navy-600) !important; }
+  .dark ::-webkit-scrollbar-track { background: transparent !important; }
+
+  .dark ::selection { background: var(--navy-700) !important; color: var(--text-primary) !important; }
+}
