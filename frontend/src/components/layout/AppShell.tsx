@@ -32,9 +32,9 @@ const WORKSPACE_ITEMS = [
 ];
 
 const ADMIN_ITEMS = [
-  { label: 'User Management',    path: '/users',              icon: Users,    adminOnly: true },
-  { label: 'Application Links',  path: '/application-links',  icon: Link2,    agentPlus: true },
-  { label: 'Settings',           path: '/settings',           icon: Settings },
+  { label: 'User Management',    path: '/users',             icon: Users,    adminOnly: true },
+  { label: 'Application Links',  path: '/application-links', icon: Link2,    agentPlus: true },
+  { label: 'Settings',           path: '/settings',          icon: Settings },
 ];
 
 /* ---------- sidebar nav item ---------- */
@@ -61,9 +61,9 @@ function NavItem({ label, path, icon: Icon, end: forceEnd }: {
         cursor: 'pointer',
         fontFamily: 'inherit',
         textDecoration: 'none',
-        fontSize: 13,
+        fontSize: 13.5,
         fontWeight: isActive ? 600 : 500,
-        letterSpacing: '-0.005em',
+        letterSpacing: '-0.01em',
         boxShadow: isActive
           ? '0 1px 0 rgba(255,255,255,0.18) inset, 0 6px 16px -6px rgba(37,99,235,0.55), 0 2px 4px rgba(37,99,235,0.20)'
           : 'none',
@@ -71,7 +71,7 @@ function NavItem({ label, path, icon: Icon, end: forceEnd }: {
       })}
       className="sams-nav-item"
     >
-      <Icon size={15} strokeWidth={1.9} />
+      <Icon size={16} strokeWidth={1.8} />
       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {label}
       </span>
@@ -86,10 +86,10 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
       padding: '6px 10px',
       fontSize: 10.5,
       fontWeight: 700,
-      color: 'rgba(255,255,255,0.36)',
-      letterSpacing: '0.08em',
+      color: 'rgba(255,255,255,0.32)',
+      letterSpacing: '0.09em',
       textTransform: 'uppercase',
-      marginTop: 16,
+      marginTop: 18,
       marginBottom: 2,
     }}>
       {children}
@@ -169,55 +169,32 @@ export default function AppShell() {
 
       {/* Brand */}
       <div style={{
-        padding: '18px 16px 14px', flexShrink: 0, position: 'relative', zIndex: 1,
+        padding: '20px 16px 16px', flexShrink: 0, position: 'relative', zIndex: 1,
         borderBottom: '1px solid rgba(255,255,255,0.06)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* Brand icon — graduation cap at proper size */}
           <div style={{
-            width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-            background: 'linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%)',
+            width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
             boxShadow: '0 1px 0 rgba(255,255,255,0.30) inset, 0 6px 14px -4px rgba(37,99,235,0.50)',
           }}>
-            <GraduationCap size={18} strokeWidth={2.2} />
+            <GraduationCap size={22} strokeWidth={1.8} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 15.5, fontWeight: 700, letterSpacing: '-0.02em' }}>
+            <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff' }}>
               Admission
             </div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 1 }}>
               Management System
             </div>
           </div>
         </div>
       </div>
 
-      {/* Search button */}
-      <div style={{ padding: '12px 12px 4px', flexShrink: 0, position: 'relative', zIndex: 1 }}>
-        <button
-          onClick={() => navigate('/students')}
-          style={{
-            width: '100%', height: 34, display: 'flex', alignItems: 'center', gap: 9,
-            padding: '0 10px', borderRadius: 10, cursor: 'pointer', fontFamily: 'inherit', fontSize: 12.5,
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.06)',
-            color: 'rgba(255,255,255,0.55)', transition: 'background 120ms ease, color 120ms ease',
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.09)'; e.currentTarget.style.color = '#fff'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(255,255,255,0.55)'; }}
-        >
-          <Search size={13} />
-          <span style={{ flex: 1, textAlign: 'left' }}>Search...</span>
-          <kbd style={{
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            minWidth: 18, height: 18, padding: '0 5px',
-            fontFamily: 'var(--font-ui)', fontSize: 10.5, fontWeight: 600, color: 'rgba(255,255,255,0.5)',
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 5,
-          }}>⌘K</kbd>
-        </button>
-      </div>
-
-      {/* Nav */}
-      <nav style={{ flex: 1, padding: '4px 10px 12px', overflowY: 'auto', position: 'relative', zIndex: 1 }}
+      {/* Nav — no search bar */}
+      <nav style={{ flex: 1, padding: '6px 10px 12px', overflowY: 'auto', position: 'relative', zIndex: 1 }}
            onClick={() => setMobileOpen(false)}>
 
         <SectionLabel>Workspace</SectionLabel>
@@ -244,15 +221,15 @@ export default function AppShell() {
 
       {/* User block */}
       <div style={{
-        padding: '12px', borderTop: '1px solid rgba(255,255,255,0.06)', flexShrink: 0,
-        background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.28))',
+        padding: '12px 14px', borderTop: '1px solid rgba(255,255,255,0.07)', flexShrink: 0,
+        background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.30))',
         position: 'relative', zIndex: 1,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {/* Avatar */}
           <div style={{
-            width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-            background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)',
+            width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
+            background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 13, fontWeight: 700, color: '#fff', overflow: 'hidden',
             boxShadow: '0 0 0 2px rgba(59,130,246,0.45)',
@@ -262,10 +239,10 @@ export default function AppShell() {
               : displayName.charAt(0).toUpperCase()}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 12.5, fontWeight: 700, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {displayName}
             </div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'capitalize' }}>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.42)', textTransform: 'capitalize', marginTop: 1 }}>
               {user?.role}
             </div>
           </div>
@@ -275,11 +252,11 @@ export default function AppShell() {
             style={{
               width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: 'transparent', border: 'none', borderRadius: 8,
-              color: 'rgba(255,255,255,0.45)', cursor: 'pointer',
+              color: 'rgba(255,255,255,0.40)', cursor: 'pointer',
               transition: 'background 120ms ease, color 120ms ease',
             }}
             onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#fff'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.45)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.40)'; }}
           >
             <LogOut size={14} />
           </button>
@@ -310,7 +287,7 @@ export default function AppShell() {
         <Sidebar />
       </div>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer — X button floats outside, only visible on mobile */}
       <div style={{
         position: 'fixed', inset: 0, zIndex: 50, pointerEvents: mobileOpen ? 'auto' : 'none',
       }}>
@@ -320,11 +297,13 @@ export default function AppShell() {
           transition: 'transform 280ms cubic-bezier(0.22,1,0.36,1)',
         }}>
           <Sidebar />
+          {/* Mobile close — floats to the right of drawer, never visible on desktop */}
           <button
             onClick={() => setMobileOpen(false)}
+            className="lg:hidden"
             style={{
-              position: 'absolute', top: 12, right: -40, width: 32, height: 32,
-              borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: 'none',
+              position: 'absolute', top: 14, right: -44, width: 32, height: 32,
+              borderRadius: '50%', background: 'rgba(0,0,0,0.55)', border: 'none',
               color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           >
@@ -362,7 +341,7 @@ export default function AppShell() {
             {/* Title */}
             <div style={{ minWidth: 0, flex: 1 }}>
               <h1 style={{
-                margin: 0, fontFamily: 'var(--font-display, inherit)',
+                margin: 0,
                 fontSize: 18, fontWeight: 700, letterSpacing: '-0.025em', color: '#0a0e1a',
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
               }}>
@@ -376,7 +355,7 @@ export default function AppShell() {
               </p>
             </div>
 
-            {/* Right side */}
+            {/* Right side — header search stays */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
               <form onSubmit={handleTopSearch} className="hidden lg:block" style={{ position: 'relative' }}>
                 <Search style={{
