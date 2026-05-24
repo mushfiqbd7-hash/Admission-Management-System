@@ -55,7 +55,7 @@ function NavItem({ label, path, icon: Icon, end: forceEnd }: {
         background: isActive
           ? 'linear-gradient(180deg, #3b82f6 0%, #2563eb 100%)'
           : 'transparent',
-        color: isActive ? '#fff' : 'var(--text-secondary)',
+        color: isActive ? '#fff' : 'var(--sidebar-text)',
         cursor: 'pointer',
         fontFamily: 'inherit',
         textDecoration: 'none',
@@ -83,7 +83,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
       padding: '6px 10px',
       fontSize: 10.5,
       fontWeight: 700,
-      color: 'var(--text-tertiary)',
+      color: 'var(--sidebar-muted)',
       letterSpacing: '0.09em',
       textTransform: 'uppercase',
       marginTop: 18,
@@ -139,26 +139,19 @@ export default function AppShell() {
     ? 'Admin' : rawDisplayName;
 
   const Sidebar = () => (
-    <aside style={{
+    <aside className="sams-sidebar" style={{
       width: 248, minWidth: 248, height: '100%', flexShrink: 0,
-      background: 'linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 100%)',
+      background: 'var(--sidebar-bg)',
       color: '#f8fafc', display: 'flex', flexDirection: 'column',
       position: 'relative',
-      borderRight: '1px solid var(--navy-700)',
+      borderRight: '1px solid var(--sidebar-border)',
       overflowY: 'auto', overflowX: 'hidden',
       transition: 'background 0.25s ease, border-color 0.25s ease',
     }}>
-      {/* Atmospheric glow */}
-      <div style={{
-        position: 'absolute', top: -100, left: -40, right: -40, height: 240,
-        background: 'radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.22), transparent 65%)',
-        pointerEvents: 'none', zIndex: 0,
-      }} />
-
       {/* Brand */}
       <div style={{
         padding: '20px 16px 16px', flexShrink: 0, position: 'relative', zIndex: 1,
-        borderBottom: '1px solid var(--navy-700)',
+        borderBottom: '1px solid var(--sidebar-border)',
         transition: 'border-color 0.25s ease',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -173,9 +166,9 @@ export default function AppShell() {
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em', color: '#f8fafc' }}>
-              Admission
+            Admission
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>
+            <div style={{ fontSize: 11, color: 'var(--sidebar-muted)', marginTop: 1 }}>
               Management System
             </div>
           </div>
@@ -184,35 +177,39 @@ export default function AppShell() {
 
       {/* Nav */}
       <nav
-        style={{ flex: 1, padding: '6px 10px 12px', overflowY: 'auto', position: 'relative', zIndex: 1 }}
+        style={{ flex: 1, padding: '6px 10px 12px', overflowY: 'auto', position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column' }}
         onClick={() => setMobileOpen(false)}
       >
-        <SectionLabel>Workspace</SectionLabel>
-        {WORKSPACE_ITEMS.filter(item => {
-          if ((item as any).adminStaff && !isAdminOrStaff) return false;
-          return true;
-        }).map(item => (
-          <NavItem key={item.path} label={item.label} path={item.path} icon={item.icon} />
-        ))}
+        <div>
+          <SectionLabel>Workspace</SectionLabel>
+          {WORKSPACE_ITEMS.filter(item => {
+            if ((item as any).adminStaff && !isAdminOrStaff) return false;
+            return true;
+          }).map(item => (
+            <NavItem key={item.path} label={item.label} path={item.path} icon={item.icon} />
+          ))}
+        </div>
 
-        {(isAdmin || isAgentPlus) && (
-          <>
-            <SectionLabel>Admin</SectionLabel>
-            {ADMIN_ITEMS.filter(item => {
-              if ((item as any).adminOnly && !isAdmin) return false;
-              if ((item as any).agentPlus && !isAgentPlus) return false;
-              return true;
-            }).map(item => (
-              <NavItem key={item.path} label={item.label} path={item.path} icon={item.icon} />
-            ))}
-          </>
-        )}
+        <div style={{ marginTop: 'auto', paddingTop: 16 }}>
+          {(isAdmin || isAgentPlus) && (
+            <>
+              <SectionLabel>Admin</SectionLabel>
+              {ADMIN_ITEMS.filter(item => {
+                if ((item as any).adminOnly && !isAdmin) return false;
+                if ((item as any).agentPlus && !isAgentPlus) return false;
+                return true;
+              }).map(item => (
+                <NavItem key={item.path} label={item.label} path={item.path} icon={item.icon} />
+              ))}
+            </>
+          )}
+        </div>
       </nav>
 
       {/* User block + Theme Toggle */}
       <div style={{
-        padding: '12px 14px', borderTop: '1px solid var(--navy-700)', flexShrink: 0,
-        background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.30))',
+        padding: '12px 14px', borderTop: '1px solid var(--sidebar-border)', flexShrink: 0,
+        background: 'var(--sidebar-footer-bg)',
         position: 'relative', zIndex: 1,
         transition: 'border-color 0.25s ease',
       }}>
@@ -233,29 +230,23 @@ export default function AppShell() {
             <div style={{ fontSize: 13, fontWeight: 600, color: '#f8fafc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {displayName}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'capitalize', marginTop: 1 }}>
+            <div style={{ fontSize: 11, color: 'var(--sidebar-muted)', textTransform: 'capitalize', marginTop: 1 }}>
               {user?.role}
             </div>
           </div>
         </div>
 
         {/* Controls: Theme Toggle + Sign Out */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-           {/* Theme Toggle Moved Here */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
           <ThemeToggle />
           
           <button
             onClick={handleLogout}
+            className="sams-icon-button"
             title="Sign out"
             style={{
-              flexShrink: 0,
-              width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
-              color: 'var(--text-tertiary)', cursor: 'pointer',
-              transition: 'background 120ms ease, color 120ms ease',
+              flexShrink: 0
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.color = '#fff'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-tertiary)'; }}
           >
             <LogOut size={14} />
           </button>
