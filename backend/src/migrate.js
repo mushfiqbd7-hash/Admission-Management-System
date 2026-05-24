@@ -77,4 +77,37 @@ async function runMigrations() {
       const { rowCount } = await client.query(
         `DELETE FROM refresh_tokens WHERE expires_at <= NOW()`
       );
-      if (rowCo
+      if (rowCount > 0) console.log(`  CLEANUP Deleted ${rowCount} expired refresh token(s).`);
+    } catch (_) { /* table may not exist yet - ignore */ }
+
+    // Delete read notifications older than 30 days
+    try {
+      const { rowCount } = await client.query(
+        `DELETE FROM notifications WHERE is_read = TRUE AND created_at < NOW() - INTERVAL '30 days'`
+      );
+      if (rowCount > 0) console.log(`  CLEANUP Deleted ${rowCount} old notification(s).`);
+    } catch (_) { /* table may not exist yet - ignore */ }
+
+    // Null out abandoned draft file_data bytea (draft > 7 days, never pushed to Azure)
+    try {
+      const { rowCount } = await client.query(`
+        UPDATE student_documents SET file_data = NULL
+        WHERE file_data IS NOT NULL AND file_path IS NULL
+          AND student_id IN (
+            SELECT id FROM students WHERE application_status = 'draft'
+              AND created_at < NOW() - INTERVAL '7 days'
+          )
+      `);
+      if (rowCount > 0) console.log(`  CLEANUP Nulled file_data on ${rowCount} abandoned draft document(s).`);
+    } catch (_) { /* table may not exist yet - ignore */ }
+
+  } catch (err) {
+    console.error('\nMigration failed:', err.message);
+    process.exit(1);
+  } finally {
+    client.release();
+    await pool.end();
+  }
+}
+
+runMigrations();
