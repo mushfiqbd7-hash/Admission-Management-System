@@ -36,7 +36,8 @@
   --accent: var(--navy-600); --accent-hover: var(--navy-500);
   --accent-light: var(--navy-50); --text-on-accent: #ffffff;
   --surface: var(--white); --surface-raised: var(--gray-25);
-  --surface-sunken: var(--gray-50); --border: var(--gray-150);
+  --surface-sunken: var(--gray-50); --surface-hover: var(--gray-100);
+  --surface-muted: var(--gray-50); --border: var(--gray-150);
   --border-strong: var(--gray-200);
   --text-primary: var(--gray-900); --text-secondary: var(--gray-500);
   --text-tertiary: var(--gray-400);
@@ -53,6 +54,7 @@
 
   /* Typography & Spacing */
   --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
   --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px; --radius-xl: 18px;
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
   --space-6: 24px; --space-8: 32px;
@@ -60,6 +62,8 @@
   /* Shadows & Effects */
   --shadow-xs: 0 1px 2px rgba(8,15,35,0.05);
   --shadow-sm: 0 1px 3px rgba(8,15,35,0.08), 0 1px 2px rgba(8,15,35,0.04);
+  --shadow-md: 0 10px 24px -14px rgba(15,23,42,0.30), 0 2px 8px rgba(15,23,42,0.08);
+  --shadow-xl: 0 26px 70px -28px rgba(15,23,42,0.40), 0 8px 24px rgba(15,23,42,0.10);
   --sh-card: 0 1px 0 rgba(255,255,255,0.7) inset, 0 1px 2px rgba(15,23,42,0.04), 0 8px 24px -8px rgba(15,23,42,0.08);
   --sh-header: 0 1px 0 rgba(255,255,255,0.8) inset, 0 1px 12px rgba(15,23,42,0.04), 0 12px 28px -16px rgba(15,23,42,0.10);
   --sh-focus: 0 0 0 3px rgba(59,130,246,0.20);
@@ -73,12 +77,15 @@
 /* DARK MODE OVERRIDES */
 .dark {
   color-scheme: dark;
-  --surface: var(--navy-950); --surface-raised: var(--navy-900);
-  --surface-sunken: var(--navy-900); --border: var(--navy-700);
-  --border-strong: var(--navy-600); --text-primary: var(--gray-50);
-  --text-secondary: var(--gray-300); --text-tertiary: var(--gray-400);
-  --text-on-accent: var(--navy-950); --accent: var(--navy-400);
-  --accent-hover: var(--navy-500); --accent-light: var(--navy-900);
+  --surface: #101827; --surface-raised: #151f33;
+  --surface-sunken: #08111f; --surface-hover: #1b2942;
+  --surface-muted: #0d1728; --border: #22314d;
+  --border-strong: #304361; --text-primary: #f6f8fb;
+  --text-secondary: #b9c4d7; --text-tertiary: #8795ab;
+  --text-on-accent: #ffffff; --accent: #6ea8fe;
+  --accent-hover: #8dbbff; --accent-light: rgba(110,168,254,0.14);
+  --shadow-md: 0 12px 28px -18px rgba(0,0,0,0.65), 0 2px 8px rgba(0,0,0,0.32);
+  --shadow-xl: 0 30px 80px -30px rgba(0,0,0,0.75), 0 10px 28px rgba(0,0,0,0.42);
   --sh-card: 0 1px 0 rgba(255,255,255,0.05) inset, 0 1px 2px rgba(0,0,0,0.25), 0 8px 24px -8px rgba(0,0,0,0.4);
   --sh-header: 0 1px 0 rgba(255,255,255,0.06) inset, 0 1px 12px rgba(0,0,0,0.25), 0 12px 28px -16px rgba(0,0,0,0.4);
   --sh-focus: 0 0 0 3px rgba(90,130,181,0.35);
@@ -107,23 +114,21 @@
   }
   #root { min-height: 100vh; }
   
-  /* Force proper inheritance on all elements */
-  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6,
-  .dark p, .dark span, .dark div, .dark button, .dark a {
-    color: var(--text-primary);
-  }
-  .dark input, .dark select, .dark textarea {
+  .dark .sams-app-shell input,
+  .dark .sams-app-shell select,
+  .dark .sams-app-shell textarea {
     background: var(--surface-raised) !important;
     color: var(--text-primary) !important;
     border-color: var(--border) !important;
   }
-  .dark input::placeholder, .dark textarea::placeholder { color: var(--text-tertiary) !important; }
+  .dark .sams-app-shell input::placeholder,
+  .dark .sams-app-shell textarea::placeholder { color: var(--text-tertiary) !important; }
   
   /* Scrollbar */
   ::-webkit-scrollbar { width: 7px; height: 7px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.10); border-radius: 6px; }
-  .dark ::-webkit-scrollbar-thumb { background: var(--navy-700) !important; }
+  .dark .sams-app-shell ::-webkit-scrollbar-thumb { background: var(--border-strong) !important; }
   ::selection { background: #dbeafe; color: #1e40af; }
   .dark ::selection { background: var(--navy-700) !important; color: var(--gray-50) !important; }
   :focus-visible { outline: none; box-shadow: var(--sh-focus); border-radius: 8px; }
@@ -169,43 +174,100 @@
    DASHBOARD & CARD FIX FOR DARK MODE
    ═══════════════════════════════════════════════════════ */
 
-/* Force all standard cards to use dark variables */
-.dark .card, .dark [class*="bg-white"], .dark [class*="bg-gray-50"], .dark [class*="bg-slate-50"] {
+/* Scoped protected-app compatibility for legacy Tailwind utility surfaces. */
+.dark .sams-app-shell .card,
+.dark .sams-app-shell [class*="bg-white"],
+.dark .sams-app-shell [class*="bg-slate-50"],
+.dark .sams-app-shell [class*="bg-gray-50"] {
   background-color: var(--surface) !important;
   border-color: var(--border) !important;
   color: var(--text-primary) !important;
 }
 
-/* Fix table headers in dark mode */
-.dark .sams-table th, .dark table th {
-  background-color: var(--navy-900) !important;
-  color: var(--text-secondary) !important;
-  border-bottom-color: var(--border) !important;
+.dark .sams-app-shell [class*="bg-slate-100"],
+.dark .sams-app-shell [class*="bg-gray-100"],
+.dark .sams-app-shell [class*="bg-slate-200"],
+.dark .sams-app-shell [class*="bg-gray-200"] {
+  background-color: var(--surface-hover) !important;
+  border-color: var(--border) !important;
 }
 
-/* Fix table rows */
-.dark .sams-table td, .dark table td {
-  border-bottom-color: var(--navy-800) !important;
+.dark .sams-app-shell [class*="border-slate-100"],
+.dark .sams-app-shell [class*="border-slate-200"],
+.dark .sams-app-shell [class*="border-slate-300"],
+.dark .sams-app-shell [class*="border-gray-100"],
+.dark .sams-app-shell [class*="border-gray-200"],
+.dark .sams-app-shell [class*="border-gray-300"] {
+  border-color: var(--border) !important;
+}
+
+.dark .sams-app-shell [class*="text-slate-950"],
+.dark .sams-app-shell [class*="text-slate-900"],
+.dark .sams-app-shell [class*="text-slate-800"],
+.dark .sams-app-shell [class*="text-gray-950"],
+.dark .sams-app-shell [class*="text-gray-900"],
+.dark .sams-app-shell [class*="text-gray-800"] {
   color: var(--text-primary) !important;
 }
 
-/* Fix search bar & inputs in dark mode */
-.dark input, .dark select, .dark textarea {
+.dark .sams-app-shell [class*="text-slate-700"],
+.dark .sams-app-shell [class*="text-slate-600"],
+.dark .sams-app-shell [class*="text-gray-700"],
+.dark .sams-app-shell [class*="text-gray-600"] {
+  color: var(--text-secondary) !important;
+}
+
+.dark .sams-app-shell [class*="text-slate-500"],
+.dark .sams-app-shell [class*="text-slate-400"],
+.dark .sams-app-shell [class*="text-gray-500"],
+.dark .sams-app-shell [class*="text-gray-400"] {
+  color: var(--text-tertiary) !important;
+}
+
+.dark .sams-app-shell .sams-table th,
+.dark .sams-app-shell table th {
+  background-color: var(--surface-muted) !important;
+  color: var(--text-tertiary) !important;
+  border-bottom-color: var(--border) !important;
+}
+
+.dark .sams-app-shell .sams-table td,
+.dark .sams-app-shell table td {
+  border-bottom-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark .sams-app-shell .sams-table tbody tr:hover,
+.dark .sams-app-shell table tbody tr:hover {
+  background-color: var(--surface-hover) !important;
+}
+
+.dark .sams-app-shell input,
+.dark .sams-app-shell select,
+.dark .sams-app-shell textarea {
   background-color: var(--surface-raised) !important;
   color: var(--text-primary) !important;
   border-color: var(--border-strong) !important;
 }
-.dark input::placeholder, .dark textarea::placeholder {
+
+.dark .sams-app-shell input::placeholder,
+.dark .sams-app-shell textarea::placeholder {
   color: var(--text-tertiary) !important;
 }
 
-/* Fix Sidebar Brand & Text */
-.dark .sams-nav-item span { color: rgba(255,255,255,0.8) !important; }
-.dark .sams-nav-item[aria-current="page"] span { color: #fff !important; }
+.dark .sams-app-shell .btn-ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
 
-/* Fix Header Title */
-.dark header h1 { color: #f8fafc !important; }
-.dark header p { color: #94a3b8 !important; }
+.dark .sams-app-shell .btn-ghost:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
 
-/* Fix Search Icon */
-.dark svg { stroke: var(--text-tertiary) !important; }
+.dark .sams-app-shell .sams-nav-item span { color: rgba(255,255,255,0.82) !important; }
+.dark .sams-app-shell .sams-nav-item[aria-current="page"] span { color: #fff !important; }
+
+.dark .sams-app-shell header h1 { color: var(--text-primary) !important; }
+.dark .sams-app-shell header p { color: var(--text-secondary) !important; }

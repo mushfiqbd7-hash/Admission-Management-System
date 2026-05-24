@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
 
 type Theme = "light" | "dark" | "system";
 
@@ -11,26 +11,48 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const storageKey = "sams-theme";
+
+function getStoredTheme(): Theme {
+  if (typeof window === "undefined") return "system";
+  const stored = localStorage.getItem(storageKey) as Theme | null;
+  return stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
+}
+
+function resolveTheme(theme: Theme): "light" | "dark" {
+  if (theme === "dark") return "dark";
+  if (theme === "light") return "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("system");
+  const [theme, setThemeState] = useState<Theme>(getStoredTheme);
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
+
+  const setTheme = useCallback((nextTheme: Theme) => {
+    localStorage.setItem(storageKey, nextTheme);
+    setThemeState(nextTheme);
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
-    const saved = (localStorage.getItem("sams-theme") as Theme) || "system";
-    
-    const applyTheme = (t: Theme) => {
-      const isDark = t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-      root.classList.toggle("dark", isDark);
-      setResolvedTheme(isDark ? "dark" : "light");
-      localStorage.setItem("sams-theme", t);
+    const resolved = resolveTheme(theme);
+    root.classList.toggle("dark", resolved === "dark");
+    root.style.colorScheme = resolved;
+    setResolvedTheme(resolved);
+  }, [theme]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = () => {
+      if (theme === "system") {
+        const resolved = resolveTheme("system");
+        document.documentElement.classList.toggle("dark", resolved === "dark");
+        document.documentElement.style.colorScheme = resolved;
+        setResolvedTheme(resolved);
+      }
     };
 
-    applyTheme(saved);
-    setTheme(saved);
-
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = () => { if (theme === "system") applyTheme("system"); };
     media.addEventListener("change", handler);
     return () => media.removeEventListener("change", handler);
   }, [theme]);

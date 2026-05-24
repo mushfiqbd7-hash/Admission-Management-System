@@ -265,7 +265,7 @@ export default function AppShell() {
   );
 
   return (
-    <div style={{
+    <div className="sams-app-shell" style={{
       display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden',
       background: 'var(--canvas-mesh, #f4f7fb)',
       backgroundAttachment: 'fixed',
