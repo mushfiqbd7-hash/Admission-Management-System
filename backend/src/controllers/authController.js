@@ -187,4 +187,9 @@ export const changePassword = async (req, res) => {
     );
 
     await query('DELETE FROM refresh_tokens WHERE user_id = $1', [req.user.id]);
-    res.json({ message: 'Password 
+    res.json({ message: 'Password changed successfully' });
+  } catch (err) {
+    console.error('changePassword error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

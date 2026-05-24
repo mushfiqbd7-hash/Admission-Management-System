@@ -369,4 +369,13 @@ export const markNotifRead = async (req, res) => {
 
 export const markAllNotifsRead = async (req, res) => {
   try {
- 
+    await query(
+      'UPDATE notifications SET is_read = TRUE WHERE user_id = $1',
+      [req.user.id]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('markAllNotifsRead error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
