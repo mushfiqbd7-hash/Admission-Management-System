@@ -66,11 +66,7 @@ export default function RegisterPage() {
   return (
     <>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Outfit:wght@300;400;500;600&display=swap"
-      />
-
+      
       <style>{`
         .rp-root *, .rp-root *::before, .rp-root *::after { box-sizing: border-box; }
         .rp-root {
@@ -78,7 +74,7 @@ export default function RegisterPage() {
           --blue-glow: rgba(37,99,235,0.28); --glass-bg: rgba(255,255,255,0.042);
           --glass-bdr: rgba(255,255,255,0.082); --text-hi: #f0f4ff;
           --text-mid: rgba(255,255,255,0.52); --text-lo: rgba(255,255,255,0.26);
-          --serif: 'Playfair Display', Georgia, serif; --sans: 'Outfit', system-ui, sans-serif;
+          --serif: 'Inter', system-ui, sans-serif; --sans: 'Inter', system-ui, sans-serif;
           display: flex; height: 100vh; width: 100vw; overflow: hidden;
           font-family: var(--sans); background: var(--navy);
         }
@@ -88,13 +84,13 @@ export default function RegisterPage() {
         .rp-hero-veil { position: absolute; inset: 0; background: linear-gradient(175deg, rgba(8,15,35,0.18) 0%, rgba(8,15,35,0.42) 35%, rgba(8,15,35,0.76) 68%, rgba(8,15,35,0.97) 100%); }
         .rp-wordmark { position: relative; z-index: 2; display: flex; align-items: center; gap: 0.9rem; padding: 2.4rem 2.8rem; animation: rp-fade-down 0.9s cubic-bezier(.22,1,.36,1) both; }
         .rp-monogram { width: 46px; height: 46px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.28); background: rgba(255,255,255,0.06); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .rp-monogram-letter { font-family: var(--serif); font-size: 1.45rem; font-weight: 500; color: #fff; line-height: 1; }
+        .rp-monogram-letter { font-family: var(--sans); font-size: 1.45rem; font-weight: 500; color: #fff; line-height: 1; }
         .rp-wordmark-text { display: flex; flex-direction: column; gap: 1px; }
-        .rp-wordmark-name { font-family: var(--serif); font-size: 1rem; font-weight: 400; color: rgba(255,255,255,0.92); letter-spacing: 0.12em; text-transform: uppercase; }
+        .rp-wordmark-name { font-family: var(--sans); font-size: 1rem; font-weight: 400; color: rgba(255,255,255,0.92); letter-spacing: 0.12em; text-transform: uppercase; }
         .rp-wordmark-sub { font-size: 0.62rem; font-weight: 300; letter-spacing: 0.08em; color: rgba(255,255,255,0.38); text-transform: uppercase; }
         .rp-hero-spacer { flex: 1; }
         .rp-hero-copy { position: relative; z-index: 2; padding: 0 2.8rem 3rem; animation: rp-fade-up 1s cubic-bezier(.22,1,.36,1) 0.25s both; }
-        .rp-hero-title { font-family: var(--serif); font-size: clamp(2.6rem, 4.2vw, 4rem); font-weight: 400; line-height: 1.06; color: var(--text-hi); letter-spacing: -0.02em; margin-bottom: 1.4rem; }
+        .rp-hero-title { font-family: var(--sans); font-size: clamp(2.6rem, 4.2vw, 4rem); font-weight: 400; line-height: 1.06; color: var(--text-hi); letter-spacing: -0.02em; margin-bottom: 1.4rem; }
         .rp-hero-title em { font-style: italic; color: rgba(255,255,255,0.62); }
         .rp-auth { width: 500px; flex-shrink: 0; background: var(--navy-mid); position: relative; overflow: hidden; overflow-y: auto; display: flex; align-items: center; justify-content: center; padding: 2rem 1.75rem; }
         .rp-auth::before { content: ''; position: absolute; inset: 0; opacity: 0.028; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 180px; pointer-events: none; }
@@ -102,11 +98,11 @@ export default function RegisterPage() {
         .rp-auth-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 420px; height: 420px; background: radial-gradient(circle, rgba(37,99,235,0.09) 0%, transparent 68%); pointer-events: none; }
         .rp-card { position: relative; z-index: 1; width: 100%; max-width: 372px; background: var(--glass-bg); border: 1px solid var(--glass-bdr); border-radius: 22px; padding: 2.2rem 2.25rem; backdrop-filter: blur(28px); box-shadow: 0 0 0 1px rgba(255,255,255,0.035) inset, 0 24px 72px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.3); animation: rp-fade-up 0.75s cubic-bezier(.22,1,.36,1) 0.1s both; }
         .rp-card::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.14) 50%, transparent); }
-        .rp-card-heading { font-family: var(--serif); font-size: 2rem; font-weight: 400; color: var(--text-hi); letter-spacing: -0.025em; margin-bottom: 1.6rem; line-height: 1.1; }
+        .rp-card-heading { font-family: var(--sans); font-size: 2rem; font-weight: 400; color: var(--text-hi); letter-spacing: -0.025em; margin-bottom: 1.6rem; line-height: 1.1; }
         .rp-error { display: flex; align-items: flex-start; gap: 0.6rem; background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.22); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.2rem; font-size: 0.8rem; line-height: 1.45; color: #fca5a5; }
         .rp-success-box { display:flex; flex-direction:column; align-items:center; text-align:center; gap:1rem; padding: 1.5rem 0; }
         .rp-success-icon { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.25); border-radius: 50%; width: 64px; height: 64px; display:flex; align-items:center; justify-content:center; color: #4ade80; }
-        .rp-success-title { font-family: var(--serif); font-size: 1.5rem; color: var(--text-hi); }
+        .rp-success-title { font-family: var(--sans); font-size: 1.5rem; color: var(--text-hi); }
         .rp-success-msg { font-size: 0.85rem; color: var(--text-mid); line-height: 1.6; }
         .rp-success-email { color: #93c5fd; font-weight: 600; }
         .rp-field-wrap { margin-bottom: 0.9rem; }

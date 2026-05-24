@@ -1090,7 +1090,7 @@ const documentsPageCss = `
   font-size: 11px;
   font-weight: 750;
   color: #94a3b8;
-  font-family: DM Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: Inter, sans-serif;
 }
 
 .docs-category-badge,
@@ -1147,7 +1147,7 @@ const documentsPageCss = `
   font-size: 11.5px;
   font-weight: 800;
   color: #64748b;
-  font-family: DM Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: Inter, sans-serif;
   white-space: nowrap;
 }
 

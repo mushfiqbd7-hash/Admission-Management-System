@@ -1407,7 +1407,7 @@ const appBadgeStyle: CSSProperties = {
   color: '#1d4ed8',
   fontSize: 10.5,
   fontWeight: 950,
-  fontFamily: 'DM Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+  fontFamily: 'Inter', sans-serif,
 };
 
 const attachmentBadgeStyle: CSSProperties = {
@@ -1753,7 +1753,7 @@ const appInfoTitleStyle: CSSProperties = {
   fontSize: 12.5,
   fontWeight: 950,
   color: '#1d4ed8',
-  fontFamily: 'DM Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+  fontFamily: 'Inter', sans-serif,
 };
 
 const appInfoTextStyle: CSSProperties = {

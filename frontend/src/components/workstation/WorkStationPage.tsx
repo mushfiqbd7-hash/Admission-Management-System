@@ -1008,7 +1008,7 @@ const appNoStyle: CSSProperties = {
   width: 'fit-content',
   maxWidth: '100%',
   fontSize: 11.5,
-  fontFamily: 'DM Mono, monospace',
+  fontFamily: 'Inter', sans-serif,
   fontWeight: 900,
   color: '#1d4ed8',
   background: '#eff6ff',
