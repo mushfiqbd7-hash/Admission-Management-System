@@ -310,3 +310,142 @@
   border-color: rgba(255,255,255,0.20);
   color: #fff;
 }
+
+/* Professional dark-mode correction layer for legacy inline styles. */
+.dark .sams-app-shell [style*="background: rgb(255, 255, 255)"],
+.dark .sams-app-shell [style*="background: #ffffff"],
+.dark .sams-app-shell [style*="background: #fff"],
+.dark .sams-app-shell [style*="background: rgba(255, 255, 255"],
+.dark .sams-app-shell [style*="background: rgba(255,255,255"] {
+  background: var(--surface) !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark .sams-app-shell [style*="background: rgb(248, 250, 252)"],
+.dark .sams-app-shell [style*="background: #f8fafc"],
+.dark .sams-app-shell [style*="background: #fbfdff"],
+.dark .sams-app-shell [style*="background: #eef2f7"],
+.dark .sams-app-shell [style*="background: #edf2f7"],
+.dark .sams-app-shell [style*="background: #e2e8f0"],
+.dark .sams-app-shell [class*="bg-[#f7f9fc]"],
+.dark .sams-app-shell [class*="bg-[#f8fafc]"],
+.dark .sams-app-shell [style*="background: rgb(248, 251, 255)"],
+.dark .sams-app-shell [style*="background: rgb(238, 242, 247)"] {
+  background: var(--surface-muted) !important;
+  border-color: var(--border) !important;
+}
+
+.dark .sams-app-shell [style*="color: rgb(15, 23, 42)"],
+.dark .sams-app-shell [style*="color: #0f172a"],
+.dark .sams-app-shell [style*="color: #0a0e1a"],
+.dark .sams-app-shell [class*="text-[#0f172a]"],
+.dark .sams-app-shell [style*="color: rgb(10, 14, 26)"] {
+  color: var(--text-primary) !important;
+}
+
+.dark .sams-app-shell [style*="color: rgb(51, 65, 85)"],
+.dark .sams-app-shell [style*="color: #334155"],
+.dark .sams-app-shell [style*="color: rgb(71, 85, 105)"],
+.dark .sams-app-shell [style*="color: #475569"] {
+  color: var(--text-secondary) !important;
+}
+
+.dark .sams-app-shell [style*="color: rgb(100, 116, 139)"],
+.dark .sams-app-shell [style*="color: #64748b"],
+.dark .sams-app-shell [style*="color: rgb(148, 163, 184)"],
+.dark .sams-app-shell [style*="color: #94a3b8"],
+.dark .sams-app-shell [style*="color: rgb(203, 213, 225)"],
+.dark .sams-app-shell [style*="color: #cbd5e1"],
+.dark .sams-app-shell [style*="color: rgb(184, 195, 212)"],
+.dark .sams-app-shell [style*="color: #b8c3d4"],
+.dark .sams-app-shell [style*="color: #8b9ab2"] {
+  color: var(--text-tertiary) !important;
+}
+
+.dark .sams-app-shell [style*="border: 1px solid rgb(226, 232, 240)"],
+.dark .sams-app-shell [style*="border: 1px solid #e2e8f0"],
+.dark .sams-app-shell [style*="border: 1px solid #e5eaf2"],
+.dark .sams-app-shell [style*="border: 1px solid #e8edf4"],
+.dark .sams-app-shell [style*="border: 1px solid #edf2f7"],
+.dark .sams-app-shell [style*="border-color: rgb(226, 232, 240)"],
+.dark .sams-app-shell [style*="border-color: #e2e8f0"],
+.dark .sams-app-shell [style*="border-color: #e5eaf2"],
+.dark .sams-app-shell [style*="border-color: #e8edf4"],
+.dark .sams-app-shell [style*="border-color: rgba(15, 23, 42"] {
+  border-color: var(--border) !important;
+}
+
+.dark .sams-app-shell [style*="border-bottom: 1px solid rgb(226, 232, 240)"],
+.dark .sams-app-shell [style*="border-bottom: 1px solid #e2e8f0"],
+.dark .sams-app-shell [style*="border-bottom: 1px solid #e8edf4"],
+.dark .sams-app-shell [style*="border-bottom: 1px solid #edf2f7"],
+.dark .sams-app-shell [style*="border-top: 1px solid rgb(226, 232, 240)"],
+.dark .sams-app-shell [style*="border-top: 1px solid #e2e8f0"],
+.dark .sams-app-shell [style*="border-top: 1px solid #e8edf4"],
+.dark .sams-app-shell [style*="border-top: 1px solid #edf2f7"] {
+  border-color: var(--border) !important;
+}
+
+.dark .sams-app-shell [style*="box-shadow: 0 8px"],
+.dark .sams-app-shell [style*="box-shadow: 0 10px"],
+.dark .sams-app-shell [style*="box-shadow: 0 12px"],
+.dark .sams-app-shell [style*="box-shadow: 0 18px"],
+.dark .sams-app-shell [style*="box-shadow: 0 24px"] {
+  box-shadow: var(--sh-card) !important;
+}
+
+.dark .sams-app-shell [style*="background: #eff6ff"],
+.dark .sams-app-shell [style*="background: rgb(239, 246, 255)"],
+.dark .sams-app-shell [class*="bg-blue-50"] {
+  background: rgba(96,165,250,0.13) !important;
+  border-color: rgba(96,165,250,0.28) !important;
+}
+
+.dark .sams-app-shell [style*="background: #eef2ff"],
+.dark .sams-app-shell [style*="background: rgb(238, 242, 255)"] {
+  background: rgba(129,140,248,0.13) !important;
+  border-color: rgba(129,140,248,0.28) !important;
+}
+
+.dark .sams-app-shell [style*="background: #f0fdf4"],
+.dark .sams-app-shell [style*="background: #ecfdf5"],
+.dark .sams-app-shell [style*="background: rgb(240, 253, 244)"],
+.dark .sams-app-shell [style*="background: rgb(236, 253, 245)"],
+.dark .sams-app-shell [class*="bg-green-50"] {
+  background: rgba(34,197,94,0.12) !important;
+  border-color: rgba(34,197,94,0.28) !important;
+}
+
+.dark .sams-app-shell [style*="background: #fef2f2"],
+.dark .sams-app-shell [style*="background: #fff1f2"],
+.dark .sams-app-shell [style*="background: rgb(254, 242, 242)"],
+.dark .sams-app-shell [class*="bg-red-50"] {
+  background: rgba(248,113,113,0.13) !important;
+  border-color: rgba(248,113,113,0.28) !important;
+}
+
+.dark .sams-app-shell [style*="background: #fff7ed"],
+.dark .sams-app-shell [style*="background: #fef9ec"],
+.dark .sams-app-shell [style*="background: rgb(255, 247, 237)"] {
+  background: rgba(251,146,60,0.13) !important;
+  border-color: rgba(251,146,60,0.30) !important;
+}
+
+.dark .sams-app-shell [style*="background: #ecfeff"],
+.dark .sams-app-shell [style*="background: #f0fdfa"],
+.dark .sams-app-shell [style*="background: rgb(236, 254, 255)"],
+.dark .sams-app-shell [style*="background: rgb(240, 253, 250)"] {
+  background: rgba(45,212,191,0.12) !important;
+  border-color: rgba(45,212,191,0.28) !important;
+}
+
+.dark .sams-app-shell [style*="background: linear-gradient(180deg, #f7f9fc"],
+.dark .sams-app-shell [style*="linear-gradient(180deg, rgb(247, 249, 252)"],
+.dark .sams-app-shell [style*="background: linear-gradient(180deg, #f8fafc"] {
+  background: var(--canvas-mesh) !important;
+}
+
+.dark .sams-app-shell button:not(.sams-icon-button):not([style*="linear-gradient"]):not([class*="bg-[#0f5bff]"]):not([class*="text-white"]) {
+  color: inherit;
+}
