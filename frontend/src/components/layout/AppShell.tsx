@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 import HeaderRealtimeActions from '@/components/layout/HeaderRealtimeActions';
-import { ThemeToggle } from "../components/ui/ThemeToggle";
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useAuthStore } from '@/store/authStore';
 
 const WORKSPACE_ITEMS = [
@@ -147,20 +147,17 @@ export default function AppShell() {
       borderRight: '1px solid rgba(255,255,255,0.04)',
       overflowY: 'auto', overflowX: 'hidden',
     }}>
-      {/* Atmospheric glow */}
       <div style={{
         position: 'absolute', top: -100, left: -40, right: -40, height: 240,
         background: 'radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.22), transparent 65%)',
         pointerEvents: 'none', zIndex: 0,
       }} />
 
-      {/* Brand */}
       <div style={{
         padding: '20px 16px 16px', flexShrink: 0, position: 'relative', zIndex: 1,
         borderBottom: '1px solid rgba(255,255,255,0.06)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {/* Letter mark — no icon, no cross */}
           <div style={{
             width: 40, height: 40, borderRadius: 12, flexShrink: 0,
             background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
@@ -181,7 +178,6 @@ export default function AppShell() {
         </div>
       </div>
 
-      {/* Nav */}
       <nav
         style={{ flex: 1, padding: '6px 10px 12px', overflowY: 'auto', position: 'relative', zIndex: 1 }}
         onClick={() => setMobileOpen(false)}
@@ -208,7 +204,6 @@ export default function AppShell() {
         )}
       </nav>
 
-      {/* User block */}
       <div style={{
         padding: '12px 14px', borderTop: '1px solid rgba(255,255,255,0.07)', flexShrink: 0,
         background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.30))',
@@ -259,7 +254,6 @@ export default function AppShell() {
       background: 'var(--canvas-mesh, #f4f7fb)',
       backgroundAttachment: 'fixed',
     }}>
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           onClick={() => setMobileOpen(false)}
@@ -270,12 +264,10 @@ export default function AppShell() {
         />
       )}
 
-      {/* Desktop sidebar */}
       <div className="hidden lg:flex" style={{ height: '100%', flexShrink: 0 }}>
         <Sidebar />
       </div>
 
-      {/* Mobile drawer */}
       <div style={{
         position: 'fixed', inset: 0, zIndex: 50,
         pointerEvents: mobileOpen ? 'auto' : 'none',
@@ -286,7 +278,6 @@ export default function AppShell() {
           transition: 'transform 280ms cubic-bezier(0.22,1,0.36,1)',
         }}>
           <Sidebar />
-          {/* X only exists in DOM when drawer is open */}
           {mobileOpen && (
             <button
               onClick={() => setMobileOpen(false)}
@@ -304,9 +295,7 @@ export default function AppShell() {
         </div>
       </div>
 
-      {/* Main area */}
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-        {/* Glass header */}
         <header style={{ flexShrink: 0, padding: '14px 20px 0' }}>
           <div style={{
             height: 64, padding: '0 20px', borderRadius: 16,
