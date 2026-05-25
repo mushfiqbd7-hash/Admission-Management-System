@@ -445,4 +445,142 @@ export default function LoginPage() {
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                 height: 44, width: '100%', borderRadius: 12, border: 'none',
-                background: 'linear-gradient(180deg, #3b82f6 0%, #2
+                background: 'linear-gradient(180deg, #3b82f6 0%, #2563eb 100%)',
+                color: '#fff', fontSize: 13.5, fontWeight: 700, letterSpacing: '-0.005em',
+                boxShadow: btnShadow,
+                cursor: loading ? 'wait' : 'pointer',
+                opacity: loading ? 0.6 : 1,
+                transition: 'all 200ms ease',
+                fontFamily: 'inherit',
+              }}
+            >
+              {loading ? 'Signing in...' : 'Sign In'}
+            </button>
+          </form>
+
+          <p style={{
+            marginTop: 22, fontSize: 11.5,
+            color: 'rgba(255,255,255,0.35)',
+            textAlign: 'center',
+          }}>
+            No account?{' '}
+            <Link
+              to="/register"
+              style={{
+                color: 'rgba(147,197,253,0.95)',
+                fontWeight: 600,
+                textDecoration: 'none',
+              }}
+            >
+              Request access
+            </Link>
+          </p>
+        </div>
+      </div>
+
+      {/* FORGOT PASSWORD MODAL */}
+      {forgotOpen && (
+        <div
+          style={{
+            position: 'fixed', inset: 0, zIndex: 50,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(0,0,0,0.60)', backdropFilter: 'blur(6px)',
+          }}
+          onClick={closeForgot}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '100%', maxWidth: 400, margin: '0 16px',
+              background: '#0f172a', borderRadius: 20,
+              border: '1px solid rgba(255,255,255,0.10)',
+              padding: '32px 36px',
+              color: '#fff', fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: '-0.03em' }}>
+                  Reset your password
+                </h2>
+                <p style={{ margin: '6px 0 0', fontSize: 13, color: 'rgba(255,255,255,0.50)' }}>
+                  Enter your email and we'll send a reset link.
+                </p>
+              </div>
+              <button onClick={closeForgot} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.40)', padding: 4 }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            {forgotSent ? (
+              <div style={{ textAlign: 'center', padding: '12px 0' }}>
+                <CheckCircle size={40} color="#4ade80" style={{ marginBottom: 12 }} />
+                <p style={{ margin: 0, fontSize: 14, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>
+                  If <strong style={{ color: '#fff' }}>{forgotEmail}</strong> is registered,<br />
+                  a reset link is on its way. Check your inbox.
+                </p>
+                <button
+                  onClick={closeForgot}
+                  style={{
+                    marginTop: 20, height: 40, width: '100%', borderRadius: 10, border: 'none',
+                    background: 'rgba(255,255,255,0.08)', color: '#fff',
+                    fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+                  }}
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleForgot} noValidate>
+                {forgotError && (
+                  <div style={{
+                    marginBottom: 14, display: 'flex', gap: 8, alignItems: 'center',
+                    padding: '9px 12px', borderRadius: 9,
+                    border: '1px solid rgba(248,113,113,0.25)',
+                    background: 'rgba(239,68,68,0.10)', color: '#fca5a5', fontSize: 12.5,
+                  }}>
+                    <AlertCircle size={13} />
+                    <span>{forgotError}</span>
+                  </div>
+                )}
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 11.5, fontWeight: 600, color: 'rgba(255,255,255,0.60)' }}>
+                  Email address
+                </label>
+                <div style={{ position: 'relative', marginBottom: 18 }}>
+                  <Mail size={15} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.30)' }} />
+                  <input
+                    type="email"
+                    autoFocus
+                    placeholder="you@company.com"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    style={{
+                      height: 42, width: '100%', borderRadius: 10,
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      background: 'rgba(255,255,255,0.05)', color: '#fff',
+                      fontSize: 13.5, paddingLeft: 38, paddingRight: 14,
+                      boxSizing: 'border-box', outline: 'none', fontFamily: 'inherit',
+                    }}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={forgotLoading}
+                  style={{
+                    height: 43, width: '100%', borderRadius: 11, border: 'none',
+                    background: 'linear-gradient(180deg, #3b82f6 0%, #2563eb 100%)',
+                    color: '#fff', fontSize: 13.5, fontWeight: 700,
+                    cursor: forgotLoading ? 'wait' : 'pointer',
+                    opacity: forgotLoading ? 0.6 : 1, fontFamily: 'inherit',
+                  }}
+                >
+                  {forgotLoading ? 'Sending...' : 'Send reset link'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
