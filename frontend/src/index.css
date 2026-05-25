@@ -104,56 +104,102 @@
 /* DARK MODE OVERRIDES */
 .dark {
   color-scheme: dark;
-  --surface: #121923; --surface-raised: #182231;
-  --surface-sunken: #080c13; --surface-hover: #202c3c;
-  --surface-muted: #0e141d; --border: rgba(148,163,184,0.20);
-  --border-strong: rgba(170,184,204,0.34); --text-primary: #f8fafc;
-  --text-secondary: #dce6f4; --text-tertiary: #b7c3d4;
-  --ui-text-strong: #f3f7fd; --ui-text-body: #dce6f4;
-  --ui-text-muted: #c7d2e2; --ui-text-subtle: #aebbd0;
-  --ui-surface-subtle: #101722; --ui-surface-soft: #151e2b;
-  --ui-border: rgba(160,174,196,0.22); --ui-border-soft: rgba(160,174,196,0.16);
-  --ui-border-strong: rgba(180,194,214,0.36);
-  --btn-primary-bg: linear-gradient(180deg, #5b9dff 0%, #2f6fed 100%);
-  --btn-primary-bg-hover: linear-gradient(180deg, #76b0ff 0%, #3f7fff 100%);
-  --btn-primary-color: #ffffff; --btn-primary-border: rgba(147,197,253,0.48);
-  --btn-primary-shadow: 0 16px 34px rgba(37,99,235,0.34), 0 1px 0 rgba(255,255,255,0.18) inset;
-  --btn-secondary-bg: #172131; --btn-secondary-bg-hover: #202b3d;
-  --btn-secondary-color: #edf4ff; --btn-secondary-border: rgba(174,190,211,0.28);
-  --btn-subtle-bg: rgba(96,165,250,0.18); --btn-subtle-bg-hover: rgba(96,165,250,0.28);
-  --btn-subtle-color: #d4e7ff; --btn-subtle-border: rgba(125,184,255,0.40);
-  --btn-danger-bg: linear-gradient(180deg, #f05b5b 0%, #dc2626 100%);
-  --btn-danger-bg-hover: linear-gradient(180deg, #fb7777 0%, #ef4444 100%);
-  --btn-danger-color: #ffffff; --btn-danger-border: rgba(248,113,113,0.50);
-  --btn-danger-soft-bg: rgba(248,113,113,0.17); --btn-danger-soft-color: #ffd3d3;
-  --btn-danger-soft-border: rgba(248,113,113,0.40);
-  --btn-success-bg: linear-gradient(180deg, #32d474 0%, #16a34a 100%);
-  --btn-success-bg-hover: linear-gradient(180deg, #55e28e 0%, #22c55e 100%);
-  --btn-success-color: #ffffff; --btn-success-border: rgba(74,222,128,0.46);
-  --btn-success-soft-bg: rgba(34,197,94,0.17); --btn-success-soft-color: #d1fadf;
-  --btn-success-soft-border: rgba(34,197,94,0.40);
-  --text-on-accent: #ffffff; --accent: #7db8ff;
-  --accent-hover: #9bc9ff; --accent-light: rgba(96,165,250,0.18);
-  --sidebar-bg: linear-gradient(180deg, #070b12 0%, #0b111b 52%, #070b12 100%);
-  --sidebar-border: rgba(160,174,196,0.18);
-  --sidebar-text: #d8e2f1;
-  --sidebar-muted: #a0acbe;
-  --sidebar-footer-bg: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.28));
-  --shadow-md: 0 18px 44px -28px rgba(0,0,0,0.88), 0 2px 12px rgba(0,0,0,0.38);
-  --shadow-xl: 0 36px 96px -38px rgba(0,0,0,0.88), 0 14px 36px rgba(0,0,0,0.50);
-  --sh-card: 0 1px 0 rgba(255,255,255,0.07) inset, 0 16px 38px -28px rgba(0,0,0,0.82);
-  --sh-header: 0 1px 0 rgba(255,255,255,0.07) inset, 0 20px 44px -30px rgba(0,0,0,0.78);
-  --sh-focus: 0 0 0 3px rgba(125,184,255,0.34);
-  --canvas-mesh: linear-gradient(180deg, #080c13 0%, #0b111a 45%, #080c13 100%);
-  --surface-soft: rgba(18,25,35,0.92); --surface-glass: rgba(18,25,35,0.82);
-  --status-draft-bg: rgba(148,163,184,0.15); --status-draft-text: #cbd5e1; --status-draft-border: rgba(148,163,184,0.30);
-  --status-pending-bg: rgba(245,158,11,0.18); --status-pending-text: #fde68a; --status-pending-border: rgba(245,158,11,0.42);
-  --status-processing-bg: rgba(59,130,246,0.20); --status-processing-text: #cfe3ff; --status-processing-border: rgba(96,165,250,0.42);
-  --status-approved-bg: rgba(34,197,94,0.17); --status-approved-text: #bbf7d0; --status-approved-border: rgba(34,197,94,0.42);
-  --status-admitted-bg: rgba(20,184,166,0.17); --status-admitted-text: #99f6e4; --status-admitted-border: rgba(45,212,191,0.42);
-  --status-rejected-bg: rgba(244,63,94,0.18); --status-rejected-text: #fecdd3; --status-rejected-border: rgba(244,63,94,0.44);
-  --status-revoked-bg: rgba(249,115,22,0.18); --status-revoked-text: #fed7aa; --status-revoked-border: rgba(249,115,22,0.42);
-  --status-pre-bg: rgba(168,85,247,0.18); --status-pre-text: #e9d5ff; --status-pre-border: rgba(168,85,247,0.42);
+
+  /* ── [Kai] Surface depth — saturated blue-dark layers ── */
+  --surface: #111b2e;
+  --surface-raised: #162338;
+  --surface-sunken: #08091a;
+  --surface-hover: #1b2a3f;
+  --surface-muted: #0c1120;
+  --surface-soft: rgba(17,27,46,0.96);
+  --surface-glass: rgba(14,22,38,0.88);
+
+  /* ── [Kai] Borders — blue-tinted for premium depth ── */
+  --border: rgba(91,130,190,0.18);
+  --border-strong: rgba(110,155,215,0.28);
+  --ui-border: rgba(91,130,190,0.16);
+  --ui-border-soft: rgba(80,118,180,0.12);
+  --ui-border-strong: rgba(120,162,220,0.30);
+
+  /* ── [Sam] Text hierarchy — sharper contrast ── */
+  --text-primary: #edf3fc;
+  --text-secondary: #b8cfea;
+  --text-tertiary: #7a96b8;
+  --ui-text-strong: #edf3fc;
+  --ui-text-body: #b8cfea;
+  --ui-text-muted: #8aa5c4;
+  --ui-text-subtle: #6889a8;
+  --ui-surface-subtle: #0c1120;
+  --ui-surface-soft: #111b2e;
+
+  /* ── Buttons ── */
+  --btn-primary-bg: linear-gradient(180deg, #5b9dff 0%, #2d6fe8 100%);
+  --btn-primary-bg-hover: linear-gradient(180deg, #78b2ff 0%, #4280f5 100%);
+  --btn-primary-color: #ffffff;
+  --btn-primary-border: rgba(125,184,255,0.50);
+  --btn-primary-shadow: 0 18px 38px rgba(37,99,235,0.38), 0 1px 0 rgba(255,255,255,0.22) inset;
+  --btn-secondary-bg: #152030;
+  --btn-secondary-bg-hover: #1c2b40;
+  --btn-secondary-color: #c8dcf4;
+  --btn-secondary-border: rgba(91,130,190,0.26);
+  --btn-subtle-bg: rgba(91,157,255,0.16);
+  --btn-subtle-bg-hover: rgba(91,157,255,0.26);
+  --btn-subtle-color: #cce4ff;
+  --btn-subtle-border: rgba(120,184,255,0.38);
+  --btn-danger-bg: linear-gradient(180deg, #f26262 0%, #dc2626 100%);
+  --btn-danger-bg-hover: linear-gradient(180deg, #fc7a7a 0%, #ef4444 100%);
+  --btn-danger-color: #ffffff;
+  --btn-danger-border: rgba(248,113,113,0.52);
+  --btn-danger-soft-bg: rgba(248,113,113,0.15);
+  --btn-danger-soft-color: #ffcece;
+  --btn-danger-soft-border: rgba(248,113,113,0.38);
+  --btn-success-bg: linear-gradient(180deg, #34d870 0%, #16a34a 100%);
+  --btn-success-bg-hover: linear-gradient(180deg, #55e88c 0%, #22c55e 100%);
+  --btn-success-color: #ffffff;
+  --btn-success-border: rgba(74,222,128,0.48);
+  --btn-success-soft-bg: rgba(34,197,94,0.15);
+  --btn-success-soft-color: #ccf9dc;
+  --btn-success-soft-border: rgba(34,197,94,0.38);
+
+  /* ── Accent ── */
+  --text-on-accent: #ffffff;
+  --accent: #7db8ff;
+  --accent-hover: #9dccff;
+  --accent-light: rgba(91,157,255,0.16);
+
+  /* ── [Dom] Sidebar — deep navy with top ambient ── */
+  --sidebar-bg: linear-gradient(175deg, #0c1122 0%, #080d1c 38%, #060a16 70%, #050810 100%);
+  --sidebar-border: rgba(91,130,190,0.15);
+  --sidebar-text: #c8d8f0;
+  --sidebar-muted: #7a96b8;
+  --sidebar-footer-bg: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(0,0,0,0.32));
+
+  /* ── [Dom] Shadows — dramatic with color glow ── */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.45);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.35);
+  --shadow-md: 0 22px 54px -26px rgba(0,0,0,0.95), 0 4px 16px rgba(0,0,0,0.45);
+  --shadow-xl: 0 44px 108px -38px rgba(0,0,0,0.98), 0 18px 44px rgba(0,0,0,0.60);
+  --sh-card: 0 1px 0 rgba(125,184,255,0.10) inset, 0 0 0 1px rgba(91,130,190,0.10), 0 24px 56px -22px rgba(0,0,0,0.92), 0 6px 18px -4px rgba(0,0,0,0.42);
+  --sh-header: 0 1px 0 rgba(125,184,255,0.12) inset, 0 0 0 1px rgba(91,130,190,0.12), 0 28px 56px -28px rgba(0,0,0,0.90), 0 4px 18px -4px rgba(0,0,0,0.38);
+  --sh-focus: 0 0 0 3px rgba(91,157,255,0.38), 0 0 0 1px rgba(91,157,255,0.22);
+
+  /* ── [Zara] Canvas — premium ambient mesh background ── */
+  --canvas-mesh:
+    radial-gradient(ellipse 72% 48% at 14% -8%, rgba(37,99,235,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 90% 105%, rgba(99,102,241,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 38% 32% at 62% 88%, rgba(6,182,212,0.07) 0%, transparent 50%),
+    radial-gradient(ellipse 44% 38% at -5% 55%, rgba(59,130,246,0.08) 0%, transparent 55%),
+    linear-gradient(175deg, #07091c 0%, #080c1e 30%, #070a18 60%, #050810 100%);
+
+  /* ── Status badges — vivid but not harsh ── */
+  --status-draft-bg: rgba(148,163,184,0.14); --status-draft-text: #c4d4ea; --status-draft-border: rgba(148,163,184,0.28);
+  --status-pending-bg: rgba(245,158,11,0.17); --status-pending-text: #fde68a; --status-pending-border: rgba(245,158,11,0.40);
+  --status-processing-bg: rgba(59,130,246,0.18); --status-processing-text: #bfdbfe; --status-processing-border: rgba(96,165,250,0.40);
+  --status-approved-bg: rgba(34,197,94,0.16); --status-approved-text: #bbf7d0; --status-approved-border: rgba(34,197,94,0.40);
+  --status-admitted-bg: rgba(20,184,166,0.16); --status-admitted-text: #99f6e4; --status-admitted-border: rgba(45,212,191,0.40);
+  --status-rejected-bg: rgba(244,63,94,0.16); --status-rejected-text: #fecdd3; --status-rejected-border: rgba(244,63,94,0.40);
+  --status-revoked-bg: rgba(249,115,22,0.16); --status-revoked-text: #fed7aa; --status-revoked-border: rgba(249,115,22,0.40);
+  --status-pre-bg: rgba(168,85,247,0.16); --status-pre-text: #e9d5ff; --status-pre-border: rgba(168,85,247,0.40);
 }
 
 /* BASE RESET & INHERITANCE */
@@ -828,111 +874,119 @@
   [style*="background-color: #f8"],
   [style*="background-color: #eef"],
   [style*="background-color: #edf"],
-  [style*="background-color: #e2e"],
-  [style*="background-color: #f1f5"],
-  [style*="background: rgb(247"],
-  [style*="background: rgb(248"],
-  [style*="background: rgb(238"],
-  [style*="background: rgb(237"],
-  [style*="background: rgb(226"],
-  [style*="background: rgb(241"],
-  [style*="background-color: rgb(247"],
-  [style*="background-color: rgb(248"],
-  [style*="background-color: rgb(238"],
-  [style*="background-color: rgb(237"],
-  [style*="background-color: rgb(226"],
-  [style*="background-color: rgb(241"]
-) {
-  background: var(--surface-muted) !important;
-  background-color: var(--surface-muted) !important;
-  border-color: var(--border) !important;
+  [style
+
+/* ═══════════════════════════════════════════════════════
+   [MIA] Premium Dark Mode Component Polish
+   Scrollbar · Sidebar glow · Card highlights · Inputs
+   ═══════════════════════════════════════════════════════ */
+
+/* Scrollbar — premium thin track */
+.dark ::-webkit-scrollbar { width: 5px; height: 5px; }
+.dark ::-webkit-scrollbar-track { background: transparent; }
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(91,130,190,0.28);
+  border-radius: 6px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(91,157,255,0.45);
 }
 
-.dark .sams-app-shell :is(
-  [style*="background: #eff6ff"],
-  [style*="background-color: #eff6ff"],
-  [style*="background: rgb(239, 246, 255"],
-  [style*="background-color: rgb(239, 246, 255"]
-) {
-  background: rgba(96,165,250,0.13) !important;
-  background-color: rgba(96,165,250,0.13) !important;
-  border-color: rgba(96,165,250,0.28) !important;
+/* Sidebar top ambient glow (blue orb from top-left) */
+.dark .sams-app-shell .sams-sidebar::before {
+  content: '';
+  position: absolute;
+  top: -40px; left: -30px;
+  width: 200px; height: 200px;
+  background: radial-gradient(ellipse, rgba(59,130,246,0.18) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
 }
 
-/* Final dark composition layer: cleaner depth, sharper text, calmer controls. */
-.dark .sams-app-shell {
-  background: var(--canvas-mesh) !important;
+/* Card premium border: micro top-edge highlight */
+.dark .sams-app-shell .card {
+  border-top-color: rgba(125,184,255,0.14) !important;
+  box-shadow: var(--sh-card) !important;
 }
 
-.dark .sams-app-shell main {
-  background: var(--surface-sunken) !important;
+/* Header: richer glass in dark */
+.dark .sams-app-shell header > div {
+  background: rgba(13,20,38,0.88) !important;
+  border-color: rgba(91,130,190,0.18) !important;
+  box-shadow: var(--sh-header) !important;
 }
 
-.dark .sams-app-shell :is(
-  [class~="bg-white"],
-  [class~="bg-background"],
-  [class~="bg-surface"],
-  [style*="background: var(--surface)"],
-  [style*="background: var(--surface-soft)"]
-) {
-  background: var(--surface) !important;
-  border-color: var(--border) !important;
+/* Active nav item: stronger glow */
+.dark .sams-app-shell .sams-nav-item[aria-current="page"] {
+  background: linear-gradient(135deg, #2d6fe8 0%, #1e52c0 100%) !important;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.20) inset,
+    0 8px 20px -6px rgba(37,99,235,0.65),
+    0 2px 6px rgba(37,99,235,0.30) !important;
 }
 
-.dark .sams-app-shell :is(
-  [class~="bg-slate-50"],
-  [class~="bg-gray-50"],
-  [class~="bg-surface-muted"],
-  [style*="background: var(--surface-sunken)"],
-  [style*="background: var(--surface-muted)"],
-  [style*="background: var(--ui-surface-subtle)"],
-  [style*="background: var(--ui-surface-soft)"]
-) {
-  background: var(--surface-muted) !important;
-  border-color: var(--border) !important;
+/* Table rows: alternating tint for readability */
+.dark .sams-app-shell table tbody tr:nth-child(even) {
+  background: rgba(17,27,46,0.60) !important;
+}
+.dark .sams-app-shell table tbody tr:hover {
+  background: rgba(27,42,63,0.90) !important;
 }
 
-.dark .sams-app-shell :is(
-  h1,
-  h2,
-  h3,
-  h4,
-  [class~="text-primary"],
-  [style*="color: var(--text-primary)"]
-) {
-  color: var(--text-primary) !important;
+/* Table header: more defined */
+.dark .sams-app-shell table thead th,
+.dark .sams-app-shell .sams-table th {
+  background: rgba(8,9,26,0.80) !important;
+  border-bottom: 1px solid rgba(91,130,190,0.22) !important;
+  letter-spacing: 0.08em;
 }
 
-.dark .sams-app-shell :is(
-  [class~="text-secondary"],
-  [class~="text-tertiary"],
-  [style*="color: var(--text-secondary)"],
-  [style*="color: var(--text-tertiary)"],
-  [style*="color: var(--ui-text-muted)"],
-  [style*="color: var(--ui-text-subtle)"]
-) {
-  color: var(--ui-text-muted) !important;
+/* Input focus: colored ring glow */
+.dark .sams-app-shell input:focus,
+.dark .sams-app-shell select:focus,
+.dark .sams-app-shell textarea:focus {
+  border-color: rgba(91,157,255,0.60) !important;
+  box-shadow: 0 0 0 3px rgba(91,157,255,0.18), 0 0 0 1px rgba(91,157,255,0.14) !important;
+  background: rgba(17,27,46,0.95) !important;
 }
 
-.dark .sams-app-shell :is(.btn-primary, .docs-primary-btn),
-.dark .sams-app-shell button[style*="background: var(--btn-primary-bg)"],
-.dark .sams-app-shell button[class*="[background:var(--btn-primary-bg)]"] {
-  background: var(--btn-primary-bg) !important;
-  color: var(--btn-primary-color) !important;
-  border-color: var(--btn-primary-border) !important;
-  box-shadow: var(--btn-primary-shadow) !important;
+/* User avatar ring: more vibrant */
+.dark .sams-app-shell .sams-sidebar [style*="box-shadow: 0 0 0 2px rgba(59,130,246"] {
+  box-shadow: 0 0 0 2px rgba(91,157,255,0.55) !important;
 }
 
-.dark .sams-app-shell :is(.btn-ghost, .docs-secondary-btn),
-.dark .sams-app-shell button[style*="background: var(--btn-secondary-bg)"] {
-  background: var(--btn-secondary-bg) !important;
-  color: var(--btn-secondary-color) !important;
-  border-color: var(--btn-secondary-border) !important;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset !important;
+/* Badge font weight boost in dark for legibility */
+.dark .sams-app-shell [class*="badge-"] {
+  font-weight: 700 !important;
+  letter-spacing: 0.01em;
 }
 
-.dark .sams-app-shell :is(.badge, [class*="badge-"]),
-.dark .sams-app-shell [style*="--status"],
-.dark .sams-app-shell [style*="status-"] {
-  font-weight: 850 !important;
+/* Selection highlight */
+.dark ::selection {
+  background: rgba(37,99,235,0.40) !important;
+  color: #edf3fc !important;
+}
+
+/* Skeleton shimmer — blue-tinted */
+.dark .skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(17,27,46,0.80) 25%,
+    rgba(27,42,63,0.60) 50%,
+    rgba(17,27,46,0.80) 75%
+  ) !important;
+  background-size: 200% 100% !important;
+}
+
+/* Section labels in sidebar */
+.dark .sams-app-shell [style*="color: var(--sidebar-muted)"] {
+  color: rgba(120,150,195,0.75) !important;
+  letter-spacing: 0.10em;
+}
+
+/* Brand logo in sidebar */
+.dark .sams-app-shell .sams-sidebar [style*="fontSize: 11"],
+.dark .sams-app-shell .sams-sidebar [style*="font-size: 11px"] {
+  color: rgba(91,130,190,0.75) !important;
 }
