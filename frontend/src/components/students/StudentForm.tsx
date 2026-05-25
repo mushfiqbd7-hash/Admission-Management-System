@@ -61,7 +61,7 @@ function RadioPill({ name, value, checked, label, onChange }: {
         value={String(value)}
         checked={checked}
         onChange={onChange}
-        style={{ width: 16, height: 16, cursor: 'pointer', accentColor: 'var(--navy-600)' }}
+        style={{ width: 16, height: 16, cursor: 'pointer', accentColor: 'var(--accent)' }}
       />
       <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>{label}</span>
     </label>
@@ -72,7 +72,7 @@ function RowCard({ title, onRemove, children }: { title: string; onRemove?: () =
   return (
     <div style={{ background: 'var(--surface-sunken)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '16px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--navy-600)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{title}</span>
+        <span style={{ fontSize: 12, fontWeight: 750, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{title}</span>
         {onRemove && (
           <button type="button" onClick={onRemove}
             style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 6, border: '1px solid var(--btn-danger-soft-border)', background: 'var(--btn-danger-soft-bg)', color: 'var(--btn-danger-soft-color)', fontSize: 11.5, cursor: 'pointer', fontFamily: 'var(--font-ui)' }}>
@@ -625,7 +625,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
                 type="checkbox"
                 checked={sameAddress}
                 onChange={() => setSameAddress(v => !v)}
-                style={{ width: 16, height: 16, cursor: 'pointer', accentColor: 'var(--navy-600)' }}
+                style={{ width: 16, height: 16, cursor: 'pointer', accentColor: 'var(--accent)' }}
               />
               <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>Same as permanent address</span>
             </label>
@@ -730,7 +730,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
                         type="checkbox"
                         checked={row.is_highest}
                         onChange={() => setEducationRows(r => r.map((x,j) => ({...x, is_highest: j===i ? !x.is_highest : false})))}
-                        style={{ width: 16, height: 16, cursor: 'pointer', accentColor: 'var(--navy-600)' }}
+                        style={{ width: 16, height: 16, cursor: 'pointer', accentColor: 'var(--accent)' }}
                       />
                       <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>Mark as highest</span>
                     </label>
@@ -927,7 +927,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
               ].map(({ label, value, mono }) => (
                 <div key={label} style={{ background: 'var(--surface-sunken)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '12px 14px' }}>
                   <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 5, fontWeight: 500 }}>{label}</div>
-                  <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--navy-600)', fontFamily: mono ? 'var(--font-mono)' : undefined }}>{value}</div>
+                  <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--accent)', fontFamily: mono ? 'var(--font-mono)' : undefined }}>{value}</div>
                 </div>
               ))}
             </div>
@@ -991,7 +991,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
                 width: '100%', display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px',
                 borderRadius: 7, border: 'none', cursor: 'pointer', marginBottom: 2, textAlign: 'left',
                 fontFamily: 'var(--font-ui)', fontSize: 12.5, fontWeight: isActive ? 600 : 400,
-                background: isActive ? 'var(--navy-600)' : 'transparent',
+                background: isActive ? 'var(--btn-primary-bg)' : 'transparent',
                 color: isActive ? 'var(--btn-primary-color)' : isDone ? 'var(--text-secondary)' : 'var(--text-tertiary)',
                 transition: 'background 0.15s, color 0.15s',
               }}
@@ -1011,7 +1011,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div style={{ padding: '16px 24px 0', flexShrink: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-            {(() => { const Icon = SECTIONS[step].icon; return <Icon size={16} style={{ color: 'var(--navy-500)' }} />; })()}
+            {(() => { const Icon = SECTIONS[step].icon; return <Icon size={16} style={{ color: 'var(--accent)' }} />; })()}
             <h2 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
               {SECTIONS[step].label}
             </h2>

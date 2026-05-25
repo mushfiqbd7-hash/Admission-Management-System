@@ -11,8 +11,8 @@ function PageLoader() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: 200 }}>
       <div style={{
-        width: 24, height: 24, border: '2px solid var(--navy-100)',
-        borderTopColor: 'var(--navy-600)', borderRadius: '50%',
+        width: 24, height: 24, border: '2px solid var(--btn-subtle-border)',
+        borderTopColor: 'var(--accent)', borderRadius: '50%',
         animation: 'spin 0.8s linear infinite',
       }} />
     </div>

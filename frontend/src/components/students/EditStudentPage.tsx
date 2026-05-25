@@ -18,7 +18,7 @@ export default function EditStudentPage() {
 
   if (isLoading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 240 }}>
-      <div style={{ width: 26, height: 26, border: '2px solid var(--navy-100)', borderTopColor: 'var(--navy-600)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      <div style={{ width: 26, height: 26, border: '2px solid var(--btn-subtle-border)', borderTopColor: 'var(--accent)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
     </div>
   );
 
