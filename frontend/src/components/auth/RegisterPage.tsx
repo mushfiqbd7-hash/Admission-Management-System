@@ -111,7 +111,7 @@ export default function RegisterPage() {
           position: 'absolute', inset: 0,
           width: '100%', height: '100%',
           objectFit: 'cover',
-          objectPosition: 'center top',
+          objectPosition: 'center 65%',
           zIndex: 0,
           opacity: videoLoaded ? 1 : 0,
           transition: 'opacity 1.2s ease',
