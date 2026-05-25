@@ -877,116 +877,361 @@
   [style
 
 /* ═══════════════════════════════════════════════════════
-   [MIA] Premium Dark Mode Component Polish
-   Scrollbar · Sidebar glow · Card highlights · Inputs
+   PREMIUM DARK — v2 TEAM REDESIGN
+   5 new visual ideas that change the architecture
    ═══════════════════════════════════════════════════════ */
 
-/* Scrollbar — premium thin track */
-.dark ::-webkit-scrollbar { width: 5px; height: 5px; }
-.dark ::-webkit-scrollbar-track { background: transparent; }
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(91,130,190,0.28);
-  border-radius: 6px;
-}
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(91,157,255,0.45);
+/* ────────────────────────────────────────────────────────
+   IDEA 1 [Zara]: Main content area — rich gradient canvas
+   NOT flat dark. 4-stop gradient + fixed parallax orbs
+   so the background "breathes" as you scroll.
+──────────────────────────────────────────────────────── */
+.dark .sams-app-shell main {
+  background:
+    radial-gradient(ellipse 60% 40% at 70% 0%, rgba(37,99,235,0.12) 0%, transparent 58%),
+    radial-gradient(ellipse 42% 32% at 10% 80%, rgba(99,102,241,0.09) 0%, transparent 52%),
+    radial-gradient(ellipse 35% 28% at 88% 75%, rgba(6,182,212,0.07) 0%, transparent 50%),
+    linear-gradient(170deg, #08091d 0%, #07091a 40%, #060814 80%, #050810 100%) !important;
+  background-attachment: fixed !important;
 }
 
-/* Sidebar top ambient glow (blue orb from top-left) */
+/* ────────────────────────────────────────────────────────
+   IDEA 2 [Dom]: Horizon glow line — electric blue seam
+   between header and content. Stays sticky at scroll top.
+   Classic premium UI signature (Linear / Raycast style).
+──────────────────────────────────────────────────────── */
+.dark .sams-app-shell main::before {
+  content: '';
+  display: block;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  margin-bottom: -1px;
+  z-index: 999;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent                   0%,
+    rgba(59,130,246,0.0)         8%,
+    rgba(59,130,246,0.85)        28%,
+    rgba(139,92,246,0.65)        50%,
+    rgba(59,130,246,0.85)        72%,
+    rgba(59,130,246,0.0)         92%,
+    transparent                  100%
+  );
+  box-shadow:
+    0 0 24px 6px  rgba(37,99,235,0.38),
+    0 0 70px 22px rgba(37,99,235,0.18),
+    0 0 140px 50px rgba(37,99,235,0.07);
+}
+
+/* ────────────────────────────────────────────────────────
+   IDEA 3 [Mia]: Sidebar glowing right border
+   Gradient line: invisible at top/bottom, electric blue
+   at 30-70% — gives sidebar a lit-from-within feel.
+──────────────────────────────────────────────────────── */
+.dark .sams-app-shell .sams-sidebar {
+  border-right: none !important;
+  box-shadow: none !important;
+  position: relative;
+}
+.dark .sams-app-shell .sams-sidebar::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0; width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent              0%,
+    rgba(91,157,255,0.15)   12%,
+    rgba(91,157,255,0.55)   30%,
+    rgba(99,102,241,0.45)   55%,
+    rgba(91,157,255,0.28)   75%,
+    transparent              100%
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Sidebar ambient top orb — blue bloom from brand area */
 .dark .sams-app-shell .sams-sidebar::before {
   content: '';
   position: absolute;
-  top: -40px; left: -30px;
-  width: 200px; height: 200px;
-  background: radial-gradient(ellipse, rgba(59,130,246,0.18) 0%, transparent 70%);
+  top: -60px; left: -40px;
+  width: 240px; height: 240px;
+  background: radial-gradient(ellipse, rgba(37,99,235,0.22) 0%, transparent 68%);
   pointer-events: none;
   z-index: 0;
   border-radius: 50%;
 }
 
-/* Card premium border: micro top-edge highlight */
-.dark .sams-app-shell .card {
-  border-top-color: rgba(125,184,255,0.14) !important;
-  box-shadow: var(--sh-card) !important;
-}
-
-/* Header: richer glass in dark */
+/* ────────────────────────────────────────────────────────
+   IDEA 4 [Kai]: Header — deep navy glass + bottom glow spill
+   Not just a dimmed white-card: a purpose-built dark element
+   with inner top highlight and a color bloom below.
+──────────────────────────────────────────────────────── */
 .dark .sams-app-shell header > div {
-  background: rgba(13,20,38,0.88) !important;
-  border-color: rgba(91,130,190,0.18) !important;
-  box-shadow: var(--sh-header) !important;
+  background: rgba(8,11,24,0.90) !important;
+  border-color: rgba(91,130,190,0.20) !important;
+  box-shadow:
+    0 1px 0 rgba(125,184,255,0.13) inset,
+    0 1px 0 rgba(59,130,246,0.22),
+    0 16px 44px -18px rgba(0,0,0,0.75),
+    0 0 80px -32px rgba(37,99,235,0.28) !important;
+}
+.dark .sams-app-shell header {
+  background: transparent !important;
 }
 
-/* Active nav item: stronger glow */
+/* ────────────────────────────────────────────────────────
+   IDEA 5 [Sam]: Cards — darker than surface, top-edge lit
+   Cards float at #0d1829 against the #08091d main canvas.
+   Top border is a micro-highlight: looks backlit.
+──────────────────────────────────────────────────────── */
+.dark .sams-app-shell .card {
+  background: rgba(10,16,30,0.92) !important;
+  border-color: rgba(80,118,180,0.18) !important;
+  border-top-color: rgba(125,184,255,0.18) !important;
+  box-shadow:
+    0 1px 0 rgba(125,184,255,0.10) inset,
+    0 0 0 1px rgba(60,100,170,0.10),
+    0 22px 54px -22px rgba(0,0,0,0.90),
+    0 6px 18px -4px rgba(0,0,0,0.44) !important;
+  transition: border-color 200ms ease, box-shadow 200ms ease !important;
+}
+.dark .sams-app-shell .card:hover {
+  border-color: rgba(91,130,190,0.30) !important;
+  border-top-color: rgba(125,184,255,0.30) !important;
+  box-shadow:
+    0 1px 0 rgba(125,184,255,0.15) inset,
+    0 0 0 1px rgba(91,157,255,0.14),
+    0 28px 64px -24px rgba(0,0,0,0.94),
+    0 8px 22px -4px rgba(0,0,0,0.50) !important;
+}
+
+/* ────────────────────────────────────────────────────────
+   SUPPORTING DETAILS — scrollbar, nav, table, inputs
+──────────────────────────────────────────────────────── */
+
+/* Thin blue scrollbar */
+.dark ::-webkit-scrollbar { width: 5px; height: 5px; }
+.dark ::-webkit-scrollbar-track { background: transparent; }
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(91,130,190,0.30);
+  border-radius: 6px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(91,157,255,0.50);
+}
+
+/* Active nav — electric glow */
 .dark .sams-app-shell .sams-nav-item[aria-current="page"] {
   background: linear-gradient(135deg, #2d6fe8 0%, #1e52c0 100%) !important;
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.20) inset,
-    0 8px 20px -6px rgba(37,99,235,0.65),
-    0 2px 6px rgba(37,99,235,0.30) !important;
+    0 1px 0 rgba(255,255,255,0.22) inset,
+    0 8px 24px -6px rgba(37,99,235,0.72),
+    0 0 0 1px rgba(91,157,255,0.32),
+    0 2px 8px rgba(37,99,235,0.38) !important;
 }
 
-/* Table rows: alternating tint for readability */
-.dark .sams-app-shell table tbody tr:nth-child(even) {
-  background: rgba(17,27,46,0.60) !important;
-}
-.dark .sams-app-shell table tbody tr:hover {
-  background: rgba(27,42,63,0.90) !important;
+/* Nav hover */
+.dark .sams-app-shell .sams-nav-item:not([aria-current="page"]):hover {
+  background: rgba(91,157,255,0.10) !important;
+  color: #edf3fc !important;
 }
 
-/* Table header: more defined */
+/* Table header */
 .dark .sams-app-shell table thead th,
 .dark .sams-app-shell .sams-table th {
-  background: rgba(8,9,26,0.80) !important;
-  border-bottom: 1px solid rgba(91,130,190,0.22) !important;
-  letter-spacing: 0.08em;
+  background: rgba(6,8,20,0.85) !important;
+  border-bottom: 1px solid rgba(91,130,190,0.25) !important;
+  letter-spacing: 0.07em;
+  font-size: 10.5px !important;
 }
 
-/* Input focus: colored ring glow */
+/* Table rows — alternating depth */
+.dark .sams-app-shell table tbody tr:nth-child(even) {
+  background: rgba(12,17,32,0.55) !important;
+}
+.dark .sams-app-shell table tbody tr:hover {
+  background: rgba(27,44,72,0.80) !important;
+}
+
+/* Input focus ring */
 .dark .sams-app-shell input:focus,
 .dark .sams-app-shell select:focus,
 .dark .sams-app-shell textarea:focus {
-  border-color: rgba(91,157,255,0.60) !important;
-  box-shadow: 0 0 0 3px rgba(91,157,255,0.18), 0 0 0 1px rgba(91,157,255,0.14) !important;
-  background: rgba(17,27,46,0.95) !important;
+  border-color: rgba(91,157,255,0.65) !important;
+  background: rgba(14,22,40,0.95) !important;
+  box-shadow:
+    0 0 0 3px rgba(91,157,255,0.20),
+    0 0 0 1px rgba(91,157,255,0.15) !important;
 }
 
-/* User avatar ring: more vibrant */
-.dark .sams-app-shell .sams-sidebar [style*="box-shadow: 0 0 0 2px rgba(59,130,246"] {
-  box-shadow: 0 0 0 2px rgba(91,157,255,0.55) !important;
-}
-
-/* Badge font weight boost in dark for legibility */
+/* Badge weight */
 .dark .sams-app-shell [class*="badge-"] {
   font-weight: 700 !important;
   letter-spacing: 0.01em;
 }
 
-/* Selection highlight */
+/* Shell background — ensure mesh visible in padding areas */
+.dark .sams-app-shell {
+  background: var(--canvas-mesh) !important;
+}
+
+/* Override all white/light inline backgrounds consistently */
+.dark .sams-app-shell :is(
+  [style*="background: rgb(255"],
+  [style*="background-color: rgb(255"],
+  [style*="background: white"],
+  [style*="background: #fff"],
+  [style*="background: #ffffff"],
+  [style*="background: rgba(255"]
+):not([style*="linear-gradient"]):not([class*="text-white"]):not(video) {
+  background: rgba(10,16,30,0.92) !important;
+  background-color: rgba(10,16,30,0.92) !important;
+  border-color: rgba(80,118,180,0.18) !important;
+}
+
+.dark .sams-app-shell :is(
+  [style*="background: #f8"],
+  [style*="background: #f7"],
+  [style*="background: #eef"],
+  [style*="background: #f1f5"],
+  [style*="background-color: #f8"],
+  [style*="background-color: #f7"],
+  [style*="background: rgb(248"],
+  [style*="background: rgb(247"],
+  [style*="background: rgb(241"],
+  [style*="background: rgb(238"]
+) {
+  background: rgba(8,12,22,0.88) !important;
+  background-color: rgba(8,12,22,0.88) !important;
+  border-color: rgba(80,118,180,0.15) !important;
+}
+
+/* Colored semantic surfaces */
+.dark .sams-app-shell [style*="background: #eff6ff"],
+.dark .sams-app-shell [style*="background: rgb(239, 246, 255"] {
+  background: rgba(37,99,235,0.14) !important;
+  border-color: rgba(91,157,255,0.30) !important;
+}
+.dark .sams-app-shell [style*="background: #f0fdf4"],
+.dark .sams-app-shell [style*="background: #ecfdf5"],
+.dark .sams-app-shell [style*="background: rgb(240, 253"] {
+  background: rgba(34,197,94,0.13) !important;
+  border-color: rgba(74,222,128,0.30) !important;
+}
+.dark .sams-app-shell [style*="background: #fef2f2"],
+.dark .sams-app-shell [style*="background: #fff1f2"],
+.dark .sams-app-shell [style*="background: rgb(254, 242"] {
+  background: rgba(248,113,113,0.13) !important;
+  border-color: rgba(248,113,113,0.30) !important;
+}
+
+/* Text overrides */
+.dark .sams-app-shell [style*="color: rgb(15, 23, 42)"],
+.dark .sams-app-shell [style*="color: #0f172a"],
+.dark .sams-app-shell [style*="color: #334155"],
+.dark .sams-app-shell [style*="color: rgb(51, 65, 85)"] {
+  color: var(--text-primary) !important;
+}
+.dark .sams-app-shell [style*="color: rgb(71, 85, 105)"],
+.dark .sams-app-shell [style*="color: #475569"],
+.dark .sams-app-shell [style*="color: rgb(100, 116, 139)"],
+.dark .sams-app-shell [style*="color: #64748b"] {
+  color: var(--text-secondary) !important;
+}
+.dark .sams-app-shell [style*="color: rgb(148, 163, 184)"],
+.dark .sams-app-shell [style*="color: #94a3b8"],
+.dark .sams-app-shell [style*="color: #b8c3d4"],
+.dark .sams-app-shell [style*="color: rgb(184, 195"] {
+  color: var(--text-tertiary) !important;
+}
+
+/* Border overrides */
+.dark .sams-app-shell [style*="border: 1px solid #e2e8f0"],
+.dark .sams-app-shell [style*="border: 1px solid #e8edf4"],
+.dark .sams-app-shell [style*="border: 1px solid #dbe3ef"],
+.dark .sams-app-shell [style*="border: 1px solid rgb(226"],
+.dark .sams-app-shell [style*="border-color: #e2e8f0"],
+.dark .sams-app-shell [style*="border-color: rgb(226"] {
+  border-color: rgba(91,130,190,0.20) !important;
+}
+
+/* Button overrides */
+.dark .sams-app-shell :is(.btn-primary, button[style*="background: #1e3a5f"], button[style*="background: #2563eb"], button[style*="background: rgb(37, 99, 235"]) {
+  background: var(--btn-primary-bg) !important;
+  border-color: var(--btn-primary-border) !important;
+  color: var(--btn-primary-color) !important;
+  box-shadow: var(--btn-primary-shadow) !important;
+}
+.dark .sams-app-shell :is(.btn-ghost, button[style*="background: var(--surface)"], button[style*="background: var(--btn-secondary-bg)"]) {
+  background: var(--btn-secondary-bg) !important;
+  border-color: var(--btn-secondary-border) !important;
+  color: var(--btn-secondary-color) !important;
+}
+.dark .sams-app-shell :is(button[style*="background: #dc2626"], button[style*="background: rgb(220, 38, 38"]) {
+  background: var(--btn-danger-bg) !important;
+  border-color: var(--btn-danger-border) !important;
+  color: var(--btn-danger-color) !important;
+}
+.dark .sams-app-shell :is(button[style*="background: #16a34a"], button[style*="background: rgb(22, 163, 74"]) {
+  background: var(--btn-success-bg) !important;
+  border-color: var(--btn-success-border) !important;
+  color: var(--btn-success-color) !important;
+}
+
+/* Table class helpers */
+.dark .sams-app-shell .sams-table td,
+.dark .sams-app-shell table td {
+  border-bottom-color: rgba(60,90,140,0.18) !important;
+  color: var(--text-primary) !important;
+}
+.dark .sams-app-shell .sams-table tbody tr:hover,
+.dark .sams-app-shell table tbody tr:hover {
+  background: rgba(27,44,72,0.80) !important;
+}
+
+/* Selection */
 .dark ::selection {
-  background: rgba(37,99,235,0.40) !important;
+  background: rgba(37,99,235,0.44) !important;
   color: #edf3fc !important;
 }
 
-/* Skeleton shimmer — blue-tinted */
+/* Skeleton */
 .dark .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(17,27,46,0.80) 25%,
-    rgba(27,42,63,0.60) 50%,
-    rgba(17,27,46,0.80) 75%
+    rgba(10,16,30,0.90) 25%,
+    rgba(20,35,60,0.70) 50%,
+    rgba(10,16,30,0.90) 75%
   ) !important;
   background-size: 200% 100% !important;
+  animation: shimmer 1.5s infinite !important;
 }
 
-/* Section labels in sidebar */
-.dark .sams-app-shell [style*="color: var(--sidebar-muted)"] {
-  color: rgba(120,150,195,0.75) !important;
+/* Sidebar nav section label */
+.dark .sams-app-shell .sams-sidebar [style*="var(--sidebar-muted)"] {
   letter-spacing: 0.10em;
+  opacity: 0.70;
 }
 
-/* Brand logo in sidebar */
-.dark .sams-app-shell .sams-sidebar [style*="fontSize: 11"],
-.dark .sams-app-shell .sams-sidebar [style*="font-size: 11px"] {
-  color: rgba(91,130,190,0.75) !important;
+/* Icon buttons in sidebar */
+.dark .sams-app-shell .sams-icon-button {
+  background: rgba(91,157,255,0.08) !important;
+  border-color: rgba(91,130,190,0.20) !important;
+  color: var(--sidebar-text) !important;
+}
+.dark .sams-app-shell .sams-icon-button:hover {
+  background: rgba(91,157,255,0.18) !important;
+  border-color: rgba(91,157,255,0.32) !important;
+  color: #edf3fc !important;
+  transform: translateY(-1px);
+}
+
+/* Sidebar footer user block */
+.dark .sams-app-shell .sams-sidebar > div:last-child {
+  border-top-color: rgba(91,130,190,0.18) !important;
 }
