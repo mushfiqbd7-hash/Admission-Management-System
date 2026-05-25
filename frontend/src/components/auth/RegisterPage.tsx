@@ -4,11 +4,10 @@ import { Link } from 'react-router-dom';
 import { Eye, EyeOff, AlertCircle, MailCheck, User, Mail, Lock, GraduationCap } from 'lucide-react';
 import { authApi } from '@/api/client';
 
-// Cinematic campus video sources — same pool as LoginPage
+// Self-hosted campus video — place file at frontend/public/videos/bg.mp4
+// Recommended: Pexels #7683332 "College Students Walking in the Campus"
 const VIDEO_SOURCES = [
-  'https://videos.pexels.com/video-files/3195394/3195394-hd_1920_1080_25fps.mp4',
-  'https://videos.pexels.com/video-files/5198553/5198553-hd_1920_1080_30fps.mp4',
-  'https://videos.pexels.com/video-files/3990862/3990862-hd_1920_1080_30fps.mp4',
+  '/videos/bg.mp4',
 ];
 
 interface RegisterForm {
@@ -49,7 +48,7 @@ export default function RegisterPage() {
     };
     v.addEventListener('error', tryNext);
     tryNext();
-    const btnShadow = [
+  const btnShadow = [
     '0 1px 0 rgba(255,255,255,0.18) inset',
     '0 10px 20px -4px rgba(37,99,235,0.45)',
     '0 2px 4px rgba(37,99,235,0.20)',
@@ -223,9 +222,6 @@ export default function RegisterPage() {
             background: 'rgba(255,255,255,0.04)',
             border: '1px solid rgba(255,255,255,0.10)',
             backdropFilter: 'blur(40px) saturate(140%)',
-            boxShadow:
-              '0 1px 0 rgba(255,255,255,0.10) inset,' +
-              '0 30px 80px -20px rgba(0,0,0,0.55)',
           }}
         >
           {registered ? (
