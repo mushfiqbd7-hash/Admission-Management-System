@@ -3,9 +3,9 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, AlertCircle, MailCheck, User, Mail, Lock, GraduationCap } from 'lucide-react';
 import { authApi } from '@/api/client';
+import { useTheme } from '@/context/ThemeContext';
 
 // Self-hosted campus video — place file at frontend/public/videos/bg.mp4
-// Recommended: Pexels #7683332 "College Students Walking in the Campus"
 const VIDEO_SOURCES = [
   '/videos/bg.mp4',
 ];
@@ -16,16 +16,10 @@ interface RegisterForm {
   password: string;
 }
 
-const inputBase: React.CSSProperties = {
-  height: 42, width: '100%', borderRadius: 11,
-  border: '1px solid rgba(255,255,255,0.10)',
-  background: 'rgba(255,255,255,0.05)', color: '#fff', outline: 'none',
-  fontSize: 13.5, fontWeight: 500, fontFamily: 'inherit',
-  boxSizing: 'border-box',
-  transition: 'border-color 160ms ease, background-color 160ms ease',
-};
-
 export default function RegisterPage() {
+  const { resolvedTheme } = useTheme();
+  const dark = resolvedTheme === 'dark';
+
   const [showPw,          setShowPw]          = useState(false);
   const [loading,         setLoading]         = useState(false);
   const [error,           setError]           = useState('');
@@ -56,6 +50,35 @@ export default function RegisterPage() {
     '0 10px 20px -4px rgba(37,99,235,0.45)',
     '0 2px 4px rgba(37,99,235,0.20)',
   ].join(', ');
+
+  // ── Theme-aware style tokens ──
+  const overlayBg   = dark ? 'rgba(0,0,0,0.42)'          : 'rgba(0,0,0,0.25)';
+  const textPrimary = dark ? '#fff'                        : '#0f172a';
+  const textSub     = dark ? 'rgba(255,255,255,0.55)'     : 'rgba(15,23,42,0.55)';
+  const textLabel   = dark ? 'rgba(255,255,255,0.65)'     : 'rgba(15,23,42,0.65)';
+  const textMuted   = dark ? 'rgba(255,255,255,0.35)'     : 'rgba(15,23,42,0.40)';
+  const iconColor   = dark ? 'rgba(255,255,255,0.32)'     : 'rgba(15,23,42,0.30)';
+  const eyeColor    = dark ? 'rgba(255,255,255,0.40)'     : 'rgba(15,23,42,0.35)';
+  const linkColor   = dark ? 'rgba(147,197,253,0.95)'     : '#2563eb';
+  const cardBg      = dark ? 'transparent'                : 'rgba(255,255,255,0.82)';
+  const cardBorder  = dark ? 'none'                       : '1px solid rgba(15,23,42,0.08)';
+  const cardBlur    = dark ? undefined                     : 'blur(20px) saturate(180%)';
+  const cardShadow  = dark ? undefined                     : '0 8px 40px rgba(15,23,42,0.10), 0 1px 0 rgba(255,255,255,0.80) inset';
+  const inputBorder = dark ? 'rgba(255,255,255,0.10)'     : 'rgba(15,23,42,0.14)';
+  const inputBg     = dark ? 'rgba(255,255,255,0.05)'     : 'rgba(255,255,255,0.80)';
+  const inputColor  = dark ? '#fff'                        : '#0f172a';
+  const inputFocusBorder = dark ? 'rgba(96,165,250,0.6)'  : 'rgba(37,99,235,0.50)';
+  const inputFocusBg     = dark ? 'rgba(255,255,255,0.08)': 'rgba(255,255,255,0.95)';
+  const inputBlurBg      = dark ? 'rgba(255,255,255,0.05)': 'rgba(255,255,255,0.80)';
+
+  const inputBase: React.CSSProperties = {
+    height: 42, width: '100%', borderRadius: 11,
+    border: `1px solid ${inputBorder}`,
+    background: inputBg, color: inputColor, outline: 'none',
+    fontSize: 13.5, fontWeight: 500, fontFamily: 'inherit',
+    boxSizing: 'border-box',
+    transition: 'border-color 160ms ease, background-color 160ms ease',
+  };
 
   const set = (field: keyof RegisterForm) =>
     (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -95,7 +118,7 @@ export default function RegisterPage() {
       overflow: 'hidden',
       display: 'grid',
       gridTemplateColumns: 'minmax(0,1fr) 520px',
-      color: '#fff',
+      color: textPrimary,
       fontFamily: 'Inter, sans-serif',
     }}>
 
@@ -126,10 +149,11 @@ export default function RegisterPage() {
         transition: 'opacity 1.2s ease',
       }} />
 
-      {/* Cinematic dark overlay */}
+      {/* Cinematic overlay — lighter in light mode */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 1,
-        background: 'rgba(0,0,0,0.42)',
+        background: overlayBg,
+        transition: 'background 400ms ease',
       }} />
 
       {/* Vignette */}
@@ -161,7 +185,7 @@ export default function RegisterPage() {
               <GraduationCap size={26} color="#fff" />
             </div>
             <div>
-              <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>SAMS</div>
+              <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff' }}>SAMS</div>
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.60)' }}>Student Admission Management</div>
             </div>
           </div>
@@ -217,8 +241,12 @@ export default function RegisterPage() {
           style={{
             position: 'relative', width: '100%', maxWidth: 380,
             padding: '34px 36px', borderRadius: 20,
-            background: 'transparent',
-            border: 'none',
+            background: cardBg,
+            border: cardBorder,
+            backdropFilter: cardBlur,
+            WebkitBackdropFilter: cardBlur,
+            boxShadow: cardShadow,
+            transition: 'background 400ms ease, box-shadow 400ms ease',
           }}
         >
           {registered ? (
@@ -238,23 +266,23 @@ export default function RegisterPage() {
               </div>
               <h2 style={{
                 margin: 0, fontSize: 22, fontWeight: 700,
-                letterSpacing: '-0.03em', color: '#fff',
+                letterSpacing: '-0.03em', color: textPrimary,
               }}>
                 Check your email
               </h2>
               <p style={{
                 margin: 0, fontSize: 13,
-                color: 'rgba(255,255,255,0.55)', lineHeight: 1.65,
+                color: textSub, lineHeight: 1.65,
               }}>
                 We sent a verification link to<br />
-                <span style={{ color: '#93c5fd', fontWeight: 600 }}>{registeredEmail}</span><br /><br />
+                <span style={{ color: dark ? '#93c5fd' : '#2563eb', fontWeight: 600 }}>{registeredEmail}</span><br /><br />
                 Click the link to activate your account.
                 The link expires in 24 hours.
               </p>
               <Link
                 to="/login"
                 style={{
-                  fontSize: 12.5, color: 'rgba(147,197,253,0.9)',
+                  fontSize: 12.5, color: linkColor,
                   textDecoration: 'none', fontWeight: 500, marginTop: 4,
                 }}
               >
@@ -267,11 +295,11 @@ export default function RegisterPage() {
               <div style={{ marginBottom: 24 }}>
                 <h2 style={{
                   margin: 0, fontSize: 26, fontWeight: 700,
-                  letterSpacing: '-0.03em', color: '#fff',
+                  letterSpacing: '-0.03em', color: textPrimary,
                 }}>
                   Create account
                 </h2>
-                <p style={{ marginTop: 6, fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>
+                <p style={{ marginTop: 6, fontSize: 13, color: textSub }}>
                   Join SAMS to manage student admissions.
                 </p>
               </div>
@@ -294,12 +322,12 @@ export default function RegisterPage() {
                 {/* Full name */}
                 <label style={{
                   display: 'block', marginBottom: 7, fontSize: 11.5, fontWeight: 600,
-                  color: 'rgba(255,255,255,0.65)', letterSpacing: '-0.005em',
+                  color: textLabel, letterSpacing: '-0.005em',
                 }}>Full name</label>
                 <div style={{ position: 'relative', marginBottom: 14 }}>
                   <User size={15} style={{
                     position: 'absolute', left: 14, top: '50%',
-                    transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.32)',
+                    transform: 'translateY(-50%)', color: iconColor,
                   }} />
                   <input
                     type="text"
@@ -309,24 +337,24 @@ export default function RegisterPage() {
                     onChange={set('full_name')}
                     required
                     style={{ ...inputBase, paddingLeft: 40, paddingRight: 14 }}
-                    onFocus={(e) => { e.target.style.borderColor = 'rgba(96,165,250,0.6)'; e.target.style.background = 'rgba(255,255,255,0.08)'; }}
-                    onBlur={(e)  => { e.target.style.borderColor = 'rgba(255,255,255,0.10)'; e.target.style.background = 'rgba(255,255,255,0.05)'; }}
+                    onFocus={(e) => { e.target.style.borderColor = inputFocusBorder; e.target.style.background = inputFocusBg; }}
+                    onBlur={(e)  => { e.target.style.borderColor = inputBorder; e.target.style.background = inputBlurBg; }}
                   />
                 </div>
 
                 {/* Email */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 7 }}>
-                  <label style={{ fontSize: 11.5, fontWeight: 600, color: 'rgba(255,255,255,0.65)', letterSpacing: '-0.005em' }}>
+                  <label style={{ fontSize: 11.5, fontWeight: 600, color: textLabel, letterSpacing: '-0.005em' }}>
                     Email address
                   </label>
-                  <span style={{ fontSize: 11, color: 'rgba(251,191,36,0.75)', fontWeight: 500 }}>
+                  <span style={{ fontSize: 11, color: 'rgba(251,191,36,0.85)', fontWeight: 500 }}>
                     ⚠ cannot be changed later
                   </span>
                 </div>
                 <div style={{ position: 'relative', marginBottom: 14 }}>
                   <Mail size={15} style={{
                     position: 'absolute', left: 14, top: '50%',
-                    transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.32)',
+                    transform: 'translateY(-50%)', color: iconColor,
                   }} />
                   <input
                     type="email"
@@ -336,24 +364,24 @@ export default function RegisterPage() {
                     onChange={set('email')}
                     required
                     style={{ ...inputBase, paddingLeft: 40, paddingRight: 14 }}
-                    onFocus={(e) => { e.target.style.borderColor = 'rgba(96,165,250,0.6)'; e.target.style.background = 'rgba(255,255,255,0.08)'; }}
-                    onBlur={(e)  => { e.target.style.borderColor = 'rgba(255,255,255,0.10)'; e.target.style.background = 'rgba(255,255,255,0.05)'; }}
+                    onFocus={(e) => { e.target.style.borderColor = inputFocusBorder; e.target.style.background = inputFocusBg; }}
+                    onBlur={(e)  => { e.target.style.borderColor = inputBorder; e.target.style.background = inputBlurBg; }}
                   />
                 </div>
 
                 {/* Password */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 7 }}>
-                  <label style={{ fontSize: 11.5, fontWeight: 600, color: 'rgba(255,255,255,0.65)', letterSpacing: '-0.005em' }}>
+                  <label style={{ fontSize: 11.5, fontWeight: 600, color: textLabel, letterSpacing: '-0.005em' }}>
                     Password
                   </label>
-                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontWeight: 400 }}>
+                  <span style={{ fontSize: 11, color: textMuted, fontWeight: 400 }}>
                     min. 8 characters
                   </span>
                 </div>
                 <div style={{ position: 'relative', marginBottom: 22 }}>
                   <Lock size={15} style={{
                     position: 'absolute', left: 14, top: '50%',
-                    transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.32)',
+                    transform: 'translateY(-50%)', color: iconColor,
                   }} />
                   <input
                     type={showPw ? 'text' : 'password'}
@@ -363,8 +391,8 @@ export default function RegisterPage() {
                     onChange={set('password')}
                     required
                     style={{ ...inputBase, paddingLeft: 40, paddingRight: 42 }}
-                    onFocus={(e) => { e.target.style.borderColor = 'rgba(96,165,250,0.6)'; e.target.style.background = 'rgba(255,255,255,0.08)'; }}
-                    onBlur={(e)  => { e.target.style.borderColor = 'rgba(255,255,255,0.10)'; e.target.style.background = 'rgba(255,255,255,0.05)'; }}
+                    onFocus={(e) => { e.target.style.borderColor = inputFocusBorder; e.target.style.background = inputFocusBg; }}
+                    onBlur={(e)  => { e.target.style.borderColor = inputBorder; e.target.style.background = inputBlurBg; }}
                   />
                   <button
                     type="button"
@@ -372,7 +400,7 @@ export default function RegisterPage() {
                     style={{
                       position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
                       background: 'transparent', border: 'none', cursor: 'pointer',
-                      color: 'rgba(255,255,255,0.40)', padding: 4,
+                      color: eyeColor, padding: 4,
                     }}
                   >
                     {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -401,14 +429,14 @@ export default function RegisterPage() {
 
               <p style={{
                 marginTop: 22, fontSize: 11.5,
-                color: 'rgba(255,255,255,0.35)',
+                color: textMuted,
                 textAlign: 'center',
               }}>
                 Already have an account?{' '}
                 <Link
                   to="/login"
                   style={{
-                    color: 'rgba(147,197,253,0.95)',
+                    color: linkColor,
                     fontWeight: 600,
                     textDecoration: 'none',
                   }}

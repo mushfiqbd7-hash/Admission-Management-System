@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, GraduationCap, X, CheckCircle } from 'lucide-react';
 import { authApi } from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
+import { useTheme } from '@/context/ThemeContext';
 import { toast } from 'sonner';
 
 // Self-hosted campus video — place file at frontend/public/videos/bg.mp4
-// Recommended: Pexels #7683332 "College Students Walking in the Campus"
 const VIDEO_SOURCES = [
   '/videos/bg.mp4',
 ];
@@ -24,18 +24,11 @@ const STATS = [
   { v: '42',   l: 'countries served' },
 ];
 
-const inputBase: React.CSSProperties = {
-  height: 42, width: '100%', borderRadius: 11,
-  border: '1px solid rgba(255,255,255,0.10)',
-  background: 'rgba(255,255,255,0.05)', color: '#fff', outline: 'none',
-  fontSize: 13.5, fontWeight: 500, fontFamily: 'inherit',
-  boxSizing: 'border-box',
-  transition: 'border-color 160ms ease, background-color 160ms ease',
-};
-
 export default function LoginPage() {
   const navigate = useNavigate();
   const setAuth  = useAuthStore((s) => s.setAuth);
+  const { resolvedTheme } = useTheme();
+  const dark = resolvedTheme === 'dark';
 
   const [showPw,          setShowPw]          = useState(false);
   const [error,           setError]           = useState('');
@@ -106,12 +99,42 @@ export default function LoginPage() {
     '0 2px 4px rgba(37,99,235,0.20)',
   ].join(', ');
 
+  // ── Theme-aware style tokens ──
+  const overlayBg   = dark ? 'rgba(0,0,0,0.42)'          : 'rgba(0,0,0,0.25)';
+  const textPrimary = dark ? '#fff'                        : '#0f172a';
+  const textSub     = dark ? 'rgba(255,255,255,0.55)'     : 'rgba(15,23,42,0.55)';
+  const textLabel   = dark ? 'rgba(255,255,255,0.65)'     : 'rgba(15,23,42,0.65)';
+  const textMuted   = dark ? 'rgba(255,255,255,0.35)'     : 'rgba(15,23,42,0.40)';
+  const iconColor   = dark ? 'rgba(255,255,255,0.32)'     : 'rgba(15,23,42,0.30)';
+  const eyeColor    = dark ? 'rgba(255,255,255,0.40)'     : 'rgba(15,23,42,0.35)';
+  const linkColor   = dark ? 'rgba(147,197,253,0.95)'     : '#2563eb';
+  const forgotColor = dark ? 'rgba(96,165,250,0.85)'      : '#2563eb';
+  const cardBg      = dark ? 'transparent'                : 'rgba(255,255,255,0.82)';
+  const cardBorder  = dark ? 'none'                       : '1px solid rgba(15,23,42,0.08)';
+  const cardBlur    = dark ? undefined                     : 'blur(20px) saturate(180%)';
+  const cardShadow  = dark ? undefined                     : '0 8px 40px rgba(15,23,42,0.10), 0 1px 0 rgba(255,255,255,0.80) inset';
+  const inputBorder = dark ? 'rgba(255,255,255,0.10)'     : 'rgba(15,23,42,0.14)';
+  const inputBg     = dark ? 'rgba(255,255,255,0.05)'     : 'rgba(255,255,255,0.80)';
+  const inputColor  = dark ? '#fff'                        : '#0f172a';
+  const inputFocusBorder = dark ? 'rgba(96,165,250,0.6)'  : 'rgba(37,99,235,0.50)';
+  const inputFocusBg     = dark ? 'rgba(255,255,255,0.08)': 'rgba(255,255,255,0.95)';
+  const inputBlurBg      = dark ? 'rgba(255,255,255,0.05)': 'rgba(255,255,255,0.80)';
+
+  const inputBase: React.CSSProperties = {
+    height: 42, width: '100%', borderRadius: 11,
+    border: `1px solid ${inputBorder}`,
+    background: inputBg, color: inputColor, outline: 'none',
+    fontSize: 13.5, fontWeight: 500, fontFamily: 'inherit',
+    boxSizing: 'border-box',
+    transition: 'border-color 160ms ease, background-color 160ms ease',
+  };
+
   // ── Forgot password modal state ──
-  const [forgotOpen,  setForgotOpen]  = useState(false);
-  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotOpen,    setForgotOpen]    = useState(false);
+  const [forgotEmail,   setForgotEmail]   = useState('');
   const [forgotLoading, setForgotLoading] = useState(false);
-  const [forgotSent,  setForgotSent]  = useState(false);
-  const [forgotError, setForgotError] = useState('');
+  const [forgotSent,    setForgotSent]    = useState(false);
+  const [forgotError,   setForgotError]   = useState('');
 
   const handleForgot = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,7 +164,7 @@ export default function LoginPage() {
       overflow: 'hidden',
       display: 'grid',
       gridTemplateColumns: 'minmax(0,1fr) 520px',
-      color: '#fff',
+      color: textPrimary,
       fontFamily: 'Inter, sans-serif',
     }}>
 
@@ -172,10 +195,11 @@ export default function LoginPage() {
         transition: 'opacity 1.2s ease',
       }} />
 
-      {/* Cinematic dark overlay */}
+      {/* Cinematic overlay — lighter in light mode */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 1,
-        background: 'rgba(0,0,0,0.42)',
+        background: overlayBg,
+        transition: 'background 400ms ease',
       }} />
 
       {/* Vignette */}
@@ -207,7 +231,7 @@ export default function LoginPage() {
               <GraduationCap size={26} color="#fff" />
             </div>
             <div>
-              <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>SAMS</div>
+              <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff' }}>SAMS</div>
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.60)' }}>Student Admission Management</div>
             </div>
           </div>
@@ -290,19 +314,23 @@ export default function LoginPage() {
           style={{
             position: 'relative', width: '100%', maxWidth: 380,
             padding: '34px 36px', borderRadius: 20,
-            background: 'transparent',
-            border: 'none',
+            background: cardBg,
+            border: cardBorder,
+            backdropFilter: cardBlur,
+            WebkitBackdropFilter: cardBlur,
+            boxShadow: cardShadow,
+            transition: 'background 400ms ease, box-shadow 400ms ease',
           }}
         >
           {/* Card header */}
           <div style={{ marginBottom: 26 }}>
             <h2 style={{
               margin: 0, fontSize: 26, fontWeight: 700,
-              letterSpacing: '-0.03em', color: '#fff',
+              letterSpacing: '-0.03em', color: textPrimary,
             }}>
               Sign in to SAMS
             </h2>
-            <p style={{ marginTop: 6, fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>
+            <p style={{ marginTop: 6, fontSize: 13, color: textSub }}>
               Welcome back. Continue managing applications.
             </p>
           </div>
@@ -329,7 +357,7 @@ export default function LoginPage() {
               style={{
                 display: 'block', width: '100%', marginBottom: 18,
                 background: 'transparent', border: 'none', cursor: 'pointer',
-                textAlign: 'center', fontSize: 13, color: 'rgba(147,197,253,0.95)',
+                textAlign: 'center', fontSize: 13, color: linkColor,
                 textDecoration: 'underline', fontFamily: 'inherit',
               }}
             >
@@ -341,14 +369,14 @@ export default function LoginPage() {
             {/* Email */}
             <label style={{
               display: 'block', marginBottom: 7, fontSize: 11.5, fontWeight: 600,
-              color: 'rgba(255,255,255,0.65)', letterSpacing: '-0.005em',
+              color: textLabel, letterSpacing: '-0.005em',
             }}>
               Email address
             </label>
             <div style={{ position: 'relative', marginBottom: errors.email ? 4 : 14 }}>
               <Mail size={15} style={{
                 position: 'absolute', left: 14, top: '50%',
-                transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.32)',
+                transform: 'translateY(-50%)', color: iconColor,
               }} />
               <input
                 type="email"
@@ -357,18 +385,18 @@ export default function LoginPage() {
                 style={{
                   ...inputBase,
                   paddingLeft: 40, paddingRight: 14,
-                  borderColor: errors.email ? 'rgba(248,113,113,0.45)' : 'rgba(255,255,255,0.10)',
+                  borderColor: errors.email ? 'rgba(248,113,113,0.45)' : inputBorder,
                 }}
                 {...emailReg}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'rgba(96,165,250,0.6)';
-                  e.target.style.background  = 'rgba(255,255,255,0.08)';
+                  e.target.style.borderColor = inputFocusBorder;
+                  e.target.style.background  = inputFocusBg;
                 }}
                 onBlur={(e) => {
                   void emailReg.onBlur(e);
                   e.target.style.borderColor = errors.email
-                    ? 'rgba(248,113,113,0.45)' : 'rgba(255,255,255,0.10)';
-                  e.target.style.background = 'rgba(255,255,255,0.05)';
+                    ? 'rgba(248,113,113,0.45)' : inputBorder;
+                  e.target.style.background = inputBlurBg;
                 }}
               />
             </div>
@@ -382,14 +410,14 @@ export default function LoginPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 7 }}>
               <label style={{
                 fontSize: 11.5, fontWeight: 600,
-                color: 'rgba(255,255,255,0.65)', letterSpacing: '-0.005em',
+                color: textLabel, letterSpacing: '-0.005em',
               }}>
                 Password
               </label>
               <button
                 type="button"
                 onClick={() => setForgotOpen(true)}
-                style={{ fontSize: 11.5, color: 'rgba(96,165,250,0.85)', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                style={{ fontSize: 11.5, color: forgotColor, fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
               >
                 Forgot?
               </button>
@@ -397,7 +425,7 @@ export default function LoginPage() {
             <div style={{ position: 'relative', marginBottom: errors.password ? 4 : 22 }}>
               <Lock size={15} style={{
                 position: 'absolute', left: 14, top: '50%',
-                transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.32)',
+                transform: 'translateY(-50%)', color: iconColor,
               }} />
               <input
                 type={showPw ? 'text' : 'password'}
@@ -406,18 +434,18 @@ export default function LoginPage() {
                 style={{
                   ...inputBase,
                   paddingLeft: 40, paddingRight: 42,
-                  borderColor: errors.password ? 'rgba(248,113,113,0.45)' : 'rgba(255,255,255,0.10)',
+                  borderColor: errors.password ? 'rgba(248,113,113,0.45)' : inputBorder,
                 }}
                 {...passwordReg}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'rgba(96,165,250,0.6)';
-                  e.target.style.background  = 'rgba(255,255,255,0.08)';
+                  e.target.style.borderColor = inputFocusBorder;
+                  e.target.style.background  = inputFocusBg;
                 }}
                 onBlur={(e) => {
                   void passwordReg.onBlur(e);
                   e.target.style.borderColor = errors.password
-                    ? 'rgba(248,113,113,0.45)' : 'rgba(255,255,255,0.10)';
-                  e.target.style.background = 'rgba(255,255,255,0.05)';
+                    ? 'rgba(248,113,113,0.45)' : inputBorder;
+                  e.target.style.background = inputBlurBg;
                 }}
               />
               <button
@@ -426,7 +454,7 @@ export default function LoginPage() {
                 style={{
                   position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
                   background: 'transparent', border: 'none', cursor: 'pointer',
-                  color: 'rgba(255,255,255,0.40)', padding: 4,
+                  color: eyeColor, padding: 4,
                 }}
               >
                 {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -460,14 +488,14 @@ export default function LoginPage() {
 
           <p style={{
             marginTop: 22, fontSize: 11.5,
-            color: 'rgba(255,255,255,0.35)',
+            color: textMuted,
             textAlign: 'center',
           }}>
             No account?{' '}
             <Link
               to="/register"
               style={{
-                color: 'rgba(147,197,253,0.95)',
+                color: linkColor,
                 fontWeight: 600,
                 textDecoration: 'none',
               }}
@@ -544,7 +572,7 @@ export default function LoginPage() {
                   </div>
                 )}
                 <label style={{ display: 'block', marginBottom: 6, fontSize: 11.5, fontWeight: 600, color: 'rgba(255,255,255,0.60)' }}>
-                  Email address
+                    Email address
                 </label>
                 <div style={{ position: 'relative', marginBottom: 18 }}>
                   <Mail size={15} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.30)' }} />
