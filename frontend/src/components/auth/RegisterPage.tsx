@@ -48,14 +48,14 @@ export default function RegisterPage() {
     };
     v.addEventListener('error', tryNext);
     tryNext();
+    return () => v.removeEventListener('error', tryNext);
+  }, []);
+
   const btnShadow = [
     '0 1px 0 rgba(255,255,255,0.18) inset',
     '0 10px 20px -4px rgba(37,99,235,0.45)',
     '0 2px 4px rgba(37,99,235,0.20)',
   ].join(', ');
-
-  return () => v.removeEventListener('error', tryNext);
-  }, []);
 
   const set = (field: keyof RegisterForm) =>
     (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -111,6 +111,7 @@ export default function RegisterPage() {
           position: 'absolute', inset: 0,
           width: '100%', height: '100%',
           objectFit: 'cover',
+          objectPosition: 'center 30%',
           zIndex: 0,
           opacity: videoLoaded ? 1 : 0,
           transition: 'opacity 1.2s ease',
@@ -203,8 +204,6 @@ export default function RegisterPage() {
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '40px',
         borderLeft: '1px solid rgba(255,255,255,0.08)',
-        background: 'rgba(0,0,0,0.18)',
-        backdropFilter: 'blur(2px)',
       }}>
         {/* Subtle top glow */}
         <div style={{
@@ -219,7 +218,7 @@ export default function RegisterPage() {
           style={{
             position: 'relative', width: '100%', maxWidth: 380,
             padding: '34px 36px', borderRadius: 20,
-            background: 'rgba(255,255,255,0.04)',
+            background: 'transparent',
             border: '1px solid rgba(255,255,255,0.10)',
             backdropFilter: 'blur(40px) saturate(140%)',
           }}

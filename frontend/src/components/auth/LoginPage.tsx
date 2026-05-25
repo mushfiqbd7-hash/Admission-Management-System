@@ -129,6 +129,7 @@ export default function LoginPage() {
           position: 'absolute', inset: 0,
           width: '100%', height: '100%',
           objectFit: 'cover',
+          objectPosition: 'center 30%',
           zIndex: 0,
           opacity: videoLoaded ? 1 : 0,
           transition: 'opacity 1.2s ease',
@@ -248,8 +249,6 @@ export default function LoginPage() {
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '40px',
         borderLeft: '1px solid rgba(255,255,255,0.08)',
-        background: 'rgba(0,0,0,0.18)',
-        backdropFilter: 'blur(2px)',
       }}>
         {/* Subtle top glow */}
         <div style={{
@@ -264,7 +263,7 @@ export default function LoginPage() {
           style={{
             position: 'relative', width: '100%', maxWidth: 380,
             padding: '34px 36px', borderRadius: 20,
-            background: 'rgba(255,255,255,0.04)',
+            background: 'transparent',
             border: '1px solid rgba(255,255,255,0.10)',
             backdropFilter: 'blur(40px) saturate(140%)',
           }}
