@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { query } from '../config/database.js';
+import { sendPasswordResetEmail } from '../utils/emailService.js';
 
 const signAccessToken  = (userId, role) =>
   jwt.sign({ userId, role }, process.env.JWT_SECRET, {
@@ -190,6 +191,82 @@ export const changePassword = async (req, res) => {
     res.json({ message: 'Password changed successfully' });
   } catch (err) {
     console.error('changePassword error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// POST /auth/forgot-password
+export const requestPasswordReset = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const { rows } = await query(
+      'SELECT id FROM users WHERE email = $1 AND is_active = true',
+      [email.toLowerCase().trim()]
+    );
+
+    // Always return 200 — never reveal whether email exists
+    if (!rows.length) {
+      return res.json({ message: 'If that email is registered, you will receive a reset link.' });
+    }
+
+    const token     = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await query(
+      `UPDATE users
+       SET reset_token = $1, reset_token_expires_at = $2
+       WHERE id = $3`,
+      [token, expiresAt, rows[0].id]
+    );
+
+    await sendPasswordResetEmail(email.toLowerCase().trim(), token);
+
+    res.json({ message: 'If that email is registered, you will receive a reset link.' });
+  } catch (err) {
+    console.error('requestPasswordReset error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// POST /auth/reset-password
+export const resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password || String(password).length < 8) {
+      return res.status(400).json({ error: 'Token and password (min 8 chars) are required.' });
+    }
+
+    const { rows } = await query(
+      `SELECT id FROM users
+       WHERE reset_token = $1
+         AND reset_token_expires_at > NOW()
+         AND is_active = true`,
+      [token]
+    );
+
+    if (!rows.length) {
+      return res.status(400).json({ error: 'Reset link is invalid or has expired.' });
+    }
+
+    const newHash = await bcrypt.hash(password, 12);
+
+    await query(
+      `UPDATE users
+       SET password_hash = $1,
+           password = NULL,
+           reset_token = NULL,
+           reset_token_expires_at = NULL
+       WHERE id = $2`,
+      [newHash, rows[0].id]
+    );
+
+    // Invalidate all sessions
+    await query('DELETE FROM refresh_tokens WHERE user_id = $1', [rows[0].id]);
+
+    res.json({ message: 'Password reset successfully. You can now sign in.' });
+  } catch (err) {
+    console.error('resetPassword error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

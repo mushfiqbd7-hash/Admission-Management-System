@@ -81,6 +81,10 @@ export const authApi = {
                         api.get(`/auth/verify-email?token=${token}`),
   resendVerification:   (email: string) =>
                         api.post('/auth/resend-verification', { email }),
+  forgotPassword:       (email: string) =>
+                        api.post('/auth/forgot-password', { email }),
+  resetPassword:        (data: { token: string; password: string }) =>
+                        api.post('/auth/reset-password', data),
 };
 
 export const studentsApi = {

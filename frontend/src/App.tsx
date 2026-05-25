@@ -10,6 +10,7 @@ import AppShell from '@/components/layout/AppShell';
 import LoginPage from '@/components/auth/LoginPage';
 import RegisterPage from '@/components/auth/RegisterPage';
 import VerifyEmailPage from '@/components/auth/VerifyEmailPage';
+import ResetPasswordPage from '@/components/auth/ResetPasswordPage';
 import { useAuthStore } from '@/store/authStore';
 
 const DashboardPage = lazy(() => import('@/components/dashboard/DashboardPage'));
@@ -169,6 +170,7 @@ export default function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
 
             <Route element={<ProtectedRoute />}>
               <Route element={<AppShell />}>

@@ -8,6 +8,8 @@ import {
   logout,
   getMe,
   changePassword,
+  requestPasswordReset,
+  resetPassword,
 } from '../controllers/authController.js';
 
 import {
@@ -76,6 +78,25 @@ router.post(
   ],
   validateRequest,
   changePassword
+);
+
+// Public: forgot password
+router.post(
+  '/forgot-password',
+  [body('email').isEmail().normalizeEmail().withMessage('Valid email is required')],
+  validateRequest,
+  requestPasswordReset
+);
+
+// Public: reset password
+router.post(
+  '/reset-password',
+  [
+    body('token').notEmpty(),
+    body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
+  ],
+  validateRequest,
+  resetPassword
 );
 
 export default router;

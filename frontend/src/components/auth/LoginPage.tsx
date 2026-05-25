@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Eye, EyeOff, Mail, Lock, AlertCircle, GraduationCap } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, AlertCircle, GraduationCap, X, CheckCircle } from 'lucide-react';
 import { authApi } from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
@@ -105,6 +105,34 @@ export default function LoginPage() {
     '0 10px 20px -4px rgba(37,99,235,0.45)',
     '0 2px 4px rgba(37,99,235,0.20)',
   ].join(', ');
+
+  // ── Forgot password modal state ──
+  const [forgotOpen,  setForgotOpen]  = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotSent,  setForgotSent]  = useState(false);
+  const [forgotError, setForgotError] = useState('');
+
+  const handleForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail.trim()) { setForgotError('Please enter your email.'); return; }
+    setForgotLoading(true); setForgotError('');
+    try {
+      await authApi.forgotPassword(forgotEmail.trim());
+      setForgotSent(true);
+    } catch {
+      setForgotError('Something went wrong. Please try again.');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const closeForgot = () => {
+    setForgotOpen(false);
+    setForgotEmail('');
+    setForgotSent(false);
+    setForgotError('');
+  };
 
   return (
     <div style={{
@@ -358,13 +386,13 @@ export default function LoginPage() {
               }}>
                 Password
               </label>
-              <a
-                href="#"
-                onClick={(e) => e.preventDefault()}
-                style={{ fontSize: 11.5, color: 'rgba(96,165,250,0.85)', textDecoration: 'none', fontWeight: 500 }}
+              <button
+                type="button"
+                onClick={() => setForgotOpen(true)}
+                style={{ fontSize: 11.5, color: 'rgba(96,165,250,0.85)', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
               >
                 Forgot?
-              </a>
+              </button>
             </div>
             <div style={{ position: 'relative', marginBottom: errors.password ? 4 : 22 }}>
               <Lock size={15} style={{
@@ -417,32 +445,4 @@ export default function LoginPage() {
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                 height: 44, width: '100%', borderRadius: 12, border: 'none',
-                background: 'linear-gradient(180deg, #3b82f6 0%, #2563eb 100%)',
-                color: '#fff', fontSize: 13.5, fontWeight: 700, letterSpacing: '-0.005em',
-                boxShadow: '0 1px 0 rgba(255,255,255,0.18) inset, 0 10px 20px -4px rgba(37,99,235,0.45), 0 2px 4px rgba(37,99,235,0.20)',
-                cursor: loading ? 'wait' : 'pointer',
-                opacity: loading ? 0.6 : 1,
-                transition: 'all 200ms ease',
-                fontFamily: 'inherit',
-              }}
-            >
-              {loading ? 'Signing in…' : 'Sign in'}
-            </button>
-          </form>
-
-          <p style={{
-            marginTop: 22, fontSize: 11.5, color: 'rgba(255,255,255,0.35)', textAlign: 'center',
-          }}>
-            No account?{' '}
-            <Link
-              to="/register"
-              style={{ color: 'rgba(147,197,253,0.95)', fontWeight: 600, textDecoration: 'none' }}
-            >
-              Request access
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
+                background: 'linear-gradient(180deg, #3b82f6 0%, #2

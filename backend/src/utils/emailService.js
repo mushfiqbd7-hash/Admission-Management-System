@@ -1,4 +1,42 @@
 // src/utils/emailService.js
+
+export async function sendPasswordResetEmail(email, token) {
+  const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  const link = `${baseUrl}/reset-password?token=${token}`;
+
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'api-key': process.env.BREVO_API_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      sender: { name: 'SAMS Admission System', email: process.env.SMTP_USER },
+      to: [{ email }],
+      subject: 'Reset your password - SAMS',
+      htmlContent: `
+        <div style="font-family:sans-serif;max-width:480px;margin:auto">
+          <h2 style="color:#0b1120">Reset your password</h2>
+          <p>We received a request to reset your SAMS password. Click the button below to set a new password.</p>
+          <a href="${link}" style="display:inline-block;margin:16px 0;padding:12px 28px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-weight:600">
+            Reset Password
+          </a>
+          <p style="color:#888;font-size:0.85rem">This link expires in 1 hour. If you didn't request this, you can safely ignore this email.</p>
+          <p style="color:#aaa;font-size:0.8rem">Or copy: ${link}</p>
+        </div>
+      `,
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json();
+    console.error('=== BREVO API ERROR (reset) ===', err);
+    throw new Error(`Brevo API error: ${err.message}`);
+  }
+
+  console.log('=== PASSWORD RESET EMAIL SENT via Brevo ===');
+}
+
 export async function sendVerificationEmail(email, token) {
   const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
   const link = `${baseUrl}/verify-email?token=${token}`;
