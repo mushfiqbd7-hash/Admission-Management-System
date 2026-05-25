@@ -51,25 +51,25 @@ export default function RegisterPage() {
     '0 2px 4px rgba(37,99,235,0.20)',
   ].join(', ');
 
-  // ── Theme-aware style tokens ──
-  const overlayBg   = dark ? 'rgba(0,0,0,0.42)'          : 'rgba(0,0,0,0.25)';
-  const textPrimary = dark ? '#fff'                        : '#0f172a';
-  const textSub     = dark ? 'rgba(255,255,255,0.55)'     : 'rgba(15,23,42,0.55)';
-  const textLabel   = dark ? 'rgba(255,255,255,0.65)'     : 'rgba(15,23,42,0.65)';
-  const textMuted   = dark ? 'rgba(255,255,255,0.35)'     : 'rgba(15,23,42,0.40)';
-  const iconColor   = dark ? 'rgba(255,255,255,0.32)'     : 'rgba(15,23,42,0.30)';
-  const eyeColor    = dark ? 'rgba(255,255,255,0.40)'     : 'rgba(15,23,42,0.35)';
-  const linkColor   = dark ? 'rgba(147,197,253,0.95)'     : '#2563eb';
-  const cardBg      = dark ? 'transparent'                : 'rgba(255,255,255,0.82)';
-  const cardBorder  = dark ? 'none'                       : '1px solid rgba(15,23,42,0.08)';
-  const cardBlur    = dark ? undefined                     : 'blur(20px) saturate(180%)';
-  const cardShadow  = dark ? undefined                     : '0 8px 40px rgba(15,23,42,0.10), 0 1px 0 rgba(255,255,255,0.80) inset';
-  const inputBorder = dark ? 'rgba(255,255,255,0.10)'     : 'rgba(15,23,42,0.14)';
-  const inputBg     = dark ? 'rgba(255,255,255,0.05)'     : 'rgba(255,255,255,0.80)';
-  const inputColor  = dark ? '#fff'                        : '#0f172a';
-  const inputFocusBorder = dark ? 'rgba(96,165,250,0.6)'  : 'rgba(37,99,235,0.50)';
-  const inputFocusBg     = dark ? 'rgba(255,255,255,0.08)': 'rgba(255,255,255,0.95)';
-  const inputBlurBg      = dark ? 'rgba(255,255,255,0.05)': 'rgba(255,255,255,0.80)';
+  // ── Style tokens — card always cinematic/transparent on both themes ──
+  const overlayBg        = dark ? 'rgba(0,0,0,0.42)'       : 'rgba(0,0,0,0.28)';
+  const textPrimary      = '#fff';
+  const textSub          = 'rgba(255,255,255,0.55)';
+  const textLabel        = 'rgba(255,255,255,0.65)';
+  const textMuted        = 'rgba(255,255,255,0.35)';
+  const iconColor        = 'rgba(255,255,255,0.32)';
+  const eyeColor         = 'rgba(255,255,255,0.40)';
+  const linkColor        = 'rgba(147,197,253,0.95)';
+  const cardBg           = 'transparent';
+  const cardBorder       = 'none';
+  const cardBlur         = undefined;
+  const cardShadow       = undefined;
+  const inputBorder      = 'rgba(255,255,255,0.10)';
+  const inputBg          = 'rgba(255,255,255,0.05)';
+  const inputColor       = '#fff';
+  const inputFocusBorder = 'rgba(96,165,250,0.6)';
+  const inputFocusBg     = 'rgba(255,255,255,0.08)';
+  const inputBlurBg      = 'rgba(255,255,255,0.05)';
 
   const inputBase: React.CSSProperties = {
     height: 42, width: '100%', borderRadius: 11,
@@ -275,7 +275,7 @@ export default function RegisterPage() {
                 color: textSub, lineHeight: 1.65,
               }}>
                 We sent a verification link to<br />
-                <span style={{ color: dark ? '#93c5fd' : '#2563eb', fontWeight: 600 }}>{registeredEmail}</span><br /><br />
+                <span style={{ color: '#93c5fd', fontWeight: 600 }}>{registeredEmail}</span><br /><br />
                 Click the link to activate your account.
                 The link expires in 24 hours.
               </p>
