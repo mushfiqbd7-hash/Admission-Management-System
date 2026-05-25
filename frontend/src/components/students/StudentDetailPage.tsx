@@ -94,7 +94,7 @@ function Section({
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_28px_rgba(15,23,42,0.04)]">
       <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-5 py-4">
-        {Icon && <Icon size={16} className="text-[#0f5bff]" />}
+        {Icon && <Icon size={16} className="text-[var(--btn-subtle-color)]" />}
         <h3 className="m-0 text-[14px] font-black text-slate-900">{title}</h3>
       </div>
 
@@ -276,7 +276,7 @@ export default function StudentDetailPage() {
             </span>
 
             {s.priority === 'high' && (
-              <span className="inline-flex items-center gap-1 text-[12px] font-bold text-red-700">
+              <span className="inline-flex items-center gap-1 text-[12px] font-bold text-[var(--btn-danger-soft-color)]">
                 <AlertCircle size={13} /> High Priority
               </span>
             )}
@@ -284,7 +284,7 @@ export default function StudentDetailPage() {
 
           <div className="mt-1 text-[13px] text-slate-500">
             App No:{' '}
-            <span className="font-mono font-bold text-blue-700">
+            <span className="font-mono font-bold text-[var(--btn-subtle-color)]">
               {s.application_number || '-'}
             </span>
             <span className="mx-2">·</span>
@@ -321,7 +321,7 @@ export default function StudentDetailPage() {
           {canEditApplication && (
             <button
               onClick={() => navigate(`/students/${id}/edit`)}
-              className="flex h-10 items-center gap-2 rounded-xl bg-[#0f5bff] px-4 text-[13px] font-bold text-white"
+              className="flex h-10 items-center gap-2 rounded-xl [background:var(--btn-primary-bg)] px-4 text-[13px] font-bold text-[var(--btn-primary-color)]"
             >
               <Pencil size={15} /> Edit
             </button>
@@ -343,7 +343,7 @@ export default function StudentDetailPage() {
             onClick={() => setTab(tid as typeof tab)}
             className={`flex items-center gap-2 border-b-2 px-5 py-4 text-[13px] font-bold ${
               tab === tid
-                ? 'border-[#0f5bff] text-[#0f5bff]'
+                ? 'border-[var(--btn-subtle-border)] text-[var(--btn-subtle-color)]'
                 : 'border-transparent text-slate-500'
             }`}
           >
@@ -537,7 +537,7 @@ export default function StudentDetailPage() {
               {canManageApplication && uploadedCount > 0 && (
                 <button
                   onClick={handleExportDocs}
-                  className="flex h-10 items-center gap-2 rounded-xl bg-[#0f5bff] px-4 text-[13px] font-bold text-white"
+                  className="flex h-10 items-center gap-2 rounded-xl [background:var(--btn-primary-bg)] px-4 text-[13px] font-bold text-[var(--btn-primary-color)]"
                 >
                   <Download size={15} /> Download ZIP
                 </button>
@@ -564,7 +564,7 @@ export default function StudentDetailPage() {
                           : 'border-slate-300 bg-white'
                       }`}
                     >
-                      {uploaded && <CheckCircle size={13} color="#fff" />}
+                      {uploaded && <CheckCircle size={13} color="var(--btn-success-color)" />}
                     </div>
 
                     <div className="w-7 text-right text-[12px] text-slate-400">
@@ -588,7 +588,7 @@ export default function StudentDetailPage() {
                       <button
                         type="button"
                         onClick={() => handleViewDoc(uploaded.id!)}
-                        className="flex h-9 shrink-0 items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 text-[12px] font-black text-blue-700"
+                        className="flex h-9 shrink-0 items-center gap-2 rounded-xl border border-[var(--btn-subtle-border)] bg-[var(--btn-subtle-bg)] px-3 text-[12px] font-black text-[var(--btn-subtle-color)]"
                       >
                         <Eye size={14} />
                         View
@@ -614,14 +614,14 @@ export default function StudentDetailPage() {
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Write an application note..."
-                  className="mb-3 w-full resize-none rounded-xl border border-slate-200 p-4 text-[13px] outline-none focus:ring-2 focus:ring-blue-100"
+                  className="mb-3 w-full resize-none rounded-xl border border-slate-200 p-4 text-[13px] outline-none focus:ring-2 focus:ring-[rgba(96,165,250,0.28)]"
                 />
 
                 <div className="flex justify-end">
                   <button
                     onClick={() => noteMutation.mutate(note)}
                     disabled={!note.trim() || noteMutation.isPending}
-                    className="flex h-10 items-center gap-2 rounded-xl bg-[#0f5bff] px-4 text-[13px] font-bold text-white disabled:opacity-50"
+                    className="flex h-10 items-center gap-2 rounded-xl [background:var(--btn-primary-bg)] px-4 text-[13px] font-bold text-[var(--btn-primary-color)] disabled:opacity-50"
                   >
                     <Send size={15} />
                     {noteMutation.isPending ? 'Adding...' : 'Add Note'}
@@ -643,7 +643,7 @@ export default function StudentDetailPage() {
               >
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-[11px] font-black text-white">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-[11px] font-black text-[var(--btn-primary-color)]">
                       {(n.author || 'A').charAt(0).toUpperCase()}
                     </div>
 

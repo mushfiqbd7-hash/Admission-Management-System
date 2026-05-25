@@ -11,14 +11,14 @@ function SettingsCard({ icon: Icon, title, description, children }: {
   icon: any; title: string; description?: string; children: ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_40px_rgba(15,23,42,0.05)]">
-      <div className="flex items-center gap-4 border-b border-slate-100 bg-slate-50/90 px-7 py-6">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-blue-100 bg-blue-50 text-[#2563eb]">
+    <div className="overflow-hidden rounded-[20px] border border-border bg-surface shadow-[var(--sh-card)]">
+      <div className="flex items-center gap-4 border-b border-border bg-surface-muted px-7 py-6">
+        <div className="flex h-14 w-14 items-center justify-center rounded-[14px] border border-[var(--btn-subtle-border)] bg-[var(--btn-subtle-bg)] text-[var(--btn-subtle-color)]">
           <Icon size={24} />
         </div>
         <div className="min-w-0">
-          <h3 className="m-0 text-[18px] font-black tracking-[-0.03em] text-slate-950">{title}</h3>
-          {description && <p className="mt-1 text-[14px] font-medium text-slate-500">{description}</p>}
+          <h3 className="m-0 text-[18px] font-black tracking-[-0.03em] text-primary">{title}</h3>
+          {description && <p className="mt-1 text-[14px] font-medium text-secondary">{description}</p>}
         </div>
       </div>
       <div className="p-7">{children}</div>
@@ -28,7 +28,7 @@ function SettingsCard({ icon: Icon, title, description, children }: {
 
 function FieldLabel({ children, required = false }: { children: ReactNode; required?: boolean }) {
   return (
-    <label className="mb-2 block text-[13px] font-bold text-slate-700">
+    <label className="mb-2 block text-[13px] font-bold text-secondary">
       {children}
       {required && <span className="ml-1 text-red-500">*</span>}
     </label>
@@ -39,7 +39,7 @@ function InputField(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-12 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 text-[14px] font-medium text-slate-800 outline-none transition focus:border-blue-500 focus:bg-white"
+      className="h-12 w-full rounded-[12px] border border-[var(--ui-border-strong)] bg-surface px-4 text-[14px] font-medium text-primary outline-none transition focus:border-[var(--accent)] focus:bg-surface"
     />
   );
 }
@@ -51,7 +51,7 @@ function PrimaryButton({ children, disabled, onClick }: {
     <button
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex h-12 items-center justify-center rounded-2xl bg-[#2563eb] px-6 text-[14px] font-extrabold text-white shadow-[0_14px_28px_rgba(37,99,235,0.22)] transition hover:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-60"
+      className="btn-primary h-12 px-6 text-[14px] font-extrabold disabled:cursor-not-allowed disabled:opacity-60"
     >
       {children}
     </button>
@@ -59,7 +59,7 @@ function PrimaryButton({ children, disabled, onClick }: {
 }
 
 function Spinner() {
-  return <span className="inline-block h-[14px] w-[14px] animate-spin rounded-full border-2 border-white/30 border-t-white" />;
+  return <span className="inline-block h-[14px] w-[14px] animate-spin rounded-full border-2 border-current/30 border-t-current" />;
 }
 
 export default function SettingsPage() {
@@ -157,7 +157,7 @@ export default function SettingsPage() {
 
           <div className="space-y-6">
             <SettingsCard icon={User} title="Account Information" description="Current signed-in user">
-              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+              <div className="rounded-[16px] border border-border bg-surface-muted p-5">
                 <div className="flex items-center gap-4">
 
                   {/* Avatar with upload overlay */}
@@ -178,7 +178,7 @@ export default function SettingsPage() {
                     <button
                       onClick={() => !avatarUploading && fileInputRef.current?.click()}
                       disabled={avatarUploading}
-                      className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-[#2563eb] text-white shadow-md transition hover:bg-[#1d4ed8] disabled:opacity-60"
+                      className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-[var(--surface)] [background:var(--btn-primary-bg)] text-[var(--btn-primary-color)] shadow-md transition disabled:opacity-60"
                       title="Upload profile picture"
                     >
                       {avatarUploading
@@ -196,13 +196,13 @@ export default function SettingsPage() {
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <div className="truncate text-[18px] font-black tracking-[-0.03em] text-slate-950">{displayName}</div>
-                    <div className="mt-1 truncate text-[14px] font-medium text-slate-500">{displayEmail}</div>
+                    <div className="truncate text-[18px] font-black tracking-[-0.03em] text-primary">{displayName}</div>
+                    <div className="mt-1 truncate text-[14px] font-medium text-secondary">{displayEmail}</div>
                     <div className="mt-2">
-                      <span className="text-[11px] font-semibold text-slate-400">Max 200 KB · JPG, PNG, WebP</span>
+                      <span className="text-[11px] font-semibold text-tertiary">Max 200 KB · JPG, PNG, WebP</span>
                     </div>
                     <div className="mt-3">
-                      <span className="inline-flex rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-[12px] font-black capitalize text-[#2563eb]">
+                      <span className="inline-flex rounded-full border border-[var(--btn-subtle-border)] bg-[var(--btn-subtle-bg)] px-3 py-1.5 text-[12px] font-black capitalize text-[var(--btn-subtle-color)]">
                         {displayRole}
                       </span>
                     </div>
@@ -218,9 +218,9 @@ export default function SettingsPage() {
                   ['Backend', 'Node.js + Express'],
                   ['Database', 'PostgreSQL'],
                 ].map(([label, value]) => (
-                  <div key={label} className="flex items-center justify-between border-b border-slate-100 pb-4 last:border-b-0 last:pb-0">
-                    <span className="text-[13px] font-semibold text-slate-500">{label}</span>
-                    <span className="rounded-full bg-slate-50 px-3 py-1 font-mono text-[12px] font-black text-slate-800">{value}</span>
+                  <div key={label} className="flex items-center justify-between border-b border-border pb-4 last:border-b-0 last:pb-0">
+                    <span className="text-[13px] font-semibold text-secondary">{label}</span>
+                    <span className="rounded-full bg-surface-muted px-3 py-1 font-mono text-[12px] font-black text-primary">{value}</span>
                   </div>
                 ))}
               </div>

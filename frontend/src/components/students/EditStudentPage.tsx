@@ -23,7 +23,7 @@ export default function EditStudentPage() {
   );
 
   if (isError || !data) return (
-    <div style={{ padding: 40, textAlign: 'center', color: '#dc2626', fontSize: 13 }}>Student not found.</div>
+    <div style={{ padding: 40, textAlign: 'center', color: 'var(--btn-danger-soft-color)', fontSize: 13 }}>Student not found.</div>
   );
 
   const s = data.student;

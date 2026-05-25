@@ -75,7 +75,7 @@ function RowCard({ title, onRemove, children }: { title: string; onRemove?: () =
         <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--navy-600)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{title}</span>
         {onRemove && (
           <button type="button" onClick={onRemove}
-            style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 6, border: '1px solid #fecdd3', background: 'var(--status-rejected-bg)', color: '#dc2626', fontSize: 11.5, cursor: 'pointer', fontFamily: 'var(--font-ui)' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 6, border: '1px solid var(--btn-danger-soft-border)', background: 'var(--btn-danger-soft-bg)', color: 'var(--btn-danger-soft-color)', fontSize: 11.5, cursor: 'pointer', fontFamily: 'var(--font-ui)' }}>
             <Trash2 size={12} /> Remove
           </button>
         )}
@@ -88,7 +88,7 @@ function RowCard({ title, onRemove, children }: { title: string; onRemove?: () =
 function AddRowBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button type="button" onClick={onClick}
-      style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px', border: '1px dashed var(--navy-200)', borderRadius: 'var(--radius-md)', background: 'var(--navy-50)', color: 'var(--navy-500)', fontSize: 12.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', transition: 'background 0.15s' }}>
+      style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px', border: '1px dashed var(--btn-subtle-border)', borderRadius: 'var(--radius-md)', background: 'var(--btn-subtle-bg)', color: 'var(--btn-subtle-color)', fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-ui)', transition: 'background 0.15s' }}>
       + {label}
     </button>
   );
@@ -851,8 +851,8 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
       case 'documents': return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: 'var(--accent-light)', border: '1px solid var(--status-processing-border)', borderRadius: 'var(--radius-md)', padding: '12px 16px' }}>
-            <AlertCircle size={15} style={{ color: '#1d4ed8', flexShrink: 0, marginTop: 1 }} />
-            <p style={{ margin: 0, fontSize: 12.5, color: '#1e40af' }}>
+            <AlertCircle size={15} style={{ color: 'var(--btn-subtle-color)', flexShrink: 0, marginTop: 1 }} />
+            <p style={{ margin: 0, fontSize: 12.5, color: 'var(--btn-subtle-color)' }}>
               <strong>Maximum file size:</strong> 1.5 MB per document. Accepted formats: PDF, JPG, PNG, DOC, DOCX.
             </p>
           </div>
@@ -870,18 +870,18 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
                     background: uploaded ? 'var(--status-approved-bg)' : 'var(--surface)',
                     transition: 'background 0.15s',
                   }}>
-                    <div style={{ width: 18, height: 18, borderRadius: 5, background: uploaded ? '#16a34a' : 'var(--gray-100)', border: `1px solid ${uploaded ? '#16a34a' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      {uploaded && <CheckCircle size={11} color="#fff" />}
+                    <div style={{ width: 18, height: 18, borderRadius: 5, background: uploaded ? 'var(--btn-success-bg)' : 'var(--surface-muted)', border: `1px solid ${uploaded ? 'var(--btn-success-border)' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {uploaded && <CheckCircle size={11} color="var(--btn-success-color)" />}
                     </div>
 
                     <span style={{ fontSize: 11, color: 'var(--text-tertiary)', width: 22, textAlign: 'right', flexShrink: 0 }}>{idx+1}.</span>
 
                     <span style={{ flex: 1, fontSize: 13, color: uploaded ? 'var(--text-primary)' : 'var(--text-secondary)', fontWeight: uploaded ? 500 : 400 }}>
                       {doc.label}
-                      {doc.required && <span style={{ marginLeft: 6, fontSize: 10.5, color: '#dc2626', fontWeight: 600 }}>Required</span>}
+                      {doc.required && <span style={{ marginLeft: 6, fontSize: 10.5, color: 'var(--btn-danger-soft-color)', fontWeight: 600 }}>Required</span>}
                     </span>
 
-                    {uploaded && <span style={{ fontSize: 11.5, color: '#16a34a', maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{uploaded.file_name}</span>}
+                    {uploaded && <span style={{ fontSize: 11.5, color: 'var(--btn-success-soft-color)', maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{uploaded.file_name}</span>}
 
                     <input type="file" style={{ display: 'none' }} ref={el => { fileRefs.current[doc.key] = el; }}
                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
@@ -889,14 +889,14 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
 
                     <button disabled={isUp}
                       onClick={() => fileRefs.current[doc.key]?.click()}
-                      style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, fontSize: 11.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', border: '1px solid', opacity: isUp ? 0.5 : 1, transition: 'all 0.15s', background: uploaded ? 'var(--status-approved-bg)' : 'var(--navy-600)', color: uploaded ? '#15803d' : '#fff', borderColor: uploaded ? 'var(--status-approved-border)' : 'var(--navy-600)' }}>
+                      style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, fontSize: 11.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-ui)', border: '1px solid', opacity: isUp ? 0.5 : 1, transition: 'all 0.15s', background: uploaded ? 'var(--btn-success-soft-bg)' : 'var(--btn-primary-bg)', color: uploaded ? 'var(--btn-success-soft-color)' : 'var(--btn-primary-color)', borderColor: uploaded ? 'var(--btn-success-soft-border)' : 'var(--btn-primary-border)' }}>
                       {isUp ? <span style={{ width: 11, height: 11, border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.7s linear infinite', display: 'inline-block' }} /> : <Upload size={11} />}
                       {uploaded ? 'Replace' : 'Upload'}
                     </button>
 
                     {uploaded && (
                       <button type="button" onClick={() => handleViewDoc(doc.key)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, border: '1px solid var(--status-processing-border)', background: 'var(--accent-light)', color: '#1d4ed8', fontSize: 11.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', flexShrink: 0 }}>
+                        style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 6, border: '1px solid var(--btn-subtle-border)', background: 'var(--btn-subtle-bg)', color: 'var(--btn-subtle-color)', fontSize: 11.5, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', flexShrink: 0 }}>
                         <Eye size={11} />
                         View
                       </button>
@@ -904,7 +904,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
 
                     {uploaded && (
                       <button onClick={() => handleDeleteDoc(doc.key)}
-                        style={{ width: 26, height: 26, borderRadius: 6, border: '1px solid #fecdd3', background: 'var(--status-rejected-bg)', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
+                        style={{ width: 26, height: 26, borderRadius: 6, border: '1px solid var(--btn-danger-soft-border)', background: 'var(--btn-danger-soft-bg)', color: 'var(--btn-danger-soft-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
                         <Trash2 size={12} />
                       </button>
                     )}
@@ -992,14 +992,14 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
                 borderRadius: 7, border: 'none', cursor: 'pointer', marginBottom: 2, textAlign: 'left',
                 fontFamily: 'var(--font-ui)', fontSize: 12.5, fontWeight: isActive ? 600 : 400,
                 background: isActive ? 'var(--navy-600)' : 'transparent',
-                color: isActive ? '#fff' : isDone ? 'var(--text-secondary)' : 'var(--text-tertiary)',
+                color: isActive ? 'var(--btn-primary-color)' : isDone ? 'var(--text-secondary)' : 'var(--text-tertiary)',
                 transition: 'background 0.15s, color 0.15s',
               }}
               onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'var(--surface-sunken)'; }}
               onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
             >
               {isDone
-                ? <CheckCircle size={14} style={{ flexShrink: 0, color: '#16a34a' }} />
+                ? <CheckCircle size={14} style={{ flexShrink: 0, color: 'var(--btn-success-soft-color)' }} />
                 : <Icon size={14} style={{ flexShrink: 0 }} />
               }
               <span>{sec.label}</span>
@@ -1044,9 +1044,9 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
               </button>
             ) : (
               <button onClick={handleFinish} disabled={isMutating}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 'var(--radius-md)', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-ui)', opacity: isMutating ? 0.6 : 1, transition: 'background 0.15s' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#15803d'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#16a34a'; }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px', background: 'var(--btn-success-bg)', color: 'var(--btn-success-color)', border: '1px solid var(--btn-success-border)', borderRadius: 'var(--radius-md)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-ui)', opacity: isMutating ? 0.6 : 1, transition: 'background 0.15s' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--btn-success-bg-hover)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'var(--btn-success-bg)'; }}>
                 <Send size={13} />
                 {isMutating ? 'Submitting…' : 'Submit Application'}
               </button>
@@ -1090,7 +1090,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
               </button>
 
               <button onClick={handleSubmitConfirmed} disabled={isMutating}
-                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 14px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 'var(--radius-md)', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-ui)', opacity: isMutating ? 0.6 : 1 }}>
+                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 14px', background: 'var(--btn-success-bg)', color: 'var(--btn-success-color)', border: '1px solid var(--btn-success-border)', borderRadius: 'var(--radius-md)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-ui)', opacity: isMutating ? 0.6 : 1 }}>
                 <Send size={13} />
                 {isMutating ? 'Submitting…' : 'Confirm & Submit'}
               </button>

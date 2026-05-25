@@ -56,19 +56,19 @@ function statusStyle(status?: string): CSSProperties {
 
   switch (status) {
     case 'pending':
-      return { ...base, background: 'var(--status-pending-bg)', color: '#b45309', border: '1px solid var(--status-pending-border)' };
+      return { ...base, background: 'var(--status-pending-bg)', color: 'var(--status-pending-text)', border: '1px solid var(--status-pending-border)' };
     case 'approved':
-      return { ...base, background: 'var(--status-approved-bg)', color: '#15803d', border: '1px solid var(--status-approved-border)' };
+      return { ...base, background: 'var(--status-approved-bg)', color: 'var(--status-approved-text)', border: '1px solid var(--status-approved-border)' };
     case 'processing':
-      return { ...base, background: 'var(--status-processing-bg)', color: '#4338ca', border: '1px solid var(--status-processing-border)' };
+      return { ...base, background: 'var(--status-processing-bg)', color: 'var(--status-processing-text)', border: '1px solid var(--status-processing-border)' };
     case 'pre_admission':
-      return { ...base, background: 'var(--status-pre-bg)', color: '#7e22ce', border: '1px solid var(--status-pre-border)' };
+      return { ...base, background: 'var(--status-pre-bg)', color: 'var(--status-pre-text)', border: '1px solid var(--status-pre-border)' };
     case 'admitted':
-      return { ...base, background: 'var(--status-admitted-bg)', color: '#0f766e', border: '1px solid var(--status-admitted-border)' };
+      return { ...base, background: 'var(--status-admitted-bg)', color: 'var(--status-admitted-text)', border: '1px solid var(--status-admitted-border)' };
     case 'rejected':
-      return { ...base, background: 'var(--status-rejected-bg)', color: '#dc2626', border: '1px solid var(--status-rejected-border)' };
+      return { ...base, background: 'var(--status-rejected-bg)', color: 'var(--status-rejected-text)', border: '1px solid var(--status-rejected-border)' };
     case 'revoked':
-      return { ...base, background: 'var(--status-revoked-bg)', color: '#c2410c', border: '1px solid var(--status-revoked-border)' };
+      return { ...base, background: 'var(--status-revoked-bg)', color: 'var(--status-revoked-text)', border: '1px solid var(--status-revoked-border)' };
     case 'draft':
       return { ...base, background: 'var(--ui-surface-subtle)', color: 'var(--ui-text-muted)', border: '1px solid var(--ui-border)' };
     default:
@@ -79,19 +79,19 @@ function statusStyle(status?: string): CSSProperties {
 function statusDot(status?: string): CSSProperties {
   const color =
     status === 'pending'
-      ? '#f59e0b'
+      ? 'var(--status-pending-text)'
       : status === 'approved'
-      ? '#16a34a'
+      ? 'var(--status-approved-text)'
       : status === 'processing'
-      ? '#4f46e5'
+      ? 'var(--status-processing-text)'
       : status === 'pre_admission'
-      ? '#9333ea'
+      ? 'var(--status-pre-text)'
       : status === 'admitted'
-      ? '#0f766e'
+      ? 'var(--status-admitted-text)'
       : status === 'rejected'
-      ? '#ef4444'
+      ? 'var(--status-rejected-text)'
       : status === 'revoked'
-      ? '#ea580c'
+      ? 'var(--status-revoked-text)'
       : 'var(--ui-text-subtle)';
 
   return {
@@ -129,10 +129,10 @@ function ActionBtn({
 }) {
   const toneStyle =
     tone === 'red'
-      ? { color: '#dc2626', bg: 'var(--status-rejected-bg)', border: 'var(--status-rejected-border)' }
+      ? { color: 'var(--btn-danger-soft-color)', bg: 'var(--btn-danger-soft-bg)', border: 'var(--btn-danger-soft-border)' }
       : tone === 'amber'
-      ? { color: '#b45309', bg: 'var(--status-pending-bg)', border: 'var(--status-pending-border)' }
-      : { color: '#1d4ed8', bg: 'var(--accent-light)', border: 'var(--status-processing-border)' };
+      ? { color: 'var(--status-pending-text)', bg: 'var(--status-pending-bg)', border: 'var(--status-pending-border)' }
+      : { color: 'var(--btn-subtle-color)', bg: 'var(--btn-subtle-bg)', border: 'var(--btn-subtle-border)' };
 
   return (
     <button
@@ -650,7 +650,7 @@ export default function StudentsPage() {
           <div style={modalCardStyle}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
               <div style={deleteIconStyle}>
-                <Trash2 size={20} style={{ color: '#dc2626' }} />
+                <Trash2 size={20} style={{ color: 'var(--btn-danger-soft-color)' }} />
               </div>
 
               <div>
@@ -719,7 +719,7 @@ const headerIconStyle: CSSProperties = {
   borderRadius: 17,
   border: '1px solid var(--status-processing-border)',
   background: 'var(--accent-light)',
-  color: '#2563eb',
+  color: 'var(--btn-subtle-color)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -748,8 +748,8 @@ const addBtnStyle: CSSProperties = {
   padding: '0 18px',
   borderRadius: 14,
   border: 'none',
-  background: '#1e3a5f',
-  color: '#ffffff',
+  background: 'var(--btn-primary-bg)',
+  color: 'var(--btn-primary-color)',
   fontSize: 13.5,
   fontWeight: 950,
   cursor: 'pointer',
@@ -757,7 +757,7 @@ const addBtnStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: 8,
-  boxShadow: '0 14px 26px rgba(30,58,95,0.22)',
+  boxShadow: 'var(--btn-primary-shadow)',
   whiteSpace: 'nowrap',
 };
 
@@ -838,7 +838,7 @@ const clearFilterBtnStyle: CSSProperties = {
   borderRadius: 14,
   border: '1px solid var(--status-rejected-border)',
   background: 'var(--status-rejected-bg)',
-  color: '#dc2626',
+  color: 'var(--btn-danger-soft-color)',
   fontSize: 13,
   fontWeight: 900,
   cursor: 'pointer',
@@ -865,7 +865,7 @@ const filterChipStyle: CSSProperties = {
   borderRadius: 999,
   border: '1px solid var(--status-processing-border)',
   background: 'var(--accent-light)',
-  color: '#1d4ed8',
+  color: 'var(--btn-subtle-color)',
   display: 'inline-flex',
   alignItems: 'center',
   padding: '0 10px',
@@ -984,7 +984,7 @@ const appNoStyle: CSSProperties = {
   borderRadius: 999,
   border: '1px solid var(--status-processing-border)',
   background: 'var(--accent-light)',
-  color: '#1d4ed8',
+  color: 'var(--btn-subtle-color)',
   fontSize: 11.5,
   fontWeight: 950,
   fontFamily: 'Inter, sans-serif',
@@ -1074,7 +1074,7 @@ const priorityHighStyle: CSSProperties = {
   borderRadius: 999,
   border: '1px solid var(--status-rejected-border)',
   background: 'var(--status-rejected-bg)',
-  color: '#dc2626',
+  color: 'var(--btn-danger-soft-color)',
   fontSize: 12,
   fontWeight: 950,
   whiteSpace: 'nowrap',
@@ -1142,7 +1142,7 @@ const emptyActionStyle: CSSProperties = {
   borderRadius: 13,
   border: '1px solid var(--status-processing-border)',
   background: 'var(--accent-light)',
-  color: '#1d4ed8',
+  color: 'var(--btn-subtle-color)',
   fontSize: 13,
   fontWeight: 900,
   cursor: 'pointer',
@@ -1252,8 +1252,8 @@ const confirmDeleteBtnStyle: CSSProperties = {
   height: 42,
   borderRadius: 14,
   border: 'none',
-  background: '#dc2626',
-  color: '#ffffff',
+  background: 'var(--btn-danger-bg)',
+  color: 'var(--btn-danger-color)',
   fontSize: 13,
   fontWeight: 950,
   cursor: 'pointer',

@@ -14,10 +14,10 @@ export function FormField({ label, required, error, children, className }: Field
     <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }} className={className}>
       <label style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-secondary)', letterSpacing: '0.01em' }}>
         {label}
-        {required && <span style={{ color: '#dc2626', marginLeft: 2 }}>*</span>}
+        {required && <span style={{ color: 'var(--btn-danger-soft-color)', marginLeft: 2 }}>*</span>}
       </label>
       {children}
-      {error && <p style={{ fontSize: 11.5, color: '#dc2626', margin: 0 }}>{error}</p>}
+      {error && <p style={{ fontSize: 11.5, color: 'var(--btn-danger-soft-color)', margin: 0 }}>{error}</p>}
     </div>
   );
 }
@@ -142,7 +142,7 @@ export function FormSection({ title, children, className }: SectionProps) {
   return (
     <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-xs)' }} className={className}>
       <div style={{ padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--surface-sunken)' }}>
-        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--navy-600)', textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>{title}</span>
+        <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--accent)', textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>{title}</span>
       </div>
       <div style={{ padding: '18px 20px' }}>{children}</div>
     </div>

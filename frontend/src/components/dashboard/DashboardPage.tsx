@@ -70,58 +70,58 @@ const statusStyle = (
 ): { bg: string; text: string; dot: string; border: string } =>
   ({
     pending: {
-      bg: '#fff7ed',
-      text: '#c2410c',
+      bg: 'var(--status-pending-bg)',
+      text: 'var(--status-pending-text)',
       dot: '#f97316',
-      border: '#fed7aa',
+      border: 'var(--status-pending-border)',
     },
     processing: {
-      bg: '#eef2ff',
-      text: '#4338ca',
+      bg: 'var(--status-processing-bg)',
+      text: 'var(--status-processing-text)',
       dot: '#6366f1',
-      border: '#c7d2fe',
+      border: 'var(--status-processing-border)',
     },
     pre_admission: {
-      bg: '#ecfeff',
-      text: '#0e7490',
-      dot: '#06b6d4',
-      border: '#a5f3fc',
+      bg: 'var(--status-pre-bg)',
+      text: 'var(--status-pre-text)',
+      dot: '#a855f7',
+      border: 'var(--status-pre-border)',
     },
     approved: {
-      bg: '#f0fdf4',
-      text: '#15803d',
-      dot: '#22c55e',
-      border: '#bbf7d0',
+      bg: 'var(--status-approved-bg)',
+      text: 'var(--status-approved-text)',
+      dot: 'var(--status-approved-text)',
+      border: 'var(--status-approved-border)',
     },
     admitted: {
-      bg: '#f0fdfa',
-      text: '#0f766e',
-      dot: '#14b8a6',
-      border: '#99f6e4',
+      bg: 'var(--status-admitted-bg)',
+      text: 'var(--status-admitted-text)',
+      dot: 'var(--status-admitted-text)',
+      border: 'var(--status-admitted-border)',
     },
     rejected: {
-      bg: '#fef2f2',
-      text: '#dc2626',
-      dot: '#ef4444',
-      border: '#fecaca',
+      bg: 'var(--status-rejected-bg)',
+      text: 'var(--status-rejected-text)',
+      dot: 'var(--status-rejected-text)',
+      border: 'var(--status-rejected-border)',
     },
     revoked: {
-      bg: '#fff7ed',
-      text: '#c2410c',
-      dot: '#fb923c',
-      border: '#fed7aa',
+      bg: 'var(--status-revoked-bg)',
+      text: 'var(--status-revoked-text)',
+      dot: 'var(--status-revoked-text)',
+      border: 'var(--status-revoked-border)',
     },
     draft: {
-      bg: '#f8fafc',
-      text: '#64748b',
+      bg: 'var(--status-draft-bg)',
+      text: 'var(--status-draft-text)',
       dot: '#94a3b8',
-      border: '#e2e8f0',
+      border: 'var(--status-draft-border)',
     },
   })[s] || {
-    bg: '#f8fafc',
-    text: '#334155',
+    bg: 'var(--ui-surface-subtle)',
+    text: 'var(--ui-text-strong)',
     dot: '#94a3b8',
-    border: '#e2e8f0',
+    border: 'var(--ui-border)',
   };
 
 const getSubmitter = (s: Student) => {
@@ -227,7 +227,7 @@ function Panel({
       <div style={panelHeaderStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11, minWidth: 0 }}>
           <div style={panelIconStyle}>
-            <Icon size={16} style={{ color: '#2563eb' }} />
+            <Icon size={16} style={{ color: 'var(--btn-subtle-color)' }} />
           </div>
 
           <div style={{ minWidth: 0 }}>
@@ -275,9 +275,9 @@ function PagBtn({
         height: 28,
         padding: '0 8px',
         borderRadius: 9,
-        border: `1px solid ${active ? '#2563eb' : '#e2e8f0'}`,
-        background: active ? '#2563eb' : '#ffffff',
-        color: active ? '#ffffff' : '#64748b',
+        border: `1px solid ${active ? 'var(--btn-primary-border)' : 'var(--ui-border)'}`,
+        background: active ? 'var(--btn-primary-bg)' : 'var(--surface)',
+        color: active ? 'var(--btn-primary-color)' : 'var(--ui-text-muted)',
         fontSize: 11.5,
         fontWeight: 800,
         cursor: disabled ? 'not-allowed' : 'pointer',
@@ -349,56 +349,56 @@ export default function DashboardPage() {
       label: 'Total',
       value: n(stats?.total),
       icon: FileText,
-      color: '#2563eb',
-      bg: '#eff6ff',
+      color: 'var(--btn-subtle-color)',
+      bg: 'var(--btn-subtle-bg)',
       filter: null,
     },
     {
       label: 'Pending',
       value: n(stats?.pending),
       icon: Clock,
-      color: '#f97316',
-      bg: '#fff7ed',
+      color: 'var(--status-pending-text)',
+      bg: 'var(--status-pending-bg)',
       filter: 'pending',
     },
     {
       label: 'Approved',
       value: n(stats?.approved),
       icon: CheckCircle,
-      color: '#16a34a',
-      bg: '#f0fdf4',
+      color: 'var(--status-approved-text)',
+      bg: 'var(--status-approved-bg)',
       filter: 'approved',
     },
     {
       label: 'Rejected',
       value: n(stats?.rejected),
       icon: XCircle,
-      color: '#dc2626',
-      bg: '#fef2f2',
+      color: 'var(--status-rejected-text)',
+      bg: 'var(--status-rejected-bg)',
       filter: 'rejected',
     },
     {
       label: 'Processing',
       value: n(stats?.processing),
       icon: Loader2,
-      color: '#4f46e5',
-      bg: '#eef2ff',
+      color: 'var(--status-processing-text)',
+      bg: 'var(--status-processing-bg)',
       filter: 'processing',
     },
     {
       label: 'Pre Admission',
       value: n(stats?.pre_admission),
       icon: Users,
-      color: '#0891b2',
-      bg: '#ecfeff',
+      color: 'var(--status-pre-text)',
+      bg: 'var(--status-pre-bg)',
       filter: 'pre_admission',
     },
     {
       label: 'Admitted',
       value: n(stats?.admitted),
       icon: GraduationCap,
-      color: '#0f766e',
-      bg: '#f0fdfa',
+      color: 'var(--status-admitted-text)',
+      bg: 'var(--status-admitted-bg)',
       filter: 'admitted',
     },
   ];
@@ -685,7 +685,7 @@ export default function DashboardPage() {
                           transition: 'background 0.12s ease',
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.background = '#fbfdff';
+                          e.currentTarget.style.background = 'var(--ui-surface-subtle)';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.background = 'transparent';
@@ -821,7 +821,7 @@ export default function DashboardPage() {
                       >
                         <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                           <div style={sideIconStyle}>
-                            <FileText size={14} style={{ color: '#2563eb' }} />
+                            <FileText size={14} style={{ color: 'var(--btn-subtle-color)' }} />
                           </div>
 
                           <div style={{ flex: 1, minWidth: 0 }}>
@@ -892,7 +892,7 @@ export default function DashboardPage() {
                       }
                       style={{
                         ...sideItemBtnStyle,
-                        background: item.is_read ? 'transparent' : '#f8fbff',
+                        background: item.is_read ? 'transparent' : 'var(--ui-surface-subtle)',
                       }}
                     >
                       <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start' }}>
@@ -901,7 +901,7 @@ export default function DashboardPage() {
                             width: 7,
                             height: 7,
                             borderRadius: '50%',
-                            background: item.is_read ? '#cbd5e1' : '#2563eb',
+                            background: item.is_read ? 'var(--ui-border-strong)' : 'var(--btn-subtle-color)',
                             marginTop: 6,
                             flexShrink: 0,
                           }}
@@ -929,26 +929,26 @@ export default function DashboardPage() {
       {/* Link generated modal */}
       {linkModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 300, backdropFilter: 'blur(4px)' }}>
-          <div style={{ background: '#fff', borderRadius: 16, padding: '28px 28px 24px', width: 480, boxShadow: '0 24px 64px rgba(15,23,42,0.18)' }}>
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--ui-border)', borderRadius: 16, padding: '28px 28px 24px', width: 480, boxShadow: 'var(--sh-card)' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-              <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#eff6ff', border: '2px solid #bfdbfe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Link2 size={24} style={{ color: '#2563eb' }} />
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--btn-subtle-bg)', border: '2px solid var(--btn-subtle-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Link2 size={24} style={{ color: 'var(--btn-subtle-color)' }} />
               </div>
             </div>
-            <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: '#0f172a', textAlign: 'center' }}>Application Link Generated</h3>
-            <p style={{ margin: '0 0 18px', fontSize: 12.5, color: '#64748b', textAlign: 'center' }}>
+            <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', textAlign: 'center' }}>Application Link Generated</h3>
+            <p style={{ margin: '0 0 18px', fontSize: 12.5, color: 'var(--ui-text-muted)', textAlign: 'center' }}>
               Share this link with the applicant. Expires in 7 days or after one submission.
             </p>
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
-              <span style={{ fontSize: 12, color: '#334155', fontFamily: 'Inter, sans-serif', wordBreak: 'break-all' }}>{linkModal.link}</span>
+            <div style={{ background: 'var(--ui-surface-subtle)', border: '1px solid var(--ui-border)', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
+              <span style={{ fontSize: 12, color: 'var(--ui-text-strong)', fontFamily: 'Inter, sans-serif', wordBreak: 'break-all' }}>{linkModal.link}</span>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
-              <button onClick={() => setLinkModal(null)} style={{ flex: 1, padding: '9px 0', border: '1px solid #e2e8f0', borderRadius: 10, background: '#fff', color: '#64748b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+              <button onClick={() => setLinkModal(null)} style={{ flex: 1, padding: '9px 0', border: '1px solid var(--btn-secondary-border)', borderRadius: 10, background: 'var(--btn-secondary-bg)', color: 'var(--btn-secondary-color)', fontSize: 13, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
                 Close
               </button>
               <button
                 onClick={() => { navigator.clipboard.writeText(linkModal.link); toast.success('Link copied!'); }}
-                style={{ flex: 2, padding: '9px 0', border: 'none', borderRadius: 10, background: 'linear-gradient(135deg,#1e3a5f,#1d4ed8)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontFamily: 'inherit' }}>
+                style={{ flex: 2, padding: '9px 0', border: '1px solid var(--btn-primary-border)', borderRadius: 10, background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-color)', fontSize: 13, fontWeight: 850, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontFamily: 'inherit' }}>
                 <Copy size={14} /> Copy Link
               </button>
             </div>
@@ -1131,8 +1131,8 @@ const panelIconStyle: React.CSSProperties = {
   width: 36,
   height: 36,
   borderRadius: 12,
-  background: '#eff6ff',
-  border: '1px solid #dbeafe',
+  background: 'var(--btn-subtle-bg)',
+  border: '1px solid var(--btn-subtle-border)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1142,12 +1142,12 @@ const panelIconStyle: React.CSSProperties = {
 const panelTitleStyle: React.CSSProperties = {
   fontSize: 15,
   fontWeight: 900,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
 };
 
 const panelSubtitleStyle: React.CSSProperties = {
   fontSize: 11.5,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   marginTop: 2,
 };
 
@@ -1167,11 +1167,11 @@ const searchInputStyle: React.CSSProperties = {
   paddingLeft: 39,
   paddingRight: 12,
   borderRadius: 14,
-  border: '1px solid #dbe3ef',
+  border: '1px solid var(--ui-border-strong)',
   outline: 'none',
-  background: '#ffffff',
+  background: 'var(--surface)',
   fontSize: 13,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   fontFamily: 'inherit',
 };
 
@@ -1179,12 +1179,12 @@ const selectStyle: React.CSSProperties = {
   width: '100%',
   height: 42,
   borderRadius: 14,
-  border: '1px solid #dbe3ef',
-  background: '#ffffff',
+  border: '1px solid var(--ui-border-strong)',
+  background: 'var(--surface)',
   padding: '0 12px',
   outline: 'none',
   fontSize: 12.5,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   fontFamily: 'inherit',
   cursor: 'pointer',
 };
@@ -1200,10 +1200,10 @@ const thStyle: React.CSSProperties = {
   textAlign: 'left',
   fontSize: 10.5,
   fontWeight: 900,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   textTransform: 'uppercase',
   letterSpacing: '0.06em',
-  borderBottom: '1px solid #e8edf4',
+  borderBottom: '1px solid var(--ui-border)',
   whiteSpace: 'nowrap',
 };
 
@@ -1225,9 +1225,9 @@ const clearBtn: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: 5,
-  border: '1px solid #fecaca',
-  background: '#fef2f2',
-  color: '#dc2626',
+  border: '1px solid var(--btn-danger-soft-border)',
+  background: 'var(--btn-danger-soft-bg)',
+  color: 'var(--btn-danger-soft-color)',
   borderRadius: 10,
   padding: '7px 10px',
   fontSize: 12,
@@ -1240,9 +1240,9 @@ const generateLinkBtn: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: 7,
-  border: '1.5px solid #bfdbfe',
-  background: '#eff6ff',
-  color: '#1d4ed8',
+  border: '1.5px solid var(--btn-subtle-border)',
+  background: 'var(--btn-subtle-bg)',
+  color: 'var(--btn-subtle-color)',
   borderRadius: 14,
   padding: '10px 16px',
   fontSize: 12.5,
@@ -1256,9 +1256,9 @@ const newApplicationBtn: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: 7,
-  border: 'none',
-  background: 'linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%)',
-  color: '#ffffff',
+  border: '1px solid var(--btn-primary-border)',
+  background: 'var(--btn-primary-bg)',
+  color: 'var(--btn-primary-color)',
   borderRadius: 14,
   padding: '10px 16px',
   fontSize: 12.5,
@@ -1273,9 +1273,9 @@ const appNoBadgeStyle: React.CSSProperties = {
   fontFamily: 'Inter, sans-serif',
   fontSize: 11,
   fontWeight: 900,
-  color: '#1d4ed8',
-  background: '#eff6ff',
-  border: '1px solid #bfdbfe',
+  color: 'var(--btn-subtle-color)',
+  background: 'var(--btn-subtle-bg)',
+  border: '1px solid var(--btn-subtle-border)',
   borderRadius: 9,
   padding: '5px 8px',
   whiteSpace: 'nowrap',
@@ -1288,7 +1288,7 @@ const appNoBadgeStyle: React.CSSProperties = {
 const textStrongStyle: React.CSSProperties = {
   fontSize: 12.5,
   fontWeight: 800,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -1297,7 +1297,7 @@ const textStrongStyle: React.CSSProperties = {
 const studentNameStyle: React.CSSProperties = {
   fontSize: 12.5,
   fontWeight: 900,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -1305,7 +1305,7 @@ const studentNameStyle: React.CSSProperties = {
 
 const smallMutedLineStyle: React.CSSProperties = {
   fontSize: 10.5,
-  color: '#94a3b8',
+  color: 'var(--ui-text-subtle)',
   marginTop: 2,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -1314,7 +1314,7 @@ const smallMutedLineStyle: React.CSSProperties = {
 
 const mutedTruncateStyle: React.CSSProperties = {
   fontSize: 12,
-  color: '#64748b',
+  color: 'var(--ui-text-muted)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -1343,9 +1343,9 @@ const viewBtn: React.CSSProperties = {
   height: 32,
   padding: '0 10px',
   borderRadius: 10,
-  border: '1px solid #bfdbfe',
-  background: '#eff6ff',
-  color: '#1d4ed8',
+  border: '1px solid var(--btn-subtle-border)',
+  background: 'var(--btn-subtle-bg)',
+  color: 'var(--btn-subtle-color)',
   fontSize: 11.5,
   fontWeight: 900,
   cursor: 'pointer',
@@ -1355,7 +1355,7 @@ const viewBtn: React.CSSProperties = {
 
 const tableFooterStyle: React.CSSProperties = {
   padding: '12px 14px',
-  borderTop: '1px solid #edf2f7',
+  borderTop: '1px solid var(--ui-border)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -1374,7 +1374,7 @@ const rightColumnStyle: React.CSSProperties = {
 const emptyStateStyle: React.CSSProperties = {
   padding: '22px 16px',
   textAlign: 'center',
-  color: '#94a3b8',
+  color: 'var(--ui-text-muted)',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -1385,8 +1385,8 @@ const emptyIconStyle: React.CSSProperties = {
   width: 42,
   height: 42,
   borderRadius: 14,
-  background: '#f8fafc',
-  border: '1px solid #e2e8f0',
+  background: 'var(--ui-surface-subtle)',
+  border: '1px solid var(--ui-border)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1398,7 +1398,7 @@ const linkBtn: React.CSSProperties = {
   gap: 3,
   border: 'none',
   background: 'transparent',
-  color: '#2563eb',
+  color: 'var(--btn-subtle-color)',
   fontSize: 11.5,
   fontWeight: 900,
   cursor: 'pointer',
@@ -1420,8 +1420,8 @@ const sideIconStyle: React.CSSProperties = {
   width: 36,
   height: 36,
   borderRadius: 12,
-  background: '#eff6ff',
-  border: '1px solid #dbeafe',
+  background: 'var(--btn-subtle-bg)',
+  border: '1px solid var(--btn-subtle-border)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1431,7 +1431,7 @@ const sideIconStyle: React.CSSProperties = {
 const sideTitleStyle: React.CSSProperties = {
   fontSize: 12.5,
   fontWeight: 900,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -1440,7 +1440,7 @@ const sideTitleStyle: React.CSSProperties = {
 const sideAppNoStyle: React.CSSProperties = {
   fontSize: 10.5,
   fontFamily: 'Inter, sans-serif',
-  color: '#2563eb',
+  color: 'var(--btn-subtle-color)',
   marginTop: 3,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -1450,7 +1450,7 @@ const sideAppNoStyle: React.CSSProperties = {
 const notificationMessageStyle: React.CSSProperties = {
   fontSize: 12.5,
   fontWeight: 800,
-  color: '#334155',
+  color: 'var(--ui-text-strong)',
   lineHeight: 1.4,
   display: '-webkit-box',
   WebkitLineClamp: 2,
@@ -1460,8 +1460,7 @@ const notificationMessageStyle: React.CSSProperties = {
 
 const sideTimeStyle: React.CSSProperties = {
   fontSize: 10.5,
-  color: '#cbd5e1',
+  color: 'var(--ui-text-subtle)',
   flexShrink: 0,
   paddingLeft: 8,
 };
-

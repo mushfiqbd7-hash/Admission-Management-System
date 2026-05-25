@@ -126,7 +126,14 @@ function getSenderSubtitle(msg: MessageExtra, tab: Tab, isTeam: boolean) {
 }
 
 function Avatar({ name, size = 38 }: { name?: string; size?: number }) {
-  const palette = ['#1e3a5f', '#2563eb', '#4338ca', '#0f766e', '#b45309', '#be123c'];
+  const palette = [
+    'var(--btn-subtle-color)',
+    'var(--status-processing-text)',
+    'var(--status-pre-text)',
+    'var(--status-admitted-text)',
+    'var(--status-pending-text)',
+    'var(--status-rejected-text)',
+  ];
   const index = (name || 'U').charCodeAt(0) % palette.length;
 
   return (
@@ -136,7 +143,7 @@ function Avatar({ name, size = 38 }: { name?: string; size?: number }) {
         height: size,
         borderRadius: 14,
         background: palette[index],
-        color: '#ffffff',
+        color: 'var(--text-on-accent)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -153,7 +160,7 @@ function Avatar({ name, size = 38 }: { name?: string; size?: number }) {
 
 function NotificationIcon({ type }: { type?: string }) {
   if (type === 'success') {
-    return <ShieldCheck size={16} style={{ color: '#16a34a' }} />;
+    return <ShieldCheck size={16} style={{ color: 'var(--status-approved-text)' }} />;
   }
 
   if (type === 'warning') {
@@ -161,10 +168,10 @@ function NotificationIcon({ type }: { type?: string }) {
   }
 
   if (type === 'error') {
-    return <AlertCircle size={16} style={{ color: '#dc2626' }} />;
+    return <AlertCircle size={16} style={{ color: 'var(--status-rejected-text)' }} />;
   }
 
-  return <Info size={16} style={{ color: '#2563eb' }} />;
+  return <Info size={16} style={{ color: 'var(--btn-subtle-color)' }} />;
 }
 
 function FieldLabel({ children }: { children: ReactNode }) {
@@ -528,7 +535,7 @@ export default function InboxPage() {
                   ...folderBtnStyle,
                   background: active ? 'var(--accent-light)' : 'transparent',
                   borderColor: active ? 'var(--status-processing-border)' : 'transparent',
-                  color: active ? '#1d4ed8' : 'var(--ui-text-muted)',
+                  color: active ? 'var(--btn-subtle-color)' : 'var(--ui-text-muted)',
                 }}
               >
                 <span style={folderIconWrapStyle}>
@@ -548,7 +555,7 @@ export default function InboxPage() {
         </div>
 
         <div style={railHelperCardStyle}>
-          <MessageSquare size={18} style={{ color: '#2563eb' }} />
+          <MessageSquare size={18} style={{ color: 'var(--btn-subtle-color)' }} />
           <div>
             <div style={helperTitleStyle}>Admission Mailbox</div>
             <div style={helperTextStyle}>
@@ -781,7 +788,7 @@ export default function InboxPage() {
             <div style={composeBodyStyle}>
               <div>
                 <FieldLabel>
-                  Application <span style={{ color: '#ef4444' }}>*</span>
+                  Application <span style={{ color: 'var(--btn-danger-soft-color)' }}>*</span>
                 </FieldLabel>
 
                 <select
@@ -806,7 +813,7 @@ export default function InboxPage() {
 
               <div>
                 <FieldLabel>
-                  Subject <span style={{ color: '#ef4444' }}>*</span>
+                  Subject <span style={{ color: 'var(--btn-danger-soft-color)' }}>*</span>
                 </FieldLabel>
 
                 <input
@@ -819,7 +826,7 @@ export default function InboxPage() {
 
               <div>
                 <FieldLabel>
-                  Message <span style={{ color: '#ef4444' }}>*</span>
+                  Message <span style={{ color: 'var(--btn-danger-soft-color)' }}>*</span>
                 </FieldLabel>
 
                 <textarea
@@ -973,7 +980,7 @@ export default function InboxPage() {
 
                   {(msg.application_number || msg.given_name || msg.passport_number) && (
                     <div style={applicationInfoStyle}>
-                      <FileText size={16} style={{ color: '#2563eb' }} />
+                      <FileText size={16} style={{ color: 'var(--btn-subtle-color)' }} />
 
                       <div>
                         <div style={appInfoTitleStyle}>
@@ -1024,7 +1031,7 @@ export default function InboxPage() {
                               <div style={downloadSizeStyle}>{fmtSize(att.size)}</div>
                             </div>
 
-                            <Download size={16} style={{ color: '#2563eb' }} />
+                            <Download size={16} style={{ color: 'var(--btn-subtle-color)' }} />
                           </button>
                         ))}
                       </div>
@@ -1061,7 +1068,7 @@ export default function InboxPage() {
 
               {selectedNotif.application_id && (
                 <div style={applicationInfoStyle}>
-                  <FileText size={16} style={{ color: '#2563eb' }} />
+                  <FileText size={16} style={{ color: 'var(--btn-subtle-color)' }} />
                   <div>
                     <div style={appInfoTitleStyle}>Related Application</div>
                     <div style={appInfoTextStyle}>{selectedNotif.application_id}</div>
@@ -1089,7 +1096,7 @@ export default function InboxPage() {
           </div>
         ) : (
           <EmptyBox
-            icon={<MessageSquare size={34} style={{ color: '#2563eb' }} />}
+            icon={<MessageSquare size={34} style={{ color: 'var(--btn-subtle-color)' }} />}
             title="Select a message to read"
             subtitle="Choose a message from the list, or compose a new message to the Admission Team."
             action={
@@ -1119,7 +1126,7 @@ const pageStyle: CSSProperties = {
 
 const folderRailStyle: CSSProperties = {
   background: 'var(--surface)',
-  borderRight: '1px solid #e5eaf2',
+  borderRight: '1px solid var(--ui-border)',
   padding: '18px 16px 16px',
   display: 'flex',
   flexDirection: 'column',
@@ -1138,9 +1145,9 @@ const composePrimaryBtnStyle: CSSProperties = {
   width: '100%',
   height: 50,
   borderRadius: 16,
-  border: 'none',
-  background: '#1e3a5f',
-  color: '#ffffff',
+  border: '1px solid var(--btn-primary-border)',
+  background: 'var(--btn-primary-bg)',
+  color: 'var(--btn-primary-color)',
   fontSize: 14.5,
   fontWeight: 950,
   cursor: 'pointer',
@@ -1189,8 +1196,8 @@ const folderBadgeStyle: CSSProperties = {
   height: 22,
   padding: '0 7px',
   borderRadius: 999,
-  background: '#ef4444',
-  color: '#ffffff',
+  background: 'var(--btn-danger-bg)',
+  color: 'var(--btn-danger-color)',
   fontSize: 11,
   fontWeight: 950,
   display: 'inline-flex',
@@ -1207,7 +1214,7 @@ const folderCountStyle: CSSProperties = {
 const railHelperCardStyle: CSSProperties = {
   marginTop: 'auto',
   borderRadius: 18,
-  border: '1px solid #dbeafe',
+  border: '1px solid var(--btn-subtle-border)',
   background: 'var(--accent-light)',
   padding: 14,
   display: 'flex',
@@ -1231,7 +1238,7 @@ const helperTextStyle: CSSProperties = {
 
 const messageListPanelStyle: CSSProperties = {
   background: 'var(--surface-soft)',
-  borderRight: '1px solid #e5eaf2',
+  borderRight: '1px solid var(--ui-border)',
   display: 'flex',
   flexDirection: 'column',
   minHeight: 0,
@@ -1268,7 +1275,7 @@ const markAllBtnStyle: CSSProperties = {
   borderRadius: 10,
   border: '1px solid var(--status-processing-border)',
   background: 'var(--accent-light)',
-  color: '#1d4ed8',
+  color: 'var(--btn-subtle-color)',
   fontSize: 11.5,
   fontWeight: 900,
   cursor: 'pointer',
@@ -1372,7 +1379,7 @@ const senderSubtitleStyle: CSSProperties = {
 const messageSubjectStyle: CSSProperties = {
   marginTop: 7,
   fontSize: 13,
-  color: '#1e293b',
+  color: 'var(--text-primary)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -1404,7 +1411,7 @@ const appBadgeStyle: CSSProperties = {
   padding: '0 8px',
   background: 'var(--accent-light)',
   border: '1px solid var(--status-processing-border)',
-  color: '#1d4ed8',
+  color: 'var(--btn-subtle-color)',
   fontSize: 10.5,
   fontWeight: 950,
   fontFamily: 'Inter, sans-serif',
@@ -1428,7 +1435,7 @@ const unreadDotStyle: CSSProperties = {
   width: 9,
   height: 9,
   borderRadius: '50%',
-  background: '#2563eb',
+  background: 'var(--btn-subtle-color)',
   flexShrink: 0,
   marginTop: 7,
 };
@@ -1459,9 +1466,9 @@ const composeCardStyle: CSSProperties = {
   width: '100%',
   maxWidth: 820,
   background: 'var(--surface)',
-  border: '1px solid #e5eaf2',
-  borderRadius: 24,
-  boxShadow: '0 22px 50px rgba(15,23,42,0.09)',
+  border: '1px solid var(--ui-border)',
+  borderRadius: 22,
+  boxShadow: 'var(--sh-card)',
   overflow: 'hidden',
 };
 
@@ -1589,7 +1596,7 @@ const attachBtnStyle: CSSProperties = {
   borderRadius: 14,
   border: '1.5px dashed var(--status-processing-border)',
   background: 'var(--accent-light)',
-  color: '#1d4ed8',
+  color: 'var(--btn-subtle-color)',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1617,9 +1624,9 @@ const sendBtnStyle: CSSProperties = {
   height: 42,
   padding: '0 20px',
   borderRadius: 13,
-  border: 'none',
-  background: '#1e3a5f',
-  color: '#ffffff',
+  border: '1px solid var(--btn-primary-border)',
+  background: 'var(--btn-primary-bg)',
+  color: 'var(--btn-primary-color)',
   fontSize: 13,
   fontWeight: 950,
   display: 'inline-flex',
@@ -1633,9 +1640,9 @@ const readCardStyle: CSSProperties = {
   width: '100%',
   maxWidth: 860,
   background: 'var(--surface)',
-  border: '1px solid #e5eaf2',
-  borderRadius: 24,
-  boxShadow: '0 22px 50px rgba(15,23,42,0.09)',
+  border: '1px solid var(--ui-border)',
+  borderRadius: 22,
+  boxShadow: 'var(--sh-card)',
   overflow: 'hidden',
 };
 
@@ -1708,7 +1715,7 @@ const replyBtnStyle: CSSProperties = {
   borderRadius: 12,
   border: '1px solid var(--status-processing-border)',
   background: 'var(--accent-light)',
-  color: '#1d4ed8',
+  color: 'var(--btn-subtle-color)',
   fontSize: 12.5,
   fontWeight: 950,
   display: 'inline-flex',
@@ -1735,7 +1742,7 @@ const deleteBtnStyle: CSSProperties = {
   ...iconBtnStyle,
   border: '1px solid var(--status-rejected-border)',
   background: 'var(--status-rejected-bg)',
-  color: '#dc2626',
+  color: 'var(--btn-danger-soft-color)',
 };
 
 const applicationInfoStyle: CSSProperties = {
@@ -1752,7 +1759,7 @@ const applicationInfoStyle: CSSProperties = {
 const appInfoTitleStyle: CSSProperties = {
   fontSize: 12.5,
   fontWeight: 950,
-  color: '#1d4ed8',
+  color: 'var(--btn-subtle-color)',
   fontFamily: 'Inter, sans-serif',
 };
 
@@ -1815,7 +1822,7 @@ const downloadIconStyle: CSSProperties = {
   height: 38,
   borderRadius: 13,
   background: 'var(--accent-light)',
-  color: '#2563eb',
+  color: 'var(--btn-subtle-color)',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1868,7 +1875,7 @@ const openRelatedBtnStyle: CSSProperties = {
   borderRadius: 13,
   border: '1px solid var(--status-processing-border)',
   background: 'var(--accent-light)',
-  color: '#1d4ed8',
+  color: 'var(--btn-subtle-color)',
   fontSize: 13,
   fontWeight: 950,
   cursor: 'pointer',
@@ -1921,9 +1928,9 @@ const emptyComposeBtnStyle: CSSProperties = {
   height: 44,
   padding: '0 18px',
   borderRadius: 14,
-  border: 'none',
-  background: '#1e3a5f',
-  color: '#ffffff',
+  border: '1px solid var(--btn-primary-border)',
+  background: 'var(--btn-primary-bg)',
+  color: 'var(--btn-primary-color)',
   fontSize: 13.5,
   fontWeight: 950,
   display: 'inline-flex',

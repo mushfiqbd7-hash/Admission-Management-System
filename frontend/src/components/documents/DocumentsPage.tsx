@@ -48,33 +48,33 @@ const CATEGORIES = [
 const CAT_COLORS: Record<string, { bg: string; color: string; border: string }> = {
   'Admission Forms': {
     bg: 'var(--accent-light)',
-    color: '#1d4ed8',
+    color: 'var(--btn-subtle-color)',
     border: 'var(--status-processing-border)',
   },
   'University Documents': {
     bg: 'var(--status-pre-bg)',
-    color: '#7c3aed',
-    border: '#ddd6fe',
+    color: 'var(--status-pre-text)',
+    border: 'var(--status-pre-border)',
   },
   'Visa Documents': {
     bg: 'var(--status-pending-bg)',
-    color: '#b45309',
+    color: 'var(--status-pending-text)',
     border: 'var(--status-pending-border)',
   },
   'Financial Documents': {
     bg: 'var(--status-approved-bg)',
-    color: '#15803d',
+    color: 'var(--status-approved-text)',
     border: 'var(--status-approved-border)',
   },
   Templates: {
     bg: 'var(--status-admitted-bg)',
-    color: '#0f766e',
+    color: 'var(--status-admitted-text)',
     border: 'var(--status-admitted-border)',
   },
   Notices: {
     bg: 'var(--status-rejected-bg)',
-    color: '#be123c',
-    border: '#fecdd3',
+    color: 'var(--status-rejected-text)',
+    border: 'var(--status-rejected-border)',
   },
   Others: {
     bg: 'var(--ui-surface-subtle)',
@@ -933,7 +933,7 @@ const documentsPageCss = `
   padding: 0 12px;
   border: 1px solid var(--status-rejected-border);
   background: var(--status-rejected-bg);
-  color: #dc2626;
+  color: var(--btn-danger-soft-color);
   font-size: 12.5px;
   font-weight: 900;
   cursor: pointer;
@@ -951,14 +951,14 @@ const documentsPageCss = `
 
 .docs-upload-btn {
   padding: 0 14px;
-  border: none;
-  background: #2563eb;
-  color: #ffffff;
+  border: 1px solid var(--btn-primary-border);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-color);
   font-size: 13px;
   font-weight: 950;
   cursor: pointer;
   gap: 7px;
-  box-shadow: 0 14px 28px rgba(37,99,235,0.24);
+  box-shadow: var(--btn-primary-shadow);
 }
 
 .docs-content-card {
@@ -1052,11 +1052,11 @@ const documentsPageCss = `
 }
 
 .docs-file-icon-pdf {
-  color: #dc2626;
+  color: var(--status-rejected-text);
 }
 
 .docs-file-icon-default {
-  color: #2563eb;
+  color: var(--btn-subtle-color);
 }
 
 .docs-doc-info {
@@ -1177,21 +1177,21 @@ const documentsPageCss = `
 }
 
 .docs-view-btn {
-  border: 1px solid var(--status-processing-border);
-  background: var(--accent-light);
-  color: #1d4ed8;
+  border: 1px solid var(--btn-subtle-border);
+  background: var(--btn-subtle-bg);
+  color: var(--btn-subtle-color);
 }
 
 .docs-download-btn {
-  border: 1px solid var(--status-approved-border);
-  background: var(--status-approved-bg);
-  color: #15803d;
+  border: 1px solid var(--btn-success-soft-border);
+  background: var(--btn-success-soft-bg);
+  color: var(--btn-success-soft-color);
 }
 
 .docs-delete-btn {
-  border: 1px solid var(--status-rejected-border);
-  background: var(--status-rejected-bg);
-  color: #dc2626;
+  border: 1px solid var(--btn-danger-soft-border);
+  background: var(--btn-danger-soft-bg);
+  color: var(--btn-danger-soft-color);
 }
 
 .docs-skeleton-wrap {
@@ -1255,7 +1255,7 @@ const documentsPageCss = `
   border-radius: 24px;
   border: 1px solid var(--status-processing-border);
   background: var(--accent-light);
-  color: #2563eb;
+  color: var(--btn-subtle-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1331,7 +1331,7 @@ const documentsPageCss = `
   border-radius: 15px;
   border: 1px solid var(--status-processing-border);
   background: var(--accent-light);
-  color: #2563eb;
+  color: var(--btn-subtle-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1381,7 +1381,7 @@ const documentsPageCss = `
 }
 
 .docs-required {
-  color: #ef4444;
+  color: var(--btn-danger-soft-color);
 }
 
 .docs-optional {
@@ -1420,7 +1420,7 @@ const documentsPageCss = `
   margin-top: 5px;
   font-size: 12px;
   font-weight: 800;
-  color: #dc2626;
+  color: var(--btn-danger-soft-color);
 }
 
 .docs-dropzone {
@@ -1433,7 +1433,7 @@ const documentsPageCss = `
 }
 
 .docs-dropzone-dragging {
-  border-color: #2563eb;
+  border-color: var(--btn-subtle-border);
   background: var(--accent-light);
 }
 
@@ -1495,7 +1495,7 @@ const documentsPageCss = `
   border-radius: 10px;
   border: 1px solid var(--status-rejected-border);
   background: var(--status-rejected-bg);
-  color: #dc2626;
+  color: var(--btn-danger-soft-color);
   font-size: 12px;
   font-weight: 900;
   cursor: pointer;
@@ -1526,7 +1526,7 @@ const documentsPageCss = `
 }
 
 .docs-drop-title span {
-  color: #2563eb;
+  color: var(--btn-subtle-color);
 }
 
 .docs-drop-subtitle {
@@ -1570,17 +1570,17 @@ const documentsPageCss = `
 }
 
 .docs-primary-btn {
-  border: none;
-  background: #2563eb;
-  color: #ffffff;
+  border: 1px solid var(--btn-primary-border);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-color);
   font-weight: 950;
-  box-shadow: 0 12px 24px rgba(37,99,235,0.22);
+  box-shadow: var(--btn-primary-shadow);
 }
 
 .docs-danger-btn {
-  border: none;
-  background: #dc2626;
-  color: #ffffff;
+  border: 1px solid var(--btn-danger-border);
+  background: var(--btn-danger-bg);
+  color: var(--btn-danger-color);
   font-weight: 950;
   box-shadow: 0 12px 24px rgba(220,38,38,0.22);
 }
@@ -1595,7 +1595,7 @@ const documentsPageCss = `
   width: 14px;
   height: 14px;
   border: 2px solid rgba(255,255,255,0.35);
-  border-top-color: #ffffff;
+  border-top-color: var(--btn-primary-color);
   border-radius: 50%;
   display: inline-block;
   animation: spin 0.7s linear infinite;
@@ -1624,7 +1624,7 @@ const documentsPageCss = `
   border-radius: 16px;
   border: 1px solid var(--status-rejected-border);
   background: var(--status-rejected-bg);
-  color: #dc2626;
+  color: var(--btn-danger-soft-color);
   display: flex;
   align-items: center;
   justify-content: center;

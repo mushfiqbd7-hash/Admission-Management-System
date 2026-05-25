@@ -207,6 +207,10 @@
   .btn-primary:hover { background: var(--btn-primary-bg-hover); box-shadow: var(--shadow-md); transform: translateY(-1px); }
   .btn-primary:active { transform: translateY(0); }
   .btn-primary:disabled { opacity: 0.62; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 38px; padding: 0 14px; background: var(--btn-secondary-bg); color: var(--btn-secondary-color); border: 1px solid var(--btn-secondary-border); border-radius: var(--btn-radius); font-family: var(--font-ui); font-size: 13px; font-weight: 750; cursor: pointer; transition: background var(--dur-base), border-color var(--dur-base), color var(--dur-base), transform var(--dur-fast), box-shadow var(--dur-base); }
+  .btn-ghost:hover { background: var(--btn-secondary-bg-hover); transform: translateY(-1px); }
+  .btn-ghost:active { transform: translateY(0); }
+  .btn-ghost:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
   .sams-input { width: 100%; padding: 8px 12px; font-family: var(--font-ui); font-size: 13.5px; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-md); outline: none; transition: border-color var(--dur-base), background var(--dur-base); }
   .sams-input:focus { border-color: var(--navy-400); box-shadow: 0 0 0 3px rgba(31,58,95,0.1); }
   .sams-table { width: 100%; border-collapse: collapse; }
@@ -236,28 +240,28 @@
 
 /* Scoped protected-app compatibility for legacy Tailwind utility surfaces. */
 .dark .sams-app-shell .card,
-.dark .sams-app-shell [class*="bg-white"],
-.dark .sams-app-shell [class*="bg-slate-50"],
-.dark .sams-app-shell [class*="bg-gray-50"] {
+.dark .sams-app-shell [class~="bg-white"],
+.dark .sams-app-shell [class~="bg-slate-50"],
+.dark .sams-app-shell [class~="bg-gray-50"] {
   background-color: var(--surface) !important;
   border-color: var(--border) !important;
   color: var(--text-primary) !important;
 }
 
-.dark .sams-app-shell [class*="bg-slate-100"],
-.dark .sams-app-shell [class*="bg-gray-100"],
-.dark .sams-app-shell [class*="bg-slate-200"],
-.dark .sams-app-shell [class*="bg-gray-200"] {
+.dark .sams-app-shell [class~="bg-slate-100"],
+.dark .sams-app-shell [class~="bg-gray-100"],
+.dark .sams-app-shell [class~="bg-slate-200"],
+.dark .sams-app-shell [class~="bg-gray-200"] {
   background-color: var(--surface-hover) !important;
   border-color: var(--border) !important;
 }
 
-.dark .sams-app-shell [class*="border-slate-100"],
-.dark .sams-app-shell [class*="border-slate-200"],
-.dark .sams-app-shell [class*="border-slate-300"],
-.dark .sams-app-shell [class*="border-gray-100"],
-.dark .sams-app-shell [class*="border-gray-200"],
-.dark .sams-app-shell [class*="border-gray-300"] {
+.dark .sams-app-shell [class~="border-slate-100"],
+.dark .sams-app-shell [class~="border-slate-200"],
+.dark .sams-app-shell [class~="border-slate-300"],
+.dark .sams-app-shell [class~="border-gray-100"],
+.dark .sams-app-shell [class~="border-gray-200"],
+.dark .sams-app-shell [class~="border-gray-300"] {
   border-color: var(--border) !important;
 }
 
@@ -312,6 +316,13 @@
   border-color: var(--border-strong) !important;
 }
 
+.dark .sams-app-shell input:focus,
+.dark .sams-app-shell select:focus,
+.dark .sams-app-shell textarea:focus {
+  border-color: var(--accent) !important;
+  box-shadow: var(--sh-focus) !important;
+}
+
 .dark .sams-app-shell input::placeholder,
 .dark .sams-app-shell textarea::placeholder {
   color: var(--text-tertiary) !important;
@@ -341,8 +352,8 @@
 .dark .sams-app-shell h2,
 .dark .sams-app-shell h3,
 .dark .sams-app-shell h4,
-.dark .sams-app-shell strong,
-.dark .sams-app-shell b {
+.dark .sams-app-shell strong:not([style*="color"]),
+.dark .sams-app-shell b:not([style*="color"]) {
   color: var(--text-primary) !important;
 }
 
@@ -459,8 +470,27 @@
   color: var(--btn-subtle-color) !important;
 }
 
+.dark .sams-app-shell :is(
+  [class~="text-blue-500"],
+  [class~="text-blue-600"],
+  [class~="text-blue-700"],
+  [class*="text-[#0f5bff]"],
+  [class*="text-[#2563eb]"],
+  [class*="text-[var(--btn-subtle-color)]"]
+) {
+  color: var(--btn-subtle-color) !important;
+}
+
 .dark .sams-app-shell [style*="color: rgb(220, 38, 38)"],
 .dark .sams-app-shell [style*="color: #dc2626"] {
+  color: var(--btn-danger-soft-color) !important;
+}
+
+.dark .sams-app-shell :is(
+  [class~="text-red-500"],
+  [class~="text-red-600"],
+  [class~="text-red-700"]
+) {
   color: var(--btn-danger-soft-color) !important;
 }
 
@@ -468,6 +498,14 @@
 .dark .sams-app-shell [style*="color: #15803d"],
 .dark .sams-app-shell [style*="color: rgb(22, 163, 74)"],
 .dark .sams-app-shell [style*="color: #16a34a"] {
+  color: var(--btn-success-soft-color) !important;
+}
+
+.dark .sams-app-shell :is(
+  [class~="text-green-500"],
+  [class~="text-green-600"],
+  [class~="text-green-700"]
+) {
   color: var(--btn-success-soft-color) !important;
 }
 
@@ -593,7 +631,7 @@
 }
 
 /* Protected-app button polish: normalize legacy inline button styles in dark mode. */
-.dark .sams-app-shell button:not(.sams-icon-button):not(.sams-nav-item) {
+.dark .sams-app-shell button:not(.sams-icon-button):not(.sams-nav-item):not([class*="rounded-full"]):not([style*="border-radius: 50%"]):not([style*="border-radius: 999"]) {
   border-radius: var(--btn-radius) !important;
 }
 

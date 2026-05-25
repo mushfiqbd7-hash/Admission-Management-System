@@ -112,7 +112,7 @@ export default function ApplicationLinksPage() {
               <div key={t.token} style={{ display: 'grid', gridTemplateColumns: isAdminStaff ? '1fr 120px 110px 100px' : '1fr 120px 110px', gap: 0, padding: '12px 18px', borderBottom: isLast ? 'none' : '1px solid var(--border)', alignItems: 'center' }}>
                 {/* Link URL */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
-                  <Link2 size={13} style={{ color: '#2563eb', flexShrink: 0 }} />
+                  <Link2 size={13} style={{ color: 'var(--btn-subtle-color)', flexShrink: 0 }} />
                   <span style={{ fontSize: 11.5, color: 'var(--ui-text-body)', fontFamily: 'Inter, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {link}
                   </span>
@@ -128,14 +128,14 @@ export default function ApplicationLinksPage() {
 
                 {/* Expiry */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <Clock size={11} style={{ color: dl <= 1 ? '#dc2626' : 'var(--ui-text-subtle)' }} />
-                  <span style={{ fontSize: 11.5, color: dl <= 1 ? '#dc2626' : 'var(--text-secondary)', fontWeight: dl <= 1 ? 600 : 400 }}>
+                  <Clock size={11} style={{ color: dl <= 1 ? 'var(--btn-danger-soft-color)' : 'var(--ui-text-subtle)' }} />
+                  <span style={{ fontSize: 11.5, color: dl <= 1 ? 'var(--btn-danger-soft-color)' : 'var(--text-secondary)', fontWeight: dl <= 1 ? 600 : 400 }}>
                     {dl === 0 ? 'Expires today' : `${dl}d left`}
                   </span>
                 </div>
 
                 {/* Copy */}
-                <button onClick={() => handleCopy(t.token)} style={{ ...copyBtn, background: copied ? 'var(--status-approved-bg)' : 'var(--accent-light)', border: `1px solid ${copied ? 'var(--status-approved-border)' : 'var(--status-processing-border)'}`, color: copied ? '#16a34a' : '#2563eb' }}>
+                <button onClick={() => handleCopy(t.token)} style={{ ...copyBtn, background: copied ? 'var(--btn-success-soft-bg)' : 'var(--btn-subtle-bg)', border: `1px solid ${copied ? 'var(--btn-success-soft-border)' : 'var(--btn-subtle-border)'}`, color: copied ? 'var(--btn-success-soft-color)' : 'var(--btn-subtle-color)' }}>
                   {copied ? <><Check size={11} /> Copied</> : <><Copy size={11} /> Copy</>}
                 </button>
               </div>
@@ -155,7 +155,7 @@ export default function ApplicationLinksPage() {
           <div style={{ background: 'var(--surface)', borderRadius: 16, padding: '28px 28px 24px', width: 480, boxShadow: '0 24px 64px rgba(15,23,42,0.18)' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
               <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--accent-light)', border: '2px solid var(--status-processing-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Link2 size={24} style={{ color: '#2563eb' }} />
+                <Link2 size={24} style={{ color: 'var(--btn-subtle-color)' }} />
               </div>
             </div>
             <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center' }}>Link Generated!</h3>
@@ -171,7 +171,7 @@ export default function ApplicationLinksPage() {
               </button>
               <button
                 onClick={() => { navigator.clipboard.writeText(linkModal.link); toast.success('Copied!'); }}
-                style={{ flex: 2, padding: '9px 0', border: 'none', borderRadius: 10, background: 'linear-gradient(135deg,#1e3a5f,#1d4ed8)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontFamily: 'inherit' }}>
+                style={{ flex: 2, padding: '9px 0', border: '1px solid var(--btn-primary-border)', borderRadius: 10, background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-color)', fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontFamily: 'inherit' }}>
                 <Copy size={14} /> Copy Link
               </button>
             </div>
@@ -192,7 +192,7 @@ const thStyle: React.CSSProperties = {
 const genBtn: React.CSSProperties = {
   display: 'inline-flex', alignItems: 'center', gap: 7,
   padding: '9px 16px', border: 'none', borderRadius: 12,
-  background: 'linear-gradient(135deg,#1e3a5f,#1d4ed8)', color: '#fff',
+  background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-color)',
   fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
   boxShadow: '0 8px 20px rgba(30,58,95,0.2)',
 };

@@ -72,13 +72,13 @@ function displayUserName(user?: Pick<ExtUser, 'full_name' | 'role'>) {
 function roleTheme(role?: string) {
   switch (role) {
     case 'admin':
-      return { bg: 'var(--status-rejected-bg)', color: '#be123c', border: 'var(--status-rejected-border)', soft: 'var(--status-rejected-bg)' };
+      return { bg: 'var(--status-rejected-bg)', color: 'var(--status-rejected-text)', border: 'var(--status-rejected-border)', soft: 'var(--status-rejected-bg)' };
     case 'staff':
-      return { bg: 'var(--accent-light)', color: '#1d4ed8', border: 'var(--status-processing-border)', soft: 'var(--accent-light)' };
+      return { bg: 'var(--accent-light)', color: 'var(--btn-subtle-color)', border: 'var(--status-processing-border)', soft: 'var(--accent-light)' };
     case 'agent':
-      return { bg: 'var(--status-pre-bg)', color: '#7e22ce', border: 'var(--status-pre-border)', soft: 'var(--status-pre-bg)' };
+      return { bg: 'var(--status-pre-bg)', color: 'var(--status-pre-text)', border: 'var(--status-pre-border)', soft: 'var(--status-pre-bg)' };
     case 'student':
-      return { bg: 'var(--status-approved-bg)', color: '#15803d', border: 'var(--status-approved-border)', soft: 'var(--status-approved-bg)' };
+      return { bg: 'var(--status-approved-bg)', color: 'var(--status-approved-text)', border: 'var(--status-approved-border)', soft: 'var(--status-approved-bg)' };
     default:
       return { bg: 'var(--ui-surface-subtle)', color: 'var(--ui-text-muted)', border: 'var(--ui-border)', soft: 'var(--ui-surface-subtle)' };
   }
@@ -131,7 +131,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
         height: 26,
         borderRadius: 999,
         border: 'none',
-        background: checked ? '#16a34a' : 'var(--ui-border-strong)',
+        background: checked ? 'var(--btn-success-bg)' : 'var(--ui-border-strong)',
         padding: 3,
         cursor: 'pointer',
         position: 'relative',
@@ -233,8 +233,8 @@ function ActionButton({
 }) {
   const theme =
     tone === 'red'
-      ? { bg: 'var(--status-rejected-bg)', color: '#dc2626', border: 'var(--status-rejected-border)' }
-      : { bg: 'var(--accent-light)', color: '#1d4ed8', border: 'var(--status-processing-border)' };
+      ? { bg: 'var(--btn-danger-soft-bg)', color: 'var(--btn-danger-soft-color)', border: 'var(--btn-danger-soft-border)' }
+      : { bg: 'var(--btn-subtle-bg)', color: 'var(--btn-subtle-color)', border: 'var(--btn-subtle-border)' };
 
   return (
     <button
@@ -416,11 +416,11 @@ export default function UsersPage() {
 
       <div style={topBarStyle}>
         <div style={statsGridStyle}>
-          <StatCard label="Total Users" value={counts.total} icon={Users} color="#2563eb" bg="var(--accent-light)" />
+          <StatCard label="Total Users" value={counts.total} icon={Users} color="var(--btn-subtle-color)" bg="var(--btn-subtle-bg)" />
           <StatCard label="Admins" value={counts.admin} icon={Shield} color="#be123c" bg="var(--status-rejected-bg)" />
-          <StatCard label="Staff" value={counts.staff} icon={User} color="#1d4ed8" bg="var(--accent-light)" />
+          <StatCard label="Staff" value={counts.staff} icon={User} color="var(--btn-subtle-color)" bg="var(--btn-subtle-bg)" />
           <StatCard label="Agents" value={counts.agent} icon={Bot} color="#7e22ce" bg="var(--status-pre-bg)" />
-          <StatCard label="Students" value={counts.student} icon={GraduationCap} color="#15803d" bg="var(--status-approved-bg)" />
+          <StatCard label="Students" value={counts.student} icon={GraduationCap} color="var(--status-approved-text)" bg="var(--status-approved-bg)" />
         </div>
 
         {isAdmin && (
@@ -859,8 +859,8 @@ const addUserBtnStyle: CSSProperties = {
   padding: '0 18px',
   borderRadius: 15,
   border: 'none',
-  background: '#2563eb',
-  color: '#ffffff',
+  background: 'var(--btn-primary-bg)',
+  color: 'var(--btn-primary-color)',
   fontSize: 13.5,
   fontWeight: 950,
   cursor: 'pointer',
@@ -868,7 +868,7 @@ const addUserBtnStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: 8,
-  boxShadow: '0 14px 28px rgba(37,99,235,0.24)',
+  boxShadow: 'var(--btn-primary-shadow)',
   whiteSpace: 'nowrap',
 };
 
@@ -1009,7 +1009,7 @@ const avatarStyle: CSSProperties = {
   height: 46,
   borderRadius: 16,
   background: '#061a33',
-  color: '#ffffff',
+  color: 'var(--text-on-accent)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1054,7 +1054,7 @@ const statusWrapStyle: CSSProperties = {
 const activeTextStyle: CSSProperties = {
   fontSize: 12.5,
   fontWeight: 950,
-  color: '#16a34a',
+  color: 'var(--status-approved-text)',
 };
 
 const inactiveTextStyle: CSSProperties = {
@@ -1067,7 +1067,7 @@ const readOnlyToggleStyle: CSSProperties = {
   width: 46,
   height: 26,
   borderRadius: 999,
-  background: '#16a34a',
+  background: 'var(--btn-success-bg)',
   display: 'inline-block',
   flexShrink: 0,
 };
@@ -1230,18 +1230,18 @@ const primaryBtnStyle: CSSProperties = {
   flex: 1.4,
   borderRadius: 14,
   border: 'none',
-  background: '#2563eb',
-  color: '#ffffff',
+  background: 'var(--btn-primary-bg)',
+  color: 'var(--btn-primary-color)',
   fontSize: 13,
   fontWeight: 950,
   cursor: 'pointer',
   fontFamily: 'inherit',
-  boxShadow: '0 12px 24px rgba(37,99,235,0.22)',
+  boxShadow: 'var(--btn-primary-shadow)',
 };
 
 const dangerBtnStyle: CSSProperties = {
   ...primaryBtnStyle,
-  background: '#dc2626',
+  background: 'var(--btn-danger-bg)',
   boxShadow: '0 12px 24px rgba(220,38,38,0.22)',
 };
 
@@ -1253,4 +1253,3 @@ const deleteTextStyle: CSSProperties = {
   color: 'var(--ui-text-body)',
   lineHeight: 1.7,
 };
-

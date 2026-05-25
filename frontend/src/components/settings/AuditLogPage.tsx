@@ -49,46 +49,46 @@ export default function AuditLogPage() {
 
   return (
     <div className="p-4 sm:p-6">
-      <h2 className="mb-4 text-xl font-extrabold text-slate-900">Audit Log</h2>
+      <h2 className="mb-4 text-xl font-extrabold text-primary">Audit Log</h2>
 
       {/* Filters */}
-      <div className="mb-4 flex flex-wrap gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="mb-4 flex flex-wrap gap-3 rounded-[16px] border border-border bg-surface p-4 shadow-[var(--sh-card)]">
         <input
           value={action}
           onChange={e => { setAction(e.target.value); setPage(1); }}
           placeholder="Filter by action..."
-          className="h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+          className="h-10 rounded-xl border border-border px-3 text-sm outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(96,165,250,0.28)]"
         />
         <input
           value={entityType}
           onChange={e => { setEntityType(e.target.value); setPage(1); }}
           placeholder="Filter by entity type..."
-          className="h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+          className="h-10 rounded-xl border border-border px-3 text-sm outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(96,165,250,0.28)]"
         />
         <input
           type="date"
           value={dateFrom}
           onChange={e => { setDateFrom(e.target.value); setPage(1); }}
-          className="h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+          className="h-10 rounded-xl border border-border px-3 text-sm outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(96,165,250,0.28)]"
         />
         <input
           type="date"
           value={dateTo}
           onChange={e => { setDateTo(e.target.value); setPage(1); }}
-          className="h-10 rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+          className="h-10 rounded-xl border border-border px-3 text-sm outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[rgba(96,165,250,0.28)]"
         />
         <button
           onClick={clearFilters}
-          className="h-10 rounded-xl bg-slate-100 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-200"
+          className="h-10 rounded-xl bg-[var(--btn-secondary-bg)] px-4 text-sm font-semibold text-[var(--btn-secondary-color)] hover:bg-[var(--btn-secondary-bg-hover)]"
         >
           Clear
         </button>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-[16px] border border-border bg-surface shadow-[var(--sh-card)]">
         <table className="w-full text-sm">
-          <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+          <thead className="border-b border-border bg-surface-muted text-left text-xs font-semibold uppercase text-tertiary">
             <tr>
               <th className="px-4 py-3">Time</th>
               <th className="px-4 py-3">User</th>
@@ -97,62 +97,62 @@ export default function AuditLogPage() {
               <th className="px-4 py-3">IP</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-[var(--ui-border-soft)]">
             {isLoading
               ? Array.from({ length: 8 }).map((_, i) => (
                   <tr key={i}>
                     {Array.from({ length: 5 }).map((_, j) => (
                       <td key={j} className="px-4 py-3">
-                        <div className="h-3 w-24 animate-pulse rounded-full bg-slate-200" />
+                        <div className="h-3 w-24 animate-pulse rounded-full bg-border" />
                       </td>
                     ))}
                   </tr>
                 ))
               : data?.data.map(entry => (
-                  <tr key={entry.id} className="hover:bg-slate-50">
-                    <td className="whitespace-nowrap px-4 py-3 text-slate-500">
+                  <tr key={entry.id} className="hover:bg-surface-muted">
+                    <td className="whitespace-nowrap px-4 py-3 text-tertiary">
                       {format(new Date(entry.created_at), 'dd MMM yyyy HH:mm')}
                     </td>
-                    <td className="px-4 py-3 font-medium text-slate-700">
+                    <td className="px-4 py-3 font-medium text-secondary">
                       {entry.user_name ?? '-'}
                     </td>
                     <td className="px-4 py-3">
-                      <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                      <span className="rounded-full bg-[var(--btn-subtle-bg)] px-2 py-0.5 text-xs font-semibold text-[var(--btn-subtle-color)]">
                         {entry.action}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-secondary">
                       {entry.entity_type}
                     </td>
-                    <td className="px-4 py-3 text-slate-400">{entry.ip_address ?? '-'}</td>
+                    <td className="px-4 py-3 text-tertiary">{entry.ip_address ?? '-'}</td>
                   </tr>
                 ))}
           </tbody>
         </table>
 
         {!isLoading && (data?.data.length ?? 0) === 0 && (
-          <div className="py-16 text-center text-slate-400">No audit log entries found.</div>
+          <div className="py-16 text-center text-tertiary">No audit log entries found.</div>
         )}
       </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="mt-4 flex items-center justify-between">
-          <span className="text-sm text-slate-500">
+          <span className="text-sm text-tertiary">
             Page {page} of {totalPages} - {data?.total} total entries
           </span>
           <div className="flex gap-2">
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold disabled:opacity-40 hover:bg-slate-50"
+              className="rounded-xl border border-border px-4 py-2 text-sm font-semibold disabled:opacity-40 hover:bg-surface-muted"
             >
               Previous
             </button>
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold disabled:opacity-40 hover:bg-slate-50"
+              className="rounded-xl border border-border px-4 py-2 text-sm font-semibold disabled:opacity-40 hover:bg-surface-muted"
             >
               Next
             </button>

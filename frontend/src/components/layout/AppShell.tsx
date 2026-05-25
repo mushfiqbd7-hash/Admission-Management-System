@@ -52,10 +52,8 @@ function NavItem({ label, path, icon: Icon, end: forceEnd }: {
         marginBottom: 2,
         borderRadius: 9,
         border: 'none',
-        background: isActive
-          ? 'linear-gradient(180deg, #3b82f6 0%, #2563eb 100%)'
-          : 'transparent',
-        color: isActive ? '#fff' : 'var(--sidebar-text)',
+        background: isActive ? 'var(--btn-primary-bg)' : 'transparent',
+        color: isActive ? 'var(--btn-primary-color)' : 'var(--sidebar-text)',
         cursor: 'pointer',
         fontFamily: 'inherit',
         textDecoration: 'none',
@@ -157,9 +155,9 @@ export default function AppShell() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{
             width: 40, height: 40, borderRadius: 12, flexShrink: 0,
-            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+            background: 'var(--btn-primary-bg)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em',
+            color: 'var(--btn-primary-color)', fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em',
             boxShadow: '0 1px 0 rgba(255,255,255,0.30) inset, 0 6px 14px -4px rgba(37,99,235,0.50)',
           }}>
             A
@@ -217,9 +215,9 @@ export default function AppShell() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
           <div style={{
             width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
-            background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+            background: 'var(--btn-primary-bg)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 13, fontWeight: 700, color: '#fff', overflow: 'hidden',
+            fontSize: 13, fontWeight: 700, color: 'var(--btn-primary-color)', overflow: 'hidden',
             boxShadow: '0 0 0 2px rgba(59,130,246,0.45)',
           }}>
             {user?.avatar_url
@@ -296,7 +294,7 @@ export default function AppShell() {
                 position: 'absolute', top: 14, right: -44,
                 width: 32, height: 32, borderRadius: '50%',
                 background: 'rgba(0,0,0,0.55)', border: 'none',
-                color: '#fff', cursor: 'pointer',
+                color: 'var(--text-on-accent)', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >

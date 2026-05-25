@@ -31,13 +31,13 @@ type ExportPanelProps = {
 };
 
 const STATUSES: StatusConfig[] = [
-  { key: 'all', label: 'Total', color: '#1d4ed8', bg: 'var(--accent-light)', dot: '#2563eb' },
-  { key: 'approved', label: 'Approved', color: '#15803d', bg: 'var(--status-approved-bg)', dot: '#16a34a' },
-  { key: 'rejected', label: 'Rejected', color: '#dc2626', bg: 'var(--status-rejected-bg)', dot: '#dc2626' },
-  { key: 'processing', label: 'Processing', color: '#4338ca', bg: 'var(--status-processing-bg)', dot: '#4f46e5' },
-  { key: 'pre_admission', label: 'Pre Admission', color: '#0e7490', bg: 'var(--status-admitted-bg)', dot: '#0891b2' },
-  { key: 'admitted', label: 'Admitted', color: '#0f766e', bg: 'var(--status-admitted-bg)', dot: '#0f766e' },
-  { key: 'revoked', label: 'Revoked', color: '#c2410c', bg: 'var(--status-revoked-bg)', dot: '#ea580c' },
+  { key: 'all', label: 'Total', color: 'var(--btn-subtle-color)', bg: 'var(--accent-light)', dot: 'var(--btn-subtle-color)' },
+  { key: 'approved', label: 'Approved', color: 'var(--status-approved-text)', bg: 'var(--status-approved-bg)', dot: 'var(--status-approved-text)' },
+  { key: 'rejected', label: 'Rejected', color: 'var(--status-rejected-text)', bg: 'var(--status-rejected-bg)', dot: 'var(--status-rejected-text)' },
+  { key: 'processing', label: 'Processing', color: 'var(--status-processing-text)', bg: 'var(--status-processing-bg)', dot: 'var(--status-processing-text)' },
+  { key: 'pre_admission', label: 'Pre Admission', color: 'var(--status-pre-text)', bg: 'var(--status-pre-bg)', dot: 'var(--status-pre-text)' },
+  { key: 'admitted', label: 'Admitted', color: 'var(--status-admitted-text)', bg: 'var(--status-admitted-bg)', dot: 'var(--status-admitted-text)' },
+  { key: 'revoked', label: 'Revoked', color: 'var(--status-revoked-text)', bg: 'var(--status-revoked-bg)', dot: 'var(--status-revoked-text)' },
 ];
 
 function statusLabel(s: string) {
@@ -694,7 +694,7 @@ export default function ExportPanel({ sourceRows = [] }: ExportPanelProps) {
                     ...exportBtnStyle,
                     border: '1px solid var(--status-processing-border)',
                     background: 'var(--accent-light)',
-                    color: '#1d4ed8',
+                    color: 'var(--btn-subtle-color)',
                     opacity: !criteriaActive || loading || filteredCount === 0 ? 0.5 : 1,
                     cursor:
                       !criteriaActive || loading || filteredCount === 0
@@ -714,7 +714,7 @@ export default function ExportPanel({ sourceRows = [] }: ExportPanelProps) {
                   width: 8,
                   height: 8,
                   borderRadius: '50%',
-                  background: activeStatus?.dot || '#2563eb',
+                  background: activeStatus?.dot || 'var(--btn-subtle-color)',
                   flexShrink: 0,
                 }}
               />
@@ -772,7 +772,7 @@ const closedButtonStyle: CSSProperties = {
   cursor: 'pointer',
   border: '1px solid var(--status-processing-border)',
   background: 'var(--accent-light)',
-  color: '#1d4ed8',
+  color: 'var(--btn-subtle-color)',
   fontSize: 13,
   fontWeight: 900,
   fontFamily: 'inherit',
@@ -801,7 +801,7 @@ const reportIconBoxStyle: CSSProperties = {
   borderRadius: 16,
   background: 'var(--accent-light)',
   border: '1px solid var(--status-processing-border)',
-  color: '#2563eb',
+  color: 'var(--btn-subtle-color)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -843,7 +843,7 @@ const closeBtnStyle: CSSProperties = {
   borderRadius: 14,
   border: 'none',
   background: 'var(--text-primary)',
-  color: '#ffffff',
+  color: 'var(--text-on-accent)',
   fontSize: 13,
   fontWeight: 900,
   cursor: 'pointer',
@@ -864,7 +864,7 @@ const statusGridStyle: CSSProperties = {
 const statusCardStyle: CSSProperties = {
   minHeight: 76,
   padding: '13px 14px',
-  borderRadius: 16,
+  borderRadius: 14,
   border: '1px solid var(--ui-border)',
   background: 'var(--surface)',
   cursor: 'pointer',
@@ -897,7 +897,7 @@ const statusNameStyle: CSSProperties = {
 const statusCountStyle: CSSProperties = {
   fontSize: 18,
   fontWeight: 950,
-  color: 'var(--ui-text-subtle)',
+  color: 'var(--ui-text-strong)',
   lineHeight: 1,
 };
 
@@ -954,7 +954,7 @@ const recordsReadyStyle: CSSProperties = {
   borderRadius: 14,
   border: '1px solid var(--status-processing-border)',
   background: 'var(--accent-light)',
-  color: '#1d4ed8',
+  color: 'var(--btn-subtle-color)',
   padding: '0 16px',
   display: 'inline-flex',
   alignItems: 'center',
@@ -971,7 +971,7 @@ const resetBtnStyle: CSSProperties = {
   borderRadius: 14,
   border: '1px solid var(--status-rejected-border)',
   background: 'var(--status-rejected-bg)',
-  color: '#dc2626',
+  color: 'var(--btn-danger-soft-color)',
   fontSize: 13,
   fontWeight: 900,
   cursor: 'pointer',
@@ -1105,6 +1105,3 @@ function PdfIcon() {
     </svg>
   );
 }
-
-
-
