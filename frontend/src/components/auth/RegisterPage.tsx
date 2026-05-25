@@ -129,7 +129,7 @@ export default function RegisterPage() {
       {/* Cinematic dark overlay */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 1,
-        background: 'linear-gradient(to right, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.38) 50%, rgba(0,0,0,0.72) 100%)',
+        background: 'rgba(0,0,0,0.42)',
       }} />
 
       {/* Vignette */}
@@ -203,7 +203,6 @@ export default function RegisterPage() {
         position: 'relative', zIndex: 2,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '40px',
-        borderLeft: '1px solid rgba(255,255,255,0.08)',
       }}>
         {/* Subtle top glow */}
         <div style={{
@@ -219,8 +218,7 @@ export default function RegisterPage() {
             position: 'relative', width: '100%', maxWidth: 380,
             padding: '34px 36px', borderRadius: 20,
             background: 'transparent',
-            border: '1px solid rgba(255,255,255,0.10)',
-            backdropFilter: 'blur(40px) saturate(140%)',
+            border: 'none',
           }}
         >
           {registered ? (
