@@ -29,6 +29,7 @@ import type { Student, Notification } from '@/types';
 import { useNavigate } from 'react-router-dom';
 import type { LucideIcon } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { useTheme } from '@/context/ThemeContext';
 import { toast } from 'sonner';
 
 type StatsView = {
@@ -153,19 +154,23 @@ function StatCard({
   bg: string;
   onClick: () => void;
 }) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   return (
     <button
       onClick={onClick}
       style={statCardStyle}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.boxShadow = '0 1px 0 rgba(255,255,255,0.7) inset, 0 2px 4px rgba(15,23,42,0.05), 0 16px 40px -12px rgba(15,23,42,0.14)';
-        e.currentTarget.style.borderColor = 'rgba(15,23,42,0.10)';
+        e.currentTarget.style.boxShadow = isDark
+          ? '0 1px 0 rgba(255,255,255,0.06) inset, 0 16px 40px -12px rgba(0,0,0,0.55)'
+          : '0 1px 0 rgba(255,255,255,0.7) inset, 0 2px 4px rgba(15,23,42,0.05), 0 16px 40px -12px rgba(15,23,42,0.14)';
+        e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(15,23,42,0.10)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
         e.currentTarget.style.boxShadow = 'var(--sh-card)';
-        e.currentTarget.style.borderColor = 'rgba(15,23,42,0.06)';
+        e.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.06)';
       }}
     >
       <div
@@ -187,7 +192,7 @@ function StatCard({
           </div>
 
           <div style={statChevronBoxStyle}>
-            <ChevronRight size={15} style={{ color: '#b8c3d4' }} />
+            <ChevronRight size={15} style={{ color: isDark ? 'rgba(255,255,255,0.25)' : '#b8c3d4' }} />
           </div>
         </div>
 
@@ -245,10 +250,12 @@ function Panel({
 }
 
 function EmptyState({ text }: { text: string }) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   return (
     <div style={emptyStateStyle}>
       <div style={emptyIconStyle}>
-        <FileText size={18} style={{ color: '#cbd5e1' }} />
+        <FileText size={18} style={{ color: isDark ? 'rgba(255,255,255,0.22)' : '#cbd5e1' }} />
       </div>
       <div style={{ fontSize: 12 }}>{text}</div>
     </div>
@@ -296,6 +303,8 @@ function PagBtn({
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   const qc = useQueryClient();
 
   const canGenLink = ['admin', 'staff', 'agent'].includes(user?.role || '');
@@ -546,7 +555,7 @@ export default function DashboardPage() {
                   Generate Link
                 </button>
               )}
-              <button onClick={() => navigate('/students/new')} style={newApplicationBtn}>
+              <button onClick={() => navigate('/students/new')} style={{ ...newApplicationBtn, boxShadow: isDark ? '0 6px 20px rgba(59,130,246,0.35)' : '0 10px 22px rgba(30,58,95,0.22)' }}>
                 <Plus size={14} />
                 New Application
               </button>
@@ -563,7 +572,7 @@ export default function DashboardPage() {
                   left: 13,
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  color: '#cbd5e1',
+                  color: isDark ? 'rgba(255,255,255,0.30)' : '#cbd5e1',
                 }}
               />
 
@@ -748,7 +757,7 @@ export default function DashboardPage() {
 
           {/* Footer */}
           <div style={tableFooterStyle}>
-            <span style={{ fontSize: 11.5, color: '#94a3b8', fontWeight: 800 }}>
+            <span style={{ fontSize: 11.5, color: isDark ? 'rgba(255,255,255,0.40)' : '#94a3b8', fontWeight: 800 }}>
               {filteredRows.length === 0
                 ? '0 entries'
                 : `${(safePage - 1) * pageSize + 1}-${Math.min(

@@ -118,6 +118,7 @@
   --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
   --shadow-xl: 0 8px 24px rgba(0,0,0,0.10);
   --sh-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --sh-panel: 0 1px 3px rgba(0,0,0,0.06), 0 4px 20px rgba(0,0,0,0.05);
   --sh-header: 0 1px 0 rgba(0,0,0,0.06);
   --sh-focus: 0 0 0 3px rgba(59,130,246,0.20);
 
@@ -308,7 +309,7 @@
   --btn-primary-bg-hover: #2563eb;
   --btn-primary-color: #ffffff;
   --btn-primary-border: rgba(59,130,246,0.50);
-  --btn-primary-shadow: none;
+  --btn-primary-shadow: 0 0 16px rgba(59,130,246,0.30), 0 4px 12px rgba(59,130,246,0.18);
   --btn-secondary-bg: rgba(255,255,255,0.06);
   --btn-secondary-bg-hover: rgba(255,255,255,0.10);
   --btn-secondary-color: rgba(255,255,255,0.85);
@@ -350,7 +351,8 @@
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.70);
   --shadow-md: 0 4px 16px rgba(0,0,0,0.50);
   --shadow-xl: 0 8px 32px rgba(0,0,0,0.70);
-  --sh-card: 0 1px 0 rgba(255,255,255,0.06) inset;
+  --sh-card: 0 1px 0 rgba(255,255,255,0.06) inset, 0 1px 3px rgba(0,0,0,0.55);
+  --sh-panel: 0 1px 0 rgba(255,255,255,0.06) inset, 0 2px 12px rgba(0,0,0,0.70);
   --sh-header: 0 1px 0 rgba(255,255,255,0.06) inset;
   --sh-focus: 0 0 0 3px rgba(59,130,246,0.28);
 
@@ -1296,7 +1298,7 @@
   background: var(--btn-primary-bg) !important;
   border-color: var(--btn-primary-border) !important;
   color: var(--btn-primary-color) !important;
-  box-shadow: none !important;
+  box-shadow: var(--btn-primary-shadow) !important;
 }
 .dark .sams-app-shell :is(.btn-ghost, button[style*="background: var(--surface)"], button[style*="background: var(--btn-secondary-bg)"]) {
   background: var(--btn-secondary-bg) !important;
@@ -1354,6 +1356,23 @@
 /* Sidebar footer */
 .dark .sams-app-shell .sams-sidebar > div:last-child {
   border-top-color: rgba(255,255,255,0.07) !important;
+}
+
+/* Sidebar — subtle blue ambient glow on right edge */
+.dark .sams-app-shell .sams-sidebar {
+  box-shadow: 4px 0 32px rgba(59,130,246,0.05) !important;
+}
+
+/* Primary button — electric blue glow on hover */
+.dark .sams-app-shell .btn-primary:hover {
+  box-shadow: 0 0 24px rgba(59,130,246,0.45), 0 6px 14px rgba(59,130,246,0.25) !important;
+  transform: translateY(-1px);
+}
+
+/* Stat cards & panels — micro inset shimmer */
+.dark .sams-app-shell [style*="background: var(--surface)"][style*="border-radius: 20"],
+.dark .sams-app-shell [style*="background: var(--surface)"][style*="border-radius: 22"] {
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 1px 4px rgba(0,0,0,0.55) !important;
 }
 
 /* ═══════════════════════════════════════════════════════
