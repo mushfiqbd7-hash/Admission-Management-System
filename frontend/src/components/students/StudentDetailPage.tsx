@@ -69,11 +69,11 @@ function InfoRow({
   mono?: boolean;
 }) {
   return (
-    <div className="grid grid-cols-[160px_1fr] gap-4 border-b border-slate-100 py-2 last:border-0">
-      <div className="text-[12px] font-medium text-slate-500">{label}</div>
+    <div className="grid grid-cols-[160px_1fr] gap-4 border-b border-[var(--border)] py-2 last:border-0">
+      <div className="text-[12px] font-medium text-[var(--text-tertiary)]">{label}</div>
       <div
         className={`text-[13px] font-semibold ${
-          value ? 'text-slate-900' : 'text-slate-400'
+          value ? 'text-[var(--text-primary)]' : 'text-[var(--text-tertiary)]'
         } ${mono ? 'font-mono' : ''}`}
       >
         {value || '-'}
@@ -92,10 +92,10 @@ function Section({
   children: ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_28px_rgba(15,23,42,0.04)]">
-      <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-5 py-4">
+    <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-[var(--sh-card)]">
+      <div className="flex items-center gap-2 border-b border-[var(--border)] bg-[var(--surface-raised)] px-5 py-4">
         {Icon && <Icon size={16} className="text-[var(--btn-subtle-color)]" />}
-        <h3 className="m-0 text-[14px] font-black text-slate-900">{title}</h3>
+        <h3 className="m-0 text-[14px] font-black text-[var(--text-primary)]">{title}</h3>
       </div>
 
       <div className="px-5 py-3">{children}</div>
@@ -257,17 +257,17 @@ export default function StudentDetailPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-background">
-      <div className="flex min-h-[76px] items-center gap-4 border-b border-slate-200 bg-white px-6">
+      <div className="flex min-h-[76px] items-center gap-4 border-b border-[var(--border)] bg-[var(--surface)] px-6">
         <button
           onClick={() => navigate(-1)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50"
+          className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface-hover)]"
         >
           <ArrowLeft size={18} />
         </button>
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-3">
-            <h1 className="m-0 text-[22px] font-black tracking-[-0.03em] text-slate-950">
+            <h1 className="m-0 text-[22px] font-black tracking-[-0.03em] text-[var(--text-primary)]">
               {s.given_name} {s.family_name}
             </h1>
 
@@ -282,7 +282,7 @@ export default function StudentDetailPage() {
             )}
           </div>
 
-          <div className="mt-1 text-[13px] text-slate-500">
+          <div className="mt-1 text-[13px] text-[var(--text-tertiary)]">
             App No:{' '}
             <span className="font-mono font-bold text-[var(--btn-subtle-color)]">
               {s.application_number || '-'}
@@ -300,7 +300,7 @@ export default function StudentDetailPage() {
                 value={s.application_status}
                 onChange={(e) => statusMutation.mutate(e.target.value)}
                 disabled={statusMutation.isPending}
-                className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13px] font-bold"
+                className="h-10 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-primary)] px-3 text-[13px] font-bold"
               >
                 {(Object.keys(STATUS_LABELS) as ApplicationStatus[]).map((k) => (
                   <option key={k} value={k}>
@@ -311,7 +311,7 @@ export default function StudentDetailPage() {
 
               <button
                 onClick={handleExportDocs}
-                className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[13px] font-bold text-slate-700"
+                className="flex h-10 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-[13px] font-bold text-[var(--text-primary)]"
               >
                 <Download size={15} /> Export
               </button>
@@ -329,14 +329,14 @@ export default function StudentDetailPage() {
 
           <button
             onClick={handlePrint}
-            className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-[13px] font-bold text-slate-700"
+            className="flex h-10 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-[13px] font-bold text-[var(--text-primary)]"
           >
             <Printer size={15} /> Print
           </button>
         </div>
       </div>
 
-      <div className="flex border-b border-slate-200 bg-white px-6">
+      <div className="flex border-b border-[var(--border)] bg-[var(--surface)] px-6">
         {tabs.map(({ id: tid, label, Icon }) => (
           <button
             key={tid}
@@ -344,7 +344,7 @@ export default function StudentDetailPage() {
             className={`flex items-center gap-2 border-b-2 px-5 py-4 text-[13px] font-bold ${
               tab === tid
                 ? 'border-[var(--btn-subtle-border)] text-[var(--btn-subtle-color)]'
-                : 'border-transparent text-slate-500'
+                : 'border-transparent text-[var(--text-tertiary)]'
             }`}
           >
             <Icon size={15} />
@@ -420,7 +420,7 @@ export default function StudentDetailPage() {
             {edu.length > 0 && (
               <Section title="Education Background" icon={GraduationCap}>
                 {edu.map((e, i) => (
-                  <div key={i} className={i > 0 ? 'mt-2 border-t border-slate-100 pt-2' : ''}>
+                  <div key={i} className={i > 0 ? 'mt-2 border-t border-[var(--border)] pt-2' : ''}>
                     <InfoRow label="Institution" value={fmt(e.institution_name)} />
                     <InfoRow label="Country" value={fmt(e.country)} />
                     <InfoRow label="Degree" value={fmt(e.degree_obtained)} />
@@ -492,7 +492,7 @@ export default function StudentDetailPage() {
             {lang.length > 0 && (
               <Section title="Language Proficiency" icon={Globe}>
                 {lang.map((l, i) => (
-                  <div key={i} className={i > 0 ? 'mt-2 border-t border-slate-100 pt-2' : ''}>
+                  <div key={i} className={i > 0 ? 'mt-2 border-t border-[var(--border)] pt-2' : ''}>
                     <InfoRow label="Language" value={fmt(l.language)} />
                     <InfoRow label="Test" value={fmt(l.test_name)} />
                     <InfoRow label="Score" value={fmt(l.score)} />
@@ -505,7 +505,7 @@ export default function StudentDetailPage() {
             {work.length > 0 && (
               <Section title="Work Experience" icon={Briefcase}>
                 {work.map((w, i) => (
-                  <div key={i} className={i > 0 ? 'mt-2 border-t border-slate-100 pt-2' : ''}>
+                  <div key={i} className={i > 0 ? 'mt-2 border-t border-[var(--border)] pt-2' : ''}>
                     <InfoRow label="Employer" value={fmt(w.employer)} />
                     <InfoRow label="Position" value={fmt(w.position)} />
                     <InfoRow
@@ -523,13 +523,13 @@ export default function StudentDetailPage() {
         )}
 
         {tab === 'documents' && (
-          <div className="max-w-[820px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_28px_rgba(15,23,42,0.04)]">
-            <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-5 py-4">
+          <div className="max-w-[820px] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-[var(--sh-card)]">
+            <div className="flex items-center justify-between border-b border-[var(--border)] bg-[var(--surface-raised)] px-5 py-4">
               <div>
-                <div className="text-[14px] font-black text-slate-900">
+                <div className="text-[14px] font-black text-[var(--text-primary)]">
                   {uploadedCount} of {DOCUMENTS_LIST.length} documents uploaded
                 </div>
-                <div className="mt-1 text-[12px] text-slate-500">
+                <div className="mt-1 text-[12px] text-[var(--text-tertiary)]">
                   Uploaded documents are checked. Missing documents remain blank.
                 </div>
               </div>
@@ -554,24 +554,24 @@ export default function StudentDetailPage() {
                     className={`mb-2 flex items-center gap-3 rounded-xl border px-4 py-3 ${
                       uploaded
                         ? 'border-green-200 bg-green-50'
-                        : 'border-slate-200 bg-white'
+                        : 'border-[var(--border)] bg-[var(--surface)]'
                     }`}
                   >
                     <div
                       className={`flex h-5 w-5 items-center justify-center rounded-md border ${
                         uploaded
                           ? 'border-green-600 bg-green-600'
-                          : 'border-slate-300 bg-white'
+                          : 'border-[var(--border)] bg-[var(--surface)]'
                       }`}
                     >
                       {uploaded && <CheckCircle size={13} color="var(--btn-success-color)" />}
                     </div>
 
-                    <div className="w-7 text-right text-[12px] text-slate-400">
+                    <div className="w-7 text-right text-[12px] text-[var(--text-tertiary)]">
                       {i + 1}.
                     </div>
 
-                    <div className="flex-1 text-[13px] font-bold text-slate-800">
+                    <div className="flex-1 text-[13px] font-bold text-[var(--text-primary)]">
                       {doc.label}
                       {doc.required && (
                         <span className="ml-2 text-[11px] font-black text-red-600">
@@ -580,7 +580,7 @@ export default function StudentDetailPage() {
                       )}
                     </div>
 
-                    <div className="min-w-0 max-w-[280px] truncate text-right text-[12px] font-semibold text-slate-500">
+                    <div className="min-w-0 max-w-[280px] truncate text-right text-[12px] font-semibold text-[var(--text-tertiary)]">
                       {uploaded ? uploaded.file_name : 'Not uploaded'}
                     </div>
 
@@ -604,8 +604,8 @@ export default function StudentDetailPage() {
         {tab === 'notes' && (
           <div className="max-w-[720px]">
             {canManageNotes && (
-              <div className="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_12px_28px_rgba(15,23,42,0.04)]">
-                <div className="mb-3 text-[13px] font-black uppercase tracking-wide text-slate-500">
+              <div className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--sh-card)]">
+                <div className="mb-3 text-[13px] font-black uppercase tracking-wide text-[var(--text-tertiary)]">
                   Add Application Note
                 </div>
 
@@ -614,7 +614,7 @@ export default function StudentDetailPage() {
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Write an application note..."
-                  className="mb-3 w-full resize-none rounded-xl border border-slate-200 p-4 text-[13px] outline-none focus:ring-2 focus:ring-[rgba(96,165,250,0.28)]"
+                  className="mb-3 w-full resize-none rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 text-[13px] text-[var(--text-primary)] outline-none focus:ring-2 focus:ring-[rgba(96,165,250,0.28)]"
                 />
 
                 <div className="flex justify-end">
@@ -631,7 +631,7 @@ export default function StudentDetailPage() {
             )}
 
             {data.notes?.length === 0 && (
-              <div className="py-12 text-center text-[13px] text-slate-500">
+              <div className="py-12 text-center text-[13px] text-[var(--text-tertiary)]">
                 No notes yet.
               </div>
             )}
@@ -639,25 +639,25 @@ export default function StudentDetailPage() {
             {data.notes?.map((n) => (
               <div
                 key={n.id}
-                className="mb-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_12px_28px_rgba(15,23,42,0.04)]"
+                className="mb-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--sh-card)]"
               >
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-[11px] font-black text-[var(--btn-primary-color)]">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--btn-primary-bg)] text-[11px] font-black text-[var(--btn-primary-color)]">
                       {(n.author || 'A').charAt(0).toUpperCase()}
                     </div>
 
-                    <div className="text-[13px] font-black text-slate-900">
+                    <div className="text-[13px] font-black text-[var(--text-primary)]">
                       {n.author || 'Admin/Staff'}
                     </div>
                   </div>
 
-                  <div className="font-mono text-[11px] text-slate-400">
+                  <div className="font-mono text-[11px] text-[var(--text-tertiary)]">
                     {formatDateTime(n.created_at)}
                   </div>
                 </div>
 
-                <p className="m-0 whitespace-pre-wrap text-[13px] leading-7 text-slate-600">
+                <p className="m-0 whitespace-pre-wrap text-[13px] leading-7 text-[var(--text-secondary)]">
                   {n.note}
                 </p>
               </div>

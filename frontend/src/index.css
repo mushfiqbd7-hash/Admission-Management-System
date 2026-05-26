@@ -1341,3 +1341,74 @@
 .dark .sams-app-shell .sams-sidebar > div:last-child {
   border-top-color: rgba(255,255,255,0.07) !important;
 }
+
+/* ═══════════════════════════════════════════════════════
+   NUCLEAR DARK — Select options, hover variants, edge cases
+   ═══════════════════════════════════════════════════════ */
+
+/* Select option background — browser-native fix */
+.dark .sams-app-shell select option,
+.dark .sams-app-shell select optgroup {
+  background: #1c1c1c !important;
+  color: #ffffff !important;
+}
+
+/* Native select — force non-native rendering in dark */
+.dark .sams-app-shell select {
+  color-scheme: dark;
+  background: var(--surface-raised) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border) !important;
+}
+
+/* Tailwind hover:bg-slate-50 / hover:bg-white catch */
+.dark .sams-app-shell [class*="hover\:bg-slate-"],
+.dark .sams-app-shell [class*="hover\:bg-white"],
+.dark .sams-app-shell [class*="hover\:bg-gray-"] {
+  --tw-bg-opacity: 0 !important;
+}
+.dark .sams-app-shell [class*="hover\:bg-slate-"]:hover,
+.dark .sams-app-shell [class*="hover\:bg-white"]:hover,
+.dark .sams-app-shell [class*="hover\:bg-gray-"]:hover {
+  background-color: var(--surface-hover) !important;
+}
+
+/* Any remaining bg-white / bg-slate-* we may have missed */
+.dark .sams-app-shell [class*="bg-white"] {
+  background-color: var(--surface) !important;
+}
+.dark .sams-app-shell [class*="bg-slate-50"],
+.dark .sams-app-shell [class*="bg-slate-100"] {
+  background-color: var(--surface-raised) !important;
+}
+
+/* Light shadow override */
+.dark .sams-app-shell [class*="shadow-[0_12px"] {
+  box-shadow: var(--sh-card) !important;
+}
+
+/* border-slate-* catch-all */
+.dark .sams-app-shell [class*="border-slate-1"],
+.dark .sams-app-shell [class*="border-slate-2"],
+.dark .sams-app-shell [class*="border-slate-3"] {
+  border-color: var(--border) !important;
+}
+
+/* Tab active underline — keep it visible */
+.dark .sams-app-shell [class*="border-b-2"] {
+  border-bottom-color: var(--accent) !important;
+}
+
+/* text-slate-* catch-all */
+.dark .sams-app-shell [class*="text-slate-9"],
+.dark .sams-app-shell [class*="text-slate-8"] {
+  color: var(--text-primary) !important;
+}
+.dark .sams-app-shell [class*="text-slate-6"],
+.dark .sams-app-shell [class*="text-slate-7"] {
+  color: var(--text-secondary) !important;
+}
+.dark .sams-app-shell [class*="text-slate-4"],
+.dark .sams-app-shell [class*="text-slate-5"] {
+  color: var(--text-tertiary) !important;
+}
