@@ -249,15 +249,21 @@ function Panel({
   );
 }
 
-function EmptyState({ text }: { text: string }) {
+function EmptyState({ text, subtitle }: { text: string; subtitle?: string }) {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
   return (
     <div style={emptyStateStyle}>
-      <div style={emptyIconStyle}>
-        <FileText size={18} style={{ color: isDark ? 'rgba(255,255,255,0.22)' : '#cbd5e1' }} />
+      <div style={{
+        ...emptyIconStyle,
+        width: 48, height: 48, borderRadius: 16,
+        background: 'var(--btn-subtle-bg)',
+        border: '1px solid var(--btn-subtle-border)',
+      }}>
+        <FileText size={20} style={{ color: isDark ? 'rgba(255,255,255,0.30)' : '#93c5fd' }} />
       </div>
-      <div style={{ fontSize: 12 }}>{text}</div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)' }}>{text}</div>
+      {subtitle && <div style={{ fontSize: 11.5, color: 'var(--text-tertiary)', marginTop: 2 }}>{subtitle}</div>}
     </div>
   );
 }
@@ -679,7 +685,7 @@ export default function DashboardPage() {
                 ) : pageRows.length === 0 ? (
                   <tr>
                     <td colSpan={6}>
-                      <EmptyState text="No applications found." />
+                      <EmptyState text="No applications found." subtitle="Try adjusting your filters." />
                     </td>
                   </tr>
                 ) : (
@@ -811,7 +817,7 @@ export default function DashboardPage() {
             >
               <div style={{ padding: '6px 0' }}>
                 {recentActivity.length === 0 ? (
-                  <EmptyState text="No recent activity." />
+                  <EmptyState text="No recent activity." subtitle="Updates will appear once applications are processed." />
                 ) : (
                   recentActivity.map((s) => {
                     const st = statusStyle(s.application_status);
@@ -888,7 +894,7 @@ export default function DashboardPage() {
             >
               <div style={{ padding: '6px 0' }}>
                 {dashNotifs.length === 0 ? (
-                  <EmptyState text="No notifications yet." />
+                  <EmptyState text="No notifications yet." subtitle="You'll be notified about status changes here." />
                 ) : (
                   dashNotifs.map((item) => (
                     <button

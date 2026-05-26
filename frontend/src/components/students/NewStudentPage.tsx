@@ -1,7 +1,10 @@
 // src/components/students/NewStudentPage.tsx
+import { useTheme } from '@/context/ThemeContext';
 import StudentForm from './StudentForm';
 
 export default function NewStudentPage() {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   return (
     <div
       style={{
@@ -10,8 +13,9 @@ export default function NewStudentPage() {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        background:
-          'radial-gradient(circle at top left, rgba(37,99,235,0.055), transparent 34%), linear-gradient(180deg, var(--ui-surface-subtle) 0%, var(--surface-muted) 100%)',
+        background: isDark
+          ? '#0d0d0d'
+          : 'radial-gradient(circle at top left, rgba(37,99,235,0.055), transparent 34%), linear-gradient(180deg, var(--ui-surface-subtle) 0%, var(--surface-muted) 100%)',
       }}
     >
       <div
@@ -30,7 +34,7 @@ export default function NewStudentPage() {
             borderRadius: 24,
             border: '1px solid var(--ui-border)',
             background: 'var(--surface)',
-            boxShadow: '0 18px 42px rgba(15, 23, 42, 0.055)',
+            boxShadow: isDark ? 'var(--sh-panel)' : '0 18px 42px rgba(15, 23, 42, 0.055)',
           }}
         >
           <StudentForm mode="create" />

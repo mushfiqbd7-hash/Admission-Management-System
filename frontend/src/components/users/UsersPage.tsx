@@ -72,13 +72,13 @@ function displayUserName(user?: Pick<ExtUser, 'full_name' | 'role'>) {
 function roleTheme(role?: string) {
   switch (role) {
     case 'admin':
-      return { bg: 'var(--status-rejected-bg)', color: 'var(--status-rejected-text)', border: 'var(--status-rejected-border)', soft: 'var(--status-rejected-bg)' };
+      return { bg: 'var(--role-admin-bg)', color: 'var(--role-admin-text)', border: 'var(--role-admin-border)', soft: 'var(--role-admin-bg)' };
     case 'staff':
-      return { bg: 'var(--accent-light)', color: 'var(--btn-subtle-color)', border: 'var(--status-processing-border)', soft: 'var(--accent-light)' };
+      return { bg: 'var(--role-staff-bg)', color: 'var(--role-staff-text)', border: 'var(--role-staff-border)', soft: 'var(--role-staff-bg)' };
     case 'agent':
-      return { bg: 'var(--status-pre-bg)', color: 'var(--status-pre-text)', border: 'var(--status-pre-border)', soft: 'var(--status-pre-bg)' };
+      return { bg: 'var(--role-agent-bg)', color: 'var(--role-agent-text)', border: 'var(--role-agent-border)', soft: 'var(--role-agent-bg)' };
     case 'student':
-      return { bg: 'var(--status-approved-bg)', color: 'var(--status-approved-text)', border: 'var(--status-approved-border)', soft: 'var(--status-approved-bg)' };
+      return { bg: 'var(--role-student-bg)', color: 'var(--role-student-text)', border: 'var(--role-student-border)', soft: 'var(--role-student-bg)' };
     default:
       return { bg: 'var(--ui-surface-subtle)', color: 'var(--ui-text-muted)', border: 'var(--ui-border)', soft: 'var(--ui-surface-subtle)' };
   }
@@ -823,7 +823,7 @@ const statCardStyle: CSSProperties = {
 const statIconBoxStyle: CSSProperties = {
   width: 42,
   height: 42,
-  borderRadius: 15,
+  borderRadius: 16,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -855,9 +855,9 @@ const statLineStyle: CSSProperties = {
 };
 
 const addUserBtnStyle: CSSProperties = {
-  height: 46,
+  height: 44,
   padding: '0 18px',
-  borderRadius: 15,
+  borderRadius: 16,
   border: 'none',
   background: 'var(--btn-primary-bg)',
   color: 'var(--btn-primary-color)',
@@ -912,7 +912,7 @@ const searchIconStyle: CSSProperties = {
 const searchInputStyle: CSSProperties = {
   width: '100%',
   height: 44,
-  borderRadius: 15,
+  borderRadius: 16,
   border: '1px solid var(--ui-border-strong)',
   background: 'var(--surface)',
   padding: '0 40px',
@@ -939,7 +939,7 @@ const clearSearchBtnStyle: CSSProperties = {
 
 const roleSelectStyle: CSSProperties = {
   height: 44,
-  borderRadius: 15,
+  borderRadius: 16,
   border: '1px solid var(--ui-border-strong)',
   background: 'var(--surface)',
   padding: '0 13px',
@@ -1006,7 +1006,7 @@ const nameCellStyle: CSSProperties = {
 
 const avatarStyle: CSSProperties = {
   width: 46,
-  height: 46,
+  height: 44,
   borderRadius: 16,
   background: '#061a33',
   color: 'var(--text-on-accent)',

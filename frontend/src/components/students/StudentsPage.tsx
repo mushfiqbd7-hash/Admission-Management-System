@@ -26,6 +26,7 @@ import { STATUS_LABELS, DEGREE_LABELS } from '@/types';
 import type { Student, ApplicationStatus } from '@/types';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/store/authStore';
+import { useTheme } from '@/context/ThemeContext';
 
 type StudentExtra = Student & {
   submitted_by_name?: string;
@@ -127,6 +128,8 @@ function ActionBtn({
   children: ReactNode;
   tone?: 'blue' | 'amber' | 'red';
 }) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   const toneStyle =
     tone === 'red'
       ? { color: 'var(--btn-danger-soft-color)', bg: 'var(--btn-danger-soft-bg)', border: 'var(--btn-danger-soft-border)' }
@@ -156,7 +159,9 @@ function ActionBtn({
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-1px)';
-        e.currentTarget.style.boxShadow = '0 8px 18px rgba(15,23,42,0.10)';
+        e.currentTarget.style.boxShadow = isDark
+          ? '0 4px 12px rgba(0,0,0,0.50)'
+          : '0 8px 18px rgba(15,23,42,0.10)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
@@ -206,6 +211,8 @@ export default function StudentsPage() {
   const [params, setParams] = useSearchParams();
   const { user } = useAuthStore();
 
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   const canSeeAll = user?.role === 'admin' || user?.role === 'staff';
 
   const [search, setSearch] = useState(params.get('search') || '');
@@ -291,8 +298,8 @@ export default function StudentsPage() {
   const colCount = canSeeAll ? 10 : 9;
 
   return (
-    <div style={isFullScreen ? fullScreenStyle : pageStyle}>
-      <div style={headerCardStyle}>
+    <div style={isFullScreen ? { ...fullScreenStyle, background: isDark ? '#0d0d0d' : fullScreenStyle.background } : { ...pageStyle, background: isDark ? '#0d0d0d' : pageStyle.background }}>
+      <div style={{ ...headerCardStyle, boxShadow: isDark ? 'var(--sh-card)' : headerCardStyle.boxShadow }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={headerIconStyle}>
             <FileText size={22} />
@@ -318,7 +325,7 @@ export default function StudentsPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {canSeeAll && (
             <button
-              style={fullScreenBtnStyle}
+              style={{ ...fullScreenBtnStyle, boxShadow: isDark ? 'none' : fullScreenBtnStyle.boxShadow }}
               onClick={() => setIsFullScreen((v) => !v)}
               title={isFullScreen ? 'Exit full screen (Esc)' : 'Full screen'}
             >
@@ -334,7 +341,7 @@ export default function StudentsPage() {
         </div>
       </div>
 
-      <div style={cardStyle}>
+      <div style={{ ...cardStyle, boxShadow: isDark ? 'var(--sh-panel)' : cardStyle.boxShadow }}>
         <div style={filterBarStyle}>
           <div style={searchBoxStyle}>
             <Search
@@ -481,7 +488,24 @@ export default function StudentsPage() {
                   const canDeleteRow = canSeeAll || student.application_status === 'draft';
 
                   return (
-                    <tr key={student.id} style={rowStyle}>
+                    <tr
+                      key={student.id}
+                      style={{ ...rowStyle, boxShadow: isDark ? '0 1px 0 rgba(255,255,255,0.04) inset' : rowStyle.boxShadow, transition: 'box-shadow 160ms ease, transform 160ms ease' }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLTableRowElement).style.transform = 'translateY(-1px)';
+                        (e.currentTarget as HTMLTableRowElement).style.boxShadow = isDark
+                          ? '0 1px 0 rgba(255,255,255,0.08) inset, 0 8px 24px rgba(0,0,0,0.45)'
+                          : '0 8px 28px rgba(15,23,42,0.10)';
+                        const cells = (e.currentTarget as HTMLTableRowElement).querySelectorAll('td');
+                        cells.forEach(td => (td as HTMLElement).style.borderColor = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(15,23,42,0.10)');
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLTableRowElement).style.transform = 'translateY(0)';
+                        (e.currentTarget as HTMLTableRowElement).style.boxShadow = isDark ? '0 1px 0 rgba(255,255,255,0.04) inset' : rowStyle.boxShadow as string;
+                        const cells = (e.currentTarget as HTMLTableRowElement).querySelectorAll('td');
+                        cells.forEach(td => (td as HTMLElement).style.borderColor = '');
+                      }}
+                    >
                       <td style={firstTdStyle}>
                         <span style={appNoStyle}>{student.application_number || '-'}</span>
                       </td>
@@ -597,21 +621,44 @@ export default function StudentsPage() {
 
           {!isLoading && students.length === 0 && (
             <div style={emptyStateStyle}>
-              <div style={emptyIconStyle}>
-                <FileText size={34} style={{ color: 'var(--ui-text-subtle)' }} />
+              <div style={{
+                width: 64, height: 64, borderRadius: 20,
+                background: 'var(--btn-subtle-bg)',
+                border: '1px solid var(--btn-subtle-border)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: 4,
+              }}>
+                <FileText size={28} style={{ color: 'var(--btn-subtle-color)' }} />
               </div>
 
-              <div style={emptyTitleStyle}>No records found</div>
+              <div style={emptyTitleStyle}>
+                {hasFilters ? 'No matching records' : 'No applications yet'}
+              </div>
 
               <div style={emptySubtitleStyle}>
                 {hasFilters
-                  ? 'No applications match your current filters.'
-                  : 'New student applications will appear here after submission.'}
+                  ? "Try adjusting your filters or search query to find what you're looking for."
+                  : canSeeAll
+                    ? 'Student applications will appear here once submitted.'
+                    : 'Start by submitting your first application.'}
               </div>
 
-              {hasFilters && (
+              {hasFilters ? (
                 <button onClick={clearFilters} style={emptyActionStyle}>
-                  Clear filters
+                  <X size={13} /> Clear all filters
+                </button>
+              ) : !canSeeAll && (
+                <button onClick={() => navigate('/students/new')} style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 7,
+                  padding: '10px 20px', borderRadius: 12,
+                  border: '1px solid var(--btn-primary-border)',
+                  background: 'var(--btn-primary-bg)',
+                  color: 'var(--btn-primary-color)',
+                  fontSize: 13, fontWeight: 800, cursor: 'pointer',
+                  fontFamily: 'inherit', marginTop: 4,
+                  boxShadow: 'var(--btn-primary-shadow)',
+                }}>
+                  <Plus size={14} /> New Application
                 </button>
               )}
             </div>
@@ -716,7 +763,7 @@ const headerCardStyle: CSSProperties = {
 const headerIconStyle: CSSProperties = {
   width: 52,
   height: 52,
-  borderRadius: 17,
+  borderRadius: 16,
   border: '1px solid var(--status-processing-border)',
   background: 'var(--accent-light)',
   color: 'var(--btn-subtle-color)',
@@ -900,7 +947,7 @@ const fullScreenStyle: CSSProperties = {
 };
 
 const fullScreenBtnStyle: CSSProperties = {
-  height: 44,
+  height: 42,
   padding: '0 16px',
   borderRadius: 14,
   border: '1px solid var(--ui-border)',
@@ -963,15 +1010,15 @@ const bodyTdStyle: CSSProperties = {
 
 const firstTdStyle: CSSProperties = {
   ...bodyTdStyle,
-  borderTopLeftRadius: 18,
-  borderBottomLeftRadius: 18,
+  borderTopLeftRadius: 16,
+  borderBottomLeftRadius: 16,
   borderLeft: '1px solid var(--ui-border-soft)',
 };
 
 const lastTdStyle: CSSProperties = {
   ...bodyTdStyle,
-  borderTopRightRadius: 18,
-  borderBottomRightRadius: 18,
+  borderTopRightRadius: 16,
+  borderBottomRightRadius: 16,
   borderRight: '1px solid var(--ui-border-soft)',
 };
 

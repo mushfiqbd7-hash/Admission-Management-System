@@ -54,16 +54,44 @@ function RadioPill({ name, value, checked, label, onChange }: {
   name: string; value: string | boolean; checked: boolean; label: string; onChange: () => void;
 }) {
   return (
-    <label style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }}>
+    <label
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 7, cursor: 'pointer' }}
+      onClick={onChange}
+    >
       <input
         type="radio"
         name={name}
         value={String(value)}
         checked={checked}
         onChange={onChange}
-        style={{ width: 16, height: 16, cursor: 'pointer', accentColor: 'var(--accent)' }}
+        style={{ display: 'none' }}
       />
-      <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>{label}</span>
+      <span style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 18,
+        height: 18,
+        borderRadius: '50%',
+        border: checked ? '2px solid var(--accent)' : '2px solid var(--border-strong)',
+        background: checked ? 'var(--accent)' : 'transparent',
+        transition: 'border-color 140ms ease, background 140ms ease',
+        flexShrink: 0,
+      }}>
+        {checked && (
+          <span style={{
+            width: 6, height: 6, borderRadius: '50%',
+            background: '#ffffff',
+            display: 'block',
+          }} />
+        )}
+      </span>
+      <span style={{
+        fontSize: 13,
+        fontWeight: checked ? 700 : 500,
+        color: checked ? 'var(--text-primary)' : 'var(--text-secondary)',
+        transition: 'color 140ms ease, font-weight 140ms ease',
+      }}>{label}</span>
     </label>
   );
 }
@@ -678,7 +706,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
               </FormField>
 
               {passport.has_china_visa && (
-                <div style={{ paddingLeft: 14, borderLeft: '3px solid var(--navy-100)' }}>
+                <div style={{ paddingLeft: 14, borderLeft: '3px solid var(--btn-subtle-border)' }}>
                   <Grid2>
                     <FormField label="Visa Type" required>
                       <Select value={passport.visa_type} onChange={e => setPassport(p => ({...p, visa_type: e.target.value}))}>
@@ -755,7 +783,7 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
             </FormField>
 
             {china.has_experience && (
-              <div style={{ paddingLeft: 14, borderLeft: '3px solid var(--navy-100)' }}>
+              <div style={{ paddingLeft: 14, borderLeft: '3px solid var(--btn-subtle-border)' }}>
                 <Grid2>
                   <FormField label="University Name" required><Input placeholder="University name" value={china.university_name} onChange={e => setChina(p => ({...p, university_name: e.target.value}))} /></FormField>
                   <FormField label="City" required><Input placeholder="City in China" value={china.city} onChange={e => setChina(p => ({...p, city: e.target.value}))} /></FormField>
@@ -975,50 +1003,79 @@ export default function StudentForm({ mode, initialData, studentId, publicToken,
 
   return (
     <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
-      <div style={{ width: 196, background: 'var(--surface)', borderRight: '1px solid var(--border)', flexShrink: 0, overflowY: 'auto', padding: '14px 10px' }}>
-        <p style={{ fontSize: 10.5, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10, padding: '0 6px' }}>
-          Sections
-        </p>
+      <div style={{ width: 210, background: 'var(--surface)', borderRight: '1px solid var(--border)', flexShrink: 0, overflowY: 'auto', padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 0 }}>
+        {/* Progress bar */}
+        <div style={{ padding: '0 4px 14px', flexShrink: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Progress</span>
+            <span style={{ fontSize: 10.5, fontWeight: 800, color: 'var(--btn-subtle-color)' }}>{step + 1} / {SECTIONS.length}</span>
+          </div>
+          <div style={{ height: 4, borderRadius: 999, background: 'var(--surface-hover)', overflow: 'hidden' }}>
+            <div style={{
+              height: '100%',
+              borderRadius: 999,
+              background: 'var(--btn-primary-bg)',
+              width: `${Math.round(((step + 1) / SECTIONS.length) * 100)}%`,
+              transition: 'width 300ms cubic-bezier(0.34,1.56,0.64,1)',
+            }} />
+          </div>
+        </div>
 
         {SECTIONS.map((sec, i) => {
           const Icon = sec.icon;
           const isActive = i === step;
-          const isDone = savedId && i < step;
+          const isDone = Boolean(savedId && i < step);
 
           return (
             <button key={sec.id} onClick={() => setStep(i)}
               style={{
-                width: '100%', display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px',
-                borderRadius: 7, border: 'none', cursor: 'pointer', marginBottom: 2, textAlign: 'left',
-                fontFamily: 'var(--font-ui)', fontSize: 12.5, fontWeight: isActive ? 600 : 400,
-                background: isActive ? 'var(--btn-primary-bg)' : 'transparent',
-                color: isActive ? 'var(--btn-primary-color)' : isDone ? 'var(--text-secondary)' : 'var(--text-tertiary)',
-                transition: 'background 0.15s, color 0.15s',
+                width: '100%', display: 'flex', alignItems: 'center', gap: 9,
+                padding: '9px 10px', borderRadius: 10, border: 'none',
+                cursor: 'pointer', marginBottom: 1, textAlign: 'left',
+                fontFamily: 'var(--font-ui)', fontSize: 12.5,
+                fontWeight: isActive ? 700 : isDone ? 500 : 400,
+                background: isActive ? 'var(--btn-primary-bg)' : isDone ? 'var(--btn-subtle-bg)' : 'transparent',
+                color: isActive ? 'var(--btn-primary-color)' : isDone ? 'var(--btn-subtle-color)' : 'var(--text-tertiary)',
+                transition: 'background 140ms ease, color 140ms ease',
+                position: 'relative',
               }}
-              onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'var(--surface-sunken)'; }}
-              onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+              onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = isDone ? 'var(--btn-subtle-bg)' : 'var(--surface-raised)'; }}
+              onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = isDone ? 'var(--btn-subtle-bg)' : 'transparent'; }}
             >
-              {isDone
-                ? <CheckCircle size={14} style={{ flexShrink: 0, color: 'var(--btn-success-soft-color)' }} />
-                : <Icon size={14} style={{ flexShrink: 0 }} />
-              }
-              <span>{sec.label}</span>
+              <span style={{
+                width: 26, height: 26, borderRadius: 8, flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: isActive ? 'rgba(255,255,255,0.18)' : isDone ? 'var(--btn-primary-bg)' : 'var(--surface-raised)',
+                border: isActive ? '1px solid rgba(255,255,255,0.25)' : isDone ? '1px solid var(--btn-primary-border)' : '1px solid var(--border)',
+                transition: 'background 140ms ease',
+              }}>
+                {isDone
+                  ? <CheckCircle size={13} style={{ color: isActive ? 'inherit' : 'var(--btn-primary-color)' }} />
+                  : <Icon size={13} style={{ color: isActive ? 'inherit' : 'var(--text-secondary)' }} />
+                }
+              </span>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sec.label}</span>
             </button>
           );
         })}
       </div>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <div style={{ padding: '16px 24px 0', flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-            {(() => { const Icon = SECTIONS[step].icon; return <Icon size={16} style={{ color: 'var(--accent)' }} />; })()}
-            <h2 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
-              {SECTIONS[step].label}
-            </h2>
+        <div style={{ padding: '18px 24px 0', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+            <div style={{ width: 32, height: 32, borderRadius: 10, background: 'var(--btn-subtle-bg)', border: '1px solid var(--btn-subtle-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              {(() => { const Icon = SECTIONS[step].icon; return <Icon size={15} style={{ color: 'var(--btn-subtle-color)' }} />; })()}
+            </div>
+            <div>
+              <h2 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
+                {SECTIONS[step].label}
+              </h2>
+              <p style={{ margin: 0, fontSize: 11.5, color: 'var(--text-tertiary)', marginTop: 1 }}>
+                Step {step + 1} of {SECTIONS.length} · Fill in all required fields before continuing
+              </p>
+            </div>
           </div>
-          <p style={{ margin: '0 0 16px 26px', fontSize: 12, color: 'var(--text-tertiary)' }}>
-            Step {step + 1} of {SECTIONS.length}
-          </p>
+          <div style={{ height: 1, background: 'var(--border)', margin: '12px 0 0' }} />
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 24px' }}>

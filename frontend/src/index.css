@@ -108,7 +108,7 @@
   /* Typography & Spacing */
   --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px; --radius-xl: 18px;
+  --radius-sm: 6px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px;
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
   --space-6: 24px; --space-8: 32px;
 
@@ -119,6 +119,12 @@
   --shadow-xl: 0 8px 24px rgba(0,0,0,0.10);
   --sh-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --sh-panel: 0 1px 3px rgba(0,0,0,0.06), 0 4px 20px rgba(0,0,0,0.05);
+
+  /* Role chips — semantic, distinct from status badges */
+  --role-admin-bg: rgba(245,158,11,0.10); --role-admin-text: #b45309; --role-admin-border: rgba(245,158,11,0.28);
+  --role-staff-bg: rgba(37,99,235,0.08);  --role-staff-text: #1d4ed8;  --role-staff-border: rgba(37,99,235,0.22);
+  --role-agent-bg: rgba(168,85,247,0.08); --role-agent-text: #7c3aed;  --role-agent-border: rgba(168,85,247,0.22);
+  --role-student-bg: rgba(22,163,74,0.08);--role-student-text:#15803d; --role-student-border:rgba(22,163,74,0.22);
   --sh-header: 0 1px 0 rgba(0,0,0,0.06);
   --sh-focus: 0 0 0 3px rgba(59,130,246,0.20);
 
@@ -368,6 +374,12 @@
   --status-rejected-bg: rgba(244,63,94,0.14); --status-rejected-text: #fda4af; --status-rejected-border: rgba(244,63,94,0.32);
   --status-revoked-bg: rgba(249,115,22,0.14); --status-revoked-text: #fdba74; --status-revoked-border: rgba(249,115,22,0.32);
   --status-pre-bg: rgba(168,85,247,0.14); --status-pre-text: #d8b4fe; --status-pre-border: rgba(168,85,247,0.32);
+
+  /* Role chips — dark mode */
+  --role-admin-bg: rgba(245,158,11,0.14);  --role-admin-text: #fcd34d;  --role-admin-border: rgba(245,158,11,0.30);
+  --role-staff-bg: rgba(59,130,246,0.14);  --role-staff-text: #93c5fd;  --role-staff-border: rgba(59,130,246,0.30);
+  --role-agent-bg: rgba(168,85,247,0.14);  --role-agent-text: #d8b4fe;  --role-agent-border: rgba(168,85,247,0.30);
+  --role-student-bg: rgba(34,197,94,0.14); --role-student-text: #86efac;--role-student-border:rgba(34,197,94,0.30);
 }
 
 /* BASE RESET & INHERITANCE */
@@ -426,7 +438,9 @@
   .btn-ghost:active { transform: translateY(0); }
   .btn-ghost:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
   .sams-input { width: 100%; padding: 8px 12px; font-family: var(--font-ui); font-size: 13.5px; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-md); outline: none; transition: border-color var(--dur-base), background var(--dur-base); }
-  .sams-input:focus { border-color: var(--navy-400); box-shadow: 0 0 0 3px rgba(31,58,95,0.1); }
+  .sams-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+  .sams-select { width: 100%; padding: 8px 12px; font-family: var(--font-ui); font-size: 13.5px; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-md); outline: none; transition: border-color var(--dur-base), background var(--dur-base); cursor: pointer; }
+  .sams-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
   .sams-table { width: 100%; border-collapse: collapse; }
   .sams-table th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); background: var(--gray-50); border-bottom: 1px solid var(--border); transition: background var(--dur-base), color var(--dur-base), border-color var(--dur-base); }
   .dark .sams-table th { background: #111111; color: rgba(255,255,255,0.45); border-bottom-color: rgba(255,255,255,0.08); }

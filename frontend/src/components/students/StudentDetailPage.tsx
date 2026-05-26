@@ -207,14 +207,61 @@ export default function StudentDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-[260px] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-100 border-t-blue-600" />
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+        {/* Skeleton header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '18px 24px', borderBottom: '1px solid var(--border)', background: 'var(--surface)', minHeight: 76 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: 'linear-gradient(90deg, var(--surface-hover) 25%, var(--surface-raised) 50%, var(--surface-hover) 75%)', animation: 'shimmer 1.6s ease-in-out infinite', backgroundSize: '200% 100%' }} />
+          <div style={{ flex: 1 }}>
+            <div style={{ height: 22, width: 220, borderRadius: 8, background: 'var(--surface-hover)', marginBottom: 8, animation: 'shimmer 1.5s infinite', backgroundSize: '200% 100%' }} />
+            <div style={{ height: 14, width: 160, borderRadius: 6, background: 'linear-gradient(90deg, var(--surface-hover) 25%, var(--surface-raised) 50%, var(--surface-hover) 75%)', animation: 'shimmer 1.6s ease-in-out infinite', backgroundSize: '200% 100%' }} />
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {[88, 72, 64].map((w, i) => (
+              <div key={i} style={{ height: 40, width: w, borderRadius: 12, background: 'linear-gradient(90deg, var(--surface-hover) 25%, var(--surface-raised) 50%, var(--surface-hover) 75%)', animation: 'shimmer 1.6s ease-in-out infinite', backgroundSize: '200% 100%' }} />
+            ))}
+          </div>
+        </div>
+        {/* Skeleton tabs */}
+        <div style={{ display: 'flex', gap: 4, padding: '0 24px', borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
+          {[80, 120, 90].map((w, i) => (
+            <div key={i} style={{ height: 44, width: w, margin: '8px 4px', borderRadius: 8, background: 'linear-gradient(90deg, var(--surface-hover) 25%, var(--surface-raised) 50%, var(--surface-hover) 75%)', animation: 'shimmer 1.6s ease-in-out infinite', backgroundSize: '200% 100%' }} />
+          ))}
+        </div>
+        {/* Skeleton content grid */}
+        <div style={{ flex: 1, overflow: 'auto', padding: 24 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, maxWidth: 1280 }}>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} style={{ borderRadius: 16, border: '1px solid var(--border)', overflow: 'hidden', background: 'var(--surface)' }}>
+                <div style={{ height: 52, background: 'var(--surface-raised)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: 10 }}>
+                  <div style={{ width: 20, height: 20, borderRadius: 6, background: 'linear-gradient(90deg, var(--surface-hover) 25%, var(--surface-raised) 50%, var(--surface-hover) 75%)', animation: 'shimmer 1.6s ease-in-out infinite', backgroundSize: '200% 100%' }} />
+                  <div style={{ height: 14, width: 120, borderRadius: 6, background: 'linear-gradient(90deg, var(--surface-hover) 25%, var(--surface-raised) 50%, var(--surface-hover) 75%)', animation: 'shimmer 1.6s ease-in-out infinite', backgroundSize: '200% 100%' }} />
+                </div>
+                <div style={{ padding: '12px 20px' }}>
+                  {Array.from({ length: 5 }).map((_, j) => (
+                    <div key={j} style={{ display: 'grid', gridTemplateColumns: '160px 1fr', gap: 16, padding: '10px 0', borderBottom: j < 4 ? '1px solid var(--border)' : 'none' }}>
+                      <div style={{ height: 12, width: 80 + j * 10, borderRadius: 4, background: 'linear-gradient(90deg, var(--surface-hover) 25%, var(--surface-raised) 50%, var(--surface-hover) 75%)', animation: 'shimmer 1.6s ease-in-out infinite', backgroundSize: '200% 100%' }} />
+                      <div style={{ height: 13, width: 100 + j * 20, borderRadius: 4, background: 'linear-gradient(90deg, var(--surface-hover) 25%, var(--surface-raised) 50%, var(--surface-hover) 75%)', animation: 'shimmer 1.6s ease-in-out infinite', backgroundSize: '200% 100%' }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!data) {
-    return <div className="p-10 text-center text-red-600">Student not found.</div>;
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 300, gap: 12 }}>
+        <div style={{ width: 52, height: 52, borderRadius: 16, background: 'var(--btn-danger-soft-bg)', border: '1px solid var(--btn-danger-soft-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <AlertCircle size={24} style={{ color: 'var(--btn-danger-soft-color)' }} />
+        </div>
+        <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>Student not found</div>
+        <div style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>This record may have been deleted or you don&apos;t have access.</div>
+      </div>
+    );
   }
 
   const s = data.student as typeof data.student & {
@@ -336,21 +383,55 @@ export default function StudentDetailPage() {
         </div>
       </div>
 
-      <div className="flex border-b border-[var(--border)] bg-[var(--surface)] px-6">
-        {tabs.map(({ id: tid, label, Icon }) => (
-          <button
-            key={tid}
-            onClick={() => setTab(tid as typeof tab)}
-            className={`flex items-center gap-2 border-b-2 px-5 py-4 text-[13px] font-bold ${
-              tab === tid
-                ? 'border-[var(--btn-subtle-border)] text-[var(--btn-subtle-color)]'
-                : 'border-transparent text-[var(--text-tertiary)]'
-            }`}
-          >
-            <Icon size={15} />
-            {label}
-          </button>
-        ))}
+      <div style={{
+        display: 'flex',
+        borderBottom: '1px solid var(--border)',
+        background: 'var(--surface)',
+        padding: '0 24px',
+        gap: 2,
+        position: 'relative',
+      }}>
+        {tabs.map(({ id: tid, label, Icon }) => {
+          const isActive = tab === tid;
+          return (
+            <button
+              key={tid}
+              onClick={() => setTab(tid as typeof tab)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 7,
+                padding: '14px 16px',
+                fontSize: 13,
+                fontWeight: isActive ? 800 : 600,
+                color: isActive ? 'var(--btn-subtle-color)' : 'var(--text-tertiary)',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                position: 'relative',
+                fontFamily: 'inherit',
+                transition: 'color 160ms ease',
+                letterSpacing: '-0.01em',
+              }}
+            >
+              <Icon size={15} />
+              {label}
+              <span style={{
+                position: 'absolute',
+                bottom: -1,
+                left: 0,
+                right: 0,
+                height: 2,
+                borderRadius: '2px 2px 0 0',
+                background: 'var(--accent)',
+                opacity: isActive ? 1 : 0,
+                transform: isActive ? 'scaleX(1)' : 'scaleX(0)',
+                transition: 'opacity 180ms ease, transform 200ms cubic-bezier(0.34,1.56,0.64,1)',
+                transformOrigin: 'center',
+              }} />
+            </button>
+          );
+        })}
       </div>
 
       <div className="flex-1 overflow-y-auto p-6">
