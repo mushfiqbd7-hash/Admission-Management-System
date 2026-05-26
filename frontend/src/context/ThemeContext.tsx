@@ -27,7 +27,7 @@ function resolveTheme(theme: Theme): "light" | "dark" {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(getStoredTheme);
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">(() => resolveTheme(getStoredTheme()));
 
   const setTheme = useCallback((nextTheme: Theme) => {
     localStorage.setItem(storageKey, nextTheme);

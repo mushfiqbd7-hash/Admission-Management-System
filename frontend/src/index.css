@@ -138,10 +138,10 @@
 
 /* Shell + main */
 .sams-app-shell {
-  background: #f5f5f5 !important;
+  /* bg handled by JS useTheme in AppShell */
 }
 .sams-app-shell main {
-  background: #f5f5f5 !important;
+  /* bg handled by JS useTheme in AppShell */
 }
 
 /* Sidebar — flat dark */
@@ -150,9 +150,8 @@
   border-right: 1px solid rgba(255,255,255,0.07) !important;
 }
 
-/* Header — white glass */
+/* Header — glass borders/blur only; bg handled by JS useTheme */
 .sams-app-shell header > div {
-  background: rgba(255,255,255,0.88) !important;
   border-color: rgba(0,0,0,0.08) !important;
   box-shadow: 0 1px 0 rgba(0,0,0,0.06) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
@@ -1079,7 +1078,7 @@
   background: transparent !important;
 }
 .dark .sams-app-shell header > div {
-  background: rgba(0,0,0,0.60) !important;
+  /* bg handled by JS useTheme in AppShell */
   border-color: rgba(255,255,255,0.08) !important;
   box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
