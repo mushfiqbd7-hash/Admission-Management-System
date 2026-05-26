@@ -277,14 +277,14 @@
 .dark {
   color-scheme: dark;
 
-  /* Surfaces — deep cinematic black */
-  --surface: rgba(255,255,255,0.04);
-  --surface-raised: rgba(255,255,255,0.06);
+  /* Surfaces — solid dark, no white bleed */
+  --surface: #141414;
+  --surface-raised: #1c1c1c;
   --surface-sunken: #080808;
-  --surface-hover: rgba(255,255,255,0.07);
-  --surface-muted: rgba(255,255,255,0.02);
-  --surface-soft: rgba(255,255,255,0.04);
-  --surface-glass: rgba(0,0,0,0.55);
+  --surface-hover: #222222;
+  --surface-muted: #111111;
+  --surface-soft: rgba(18,18,18,0.95);
+  --surface-glass: rgba(0,0,0,0.65);
 
   /* Borders — whisper-thin white */
   --border: rgba(255,255,255,0.08);
@@ -302,7 +302,7 @@
   --ui-text-muted: rgba(255,255,255,0.38);
   --ui-text-subtle: rgba(255,255,255,0.25);
   --ui-surface-subtle: rgba(255,255,255,0.03);
-  --ui-surface-soft: rgba(255,255,255,0.04);
+  --ui-surface-soft: #141414;
 
   /* Buttons — flat solid, no gradients */
   --btn-primary-bg: #3b82f6;
@@ -1083,17 +1083,35 @@
 
 /* Cards — glass panels like login inputs/containers */
 .dark .sams-app-shell .card {
-  background: rgba(255,255,255,0.04) !important;
+  background: #141414 !important;
   border: 1px solid rgba(255,255,255,0.08) !important;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   transition: border-color 150ms ease, background 150ms ease !important;
 }
 .dark .sams-app-shell .card:hover {
-  background: rgba(255,255,255,0.06) !important;
+  background: #1c1c1c !important;
   border-color: rgba(255,255,255,0.14) !important;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset !important;
+}
+
+/* Kill residual backdrop-filter on inline-styled white cards in dark mode */
+.dark .sams-app-shell [style*="backdrop-filter"],
+.dark .sams-app-shell [style*="backdropFilter"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Table rows — solid dark, kill f8fafc / f7f9fc row tints */
+.dark .sams-app-shell tr[style*="background"],
+.dark .sams-app-shell tr[style*="background-color"] {
+  background: #111111 !important;
+  background-color: #111111 !important;
+}
+.dark .sams-app-shell tr:hover td,
+.dark .sams-app-shell tr:hover {
+  background: #1a1a1a !important;
 }
 
 /* Active nav — solid blue, clean */
