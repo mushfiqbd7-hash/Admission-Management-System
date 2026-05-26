@@ -19,59 +19,85 @@
 }
 
 :root {
-  /* Core Palette */
+  /* Core Palette — unchanged */
   --navy-950: #080f1e; --navy-900: #0d1629; --navy-800: #132038;
   --navy-700: #1a2d4f; --navy-600: #1F3A5F; --navy-500: #2d5082;
   --navy-400: #3d6499; --navy-300: #5a82b5; --navy-200: #8fb3d9;
   --navy-100: #ccdff0; --navy-50: #eef5fc;
 
-  /* Grays */
   --gray-950: #0c0d0f; --gray-900: #111318; --gray-800: #1c1f27;
   --gray-700: #2d3240; --gray-600: #404759; --gray-500: #5c6478;
   --gray-400: #7d889e; --gray-300: #9fa9bc; --gray-200: #c4ccda;
   --gray-150: #d8dfe9; --gray-100: #e8edf4; --gray-50: #f4f6fa;
   --gray-25: #f9fafc; --white: #ffffff;
 
-  /* Semantic */
-  --accent: var(--navy-600); --accent-hover: var(--navy-500);
-  --accent-light: var(--navy-50); --text-on-accent: #ffffff;
-  --surface: var(--white); --surface-raised: var(--gray-25);
-  --surface-sunken: var(--gray-50); --surface-hover: var(--gray-100);
-  --surface-muted: var(--gray-50); --border: var(--gray-150);
-  --border-strong: var(--gray-200);
-  --text-primary: var(--gray-900); --text-secondary: var(--gray-500);
-  --text-tertiary: var(--gray-400);
-  --ui-text-strong: #334155; --ui-text-body: #475569;
-  --ui-text-muted: #64748b; --ui-text-subtle: #94a3b8;
-  --ui-surface-subtle: #f8fafc; --ui-surface-soft: #fbfdff;
-  --ui-border: #e2e8f0; --ui-border-soft: #e8edf4;
-  --ui-border-strong: #cbd5e1;
-  --btn-radius: 11px; --btn-radius-lg: 13px;
-  --btn-primary-bg: linear-gradient(180deg, #1f3a5f 0%, #18304f 100%);
-  --btn-primary-bg-hover: linear-gradient(180deg, #244a79 0%, #1f3a5f 100%);
-  --btn-primary-color: #ffffff; --btn-primary-border: rgba(31,58,95,0.96);
-  --btn-primary-shadow: 0 12px 24px rgba(30,58,95,0.20);
-  --btn-secondary-bg: #ffffff; --btn-secondary-bg-hover: #f8fafc;
-  --btn-secondary-color: #475569; --btn-secondary-border: #dbe3ef;
-  --btn-subtle-bg: #eff6ff; --btn-subtle-bg-hover: #dbeafe;
-  --btn-subtle-color: #1d4ed8; --btn-subtle-border: #bfdbfe;
-  --btn-danger-bg: #dc2626; --btn-danger-bg-hover: #b91c1c;
-  --btn-danger-color: #ffffff; --btn-danger-border: #dc2626;
-  --btn-danger-soft-bg: #fff1f2; --btn-danger-soft-color: #dc2626;
-  --btn-danger-soft-border: #fda4af;
-  --btn-success-bg: #16a34a; --btn-success-bg-hover: #15803d;
-  --btn-success-color: #ffffff; --btn-success-border: #16a34a;
-  --btn-success-soft-bg: #f0fdf4; --btn-success-soft-color: #15803d;
-  --btn-success-soft-border: #86efac;
-  --sidebar-bg: linear-gradient(180deg, #08111f 0%, #0c1729 48%, #0a1323 100%);
-  --sidebar-border: rgba(148,163,184,0.16);
-  --sidebar-text: #b8c4d8;
-  --sidebar-muted: #718096;
-  --sidebar-footer-bg: linear-gradient(180deg, rgba(8,17,31,0.10), rgba(3,7,18,0.42));
+  /* Surfaces — clean neutral hierarchy */
+  --accent: #111111; --accent-hover: #262626;
+  --accent-light: rgba(0,0,0,0.05); --text-on-accent: #ffffff;
+  --surface: #ffffff;
+  --surface-raised: #f9f9f9;
+  --surface-sunken: #f5f5f5;
+  --surface-hover: #f0f0f0;
+  --surface-muted: #fafafa;
+  --surface-soft: rgba(255,255,255,0.92);
+  --surface-glass: rgba(255,255,255,0.80);
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.14);
 
-  /* Status */
-  --status-draft-bg: #f0f3f9; --status-draft-text: #4a5d82; --status-draft-border: #c8d3e6;
-  --status-pending-bg: #fef9ec; --status-pending-text: #92620a; --status-pending-border: #f5d98a;
+  /* Text — neutral dark, no navy tint */
+  --text-primary: #111111;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  --ui-text-strong: #111111;
+  --ui-text-body: #374151;
+  --ui-text-muted: #6b7280;
+  --ui-text-subtle: #9ca3af;
+  --ui-surface-subtle: #f9fafb;
+  --ui-surface-soft: #ffffff;
+  --ui-border: rgba(0,0,0,0.08);
+  --ui-border-soft: rgba(0,0,0,0.05);
+  --ui-border-strong: rgba(0,0,0,0.14);
+
+  /* Buttons — flat solid, zero gradients */
+  --btn-radius: 11px; --btn-radius-lg: 13px;
+  --btn-primary-bg: #111111;
+  --btn-primary-bg-hover: #262626;
+  --btn-primary-color: #ffffff;
+  --btn-primary-border: rgba(0,0,0,0.80);
+  --btn-primary-shadow: none;
+  --btn-secondary-bg: #ffffff;
+  --btn-secondary-bg-hover: #f9fafb;
+  --btn-secondary-color: #374151;
+  --btn-secondary-border: rgba(0,0,0,0.10);
+  --btn-subtle-bg: #f0f9ff;
+  --btn-subtle-bg-hover: #e0f2fe;
+  --btn-subtle-color: #0369a1;
+  --btn-subtle-border: #bae6fd;
+  --btn-danger-bg: #dc2626;
+  --btn-danger-bg-hover: #b91c1c;
+  --btn-danger-color: #ffffff;
+  --btn-danger-border: #dc2626;
+  --btn-danger-soft-bg: #fff1f2;
+  --btn-danger-soft-color: #dc2626;
+  --btn-danger-soft-border: #fda4af;
+  --btn-success-bg: #16a34a;
+  --btn-success-bg-hover: #15803d;
+  --btn-success-color: #ffffff;
+  --btn-success-border: #16a34a;
+  --btn-success-soft-bg: #f0fdf4;
+  --btn-success-soft-color: #15803d;
+  --btn-success-soft-border: #86efac;
+
+  /* Sidebar — flat dark, matches Slate Glass aesthetic */
+  --sidebar-bg: #111111;
+  --sidebar-border: rgba(255,255,255,0.07);
+  --sidebar-text: rgba(255,255,255,0.80);
+  --sidebar-muted: rgba(255,255,255,0.30);
+  --sidebar-footer-bg: #111111;
+
+  /* Status badges */
+  --status-draft-bg: #f4f4f5; --status-draft-text: #52525b; --status-draft-border: #d4d4d8;
+  --status-pending-bg: #fffbeb; --status-pending-text: #92400e; --status-pending-border: #fde68a;
   --status-processing-bg: #eff6ff; --status-processing-text: #1d4ed8; --status-processing-border: #bfdbfe;
   --status-approved-bg: #f0fdf4; --status-approved-text: #14532d; --status-approved-border: #86efac;
   --status-admitted-bg: #f0fdfa; --status-admitted-text: #134e4a; --status-admitted-border: #5eead4;
@@ -86,120 +112,261 @@
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
   --space-6: 24px; --space-8: 32px;
 
-  /* Shadows & Effects */
-  --shadow-xs: 0 1px 2px rgba(8,15,35,0.05);
-  --shadow-sm: 0 1px 3px rgba(8,15,35,0.08), 0 1px 2px rgba(8,15,35,0.04);
-  --shadow-md: 0 10px 24px -14px rgba(15,23,42,0.30), 0 2px 8px rgba(15,23,42,0.08);
-  --shadow-xl: 0 26px 70px -28px rgba(15,23,42,0.40), 0 8px 24px rgba(15,23,42,0.10);
-  --sh-card: 0 1px 0 rgba(255,255,255,0.7) inset, 0 1px 2px rgba(15,23,42,0.04), 0 8px 24px -8px rgba(15,23,42,0.08);
-  --sh-header: 0 1px 0 rgba(255,255,255,0.8) inset, 0 1px 12px rgba(15,23,42,0.04), 0 12px 28px -16px rgba(15,23,42,0.10);
+  /* Shadows — airy, no color bleed */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-xl: 0 8px 24px rgba(0,0,0,0.10);
+  --sh-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --sh-header: 0 1px 0 rgba(0,0,0,0.06);
   --sh-focus: 0 0 0 3px rgba(59,130,246,0.20);
-  --canvas-mesh: radial-gradient(900px 600px at 8% -12%, rgba(59,130,246,0.10), transparent 55%), radial-gradient(800px 500px at 110% 0%, rgba(245,158,11,0.06), transparent 55%), radial-gradient(700px 700px at 60% 110%, rgba(99,102,241,0.05), transparent 50%), linear-gradient(180deg, #f7f9fc 0%, #eef3fa 100%);
-  --surface-soft: rgba(255,255,255,0.78); --surface-glass: rgba(255,255,255,0.65);
+
+  /* Canvas — flat off-white, zero orbs */
+  --canvas-mesh: #f5f5f5;
 
   /* Transitions */
   --ease: cubic-bezier(0.22, 1, 0.36, 1); --dur-fast: 120ms; --dur-base: 200ms; --dur-slow: 350ms;
 }
 
-/* DARK MODE OVERRIDES */
+
+
+/* ═══════════════════════════════════════════════════════
+   LIGHT MODE — Slate Clean
+   White cards on #f5f5f5 canvas. Dark sidebar. Black accents.
+   Cohesive with Slate Glass dark mode.
+   ═══════════════════════════════════════════════════════ */
+
+/* Shell + main */
+.sams-app-shell {
+  background: #f5f5f5 !important;
+}
+.sams-app-shell main {
+  background: #f5f5f5 !important;
+}
+
+/* Sidebar — flat dark */
+.sams-app-shell .sams-sidebar {
+  background: #111111 !important;
+  border-right: 1px solid rgba(255,255,255,0.07) !important;
+}
+
+/* Header — white glass */
+.sams-app-shell header > div {
+  background: rgba(255,255,255,0.88) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.06) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+}
+
+/* Cards — white, subtle border + shadow */
+.sams-app-shell .card {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+  transition: border-color 150ms ease, box-shadow 150ms ease !important;
+}
+.sams-app-shell .card:hover {
+  border-color: rgba(0,0,0,0.14) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.10) !important;
+}
+
+/* Active nav — black, no glow */
+.sams-app-shell .sams-nav-item[aria-current="page"] {
+  background: #ffffff !important;
+  color: #111111 !important;
+  box-shadow: none !important;
+}
+
+/* Nav hover */
+.sams-app-shell .sams-nav-item:not([aria-current="page"]):hover {
+  background: rgba(255,255,255,0.10) !important;
+  color: #ffffff !important;
+}
+
+/* Inputs — clean white */
+.sams-app-shell input,
+.sams-app-shell select,
+.sams-app-shell textarea {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  color: #111111 !important;
+}
+.sams-app-shell input:focus,
+.sams-app-shell select:focus,
+.sams-app-shell textarea:focus {
+  border-color: #111111 !important;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.08) !important;
+}
+.sams-app-shell input::placeholder,
+.sams-app-shell textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Table header */
+.sams-app-shell table thead th,
+.sams-app-shell .sams-table th {
+  background: #f9f9f9 !important;
+  border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+  color: #6b7280 !important;
+  letter-spacing: 0.06em;
+  font-size: 10.5px !important;
+}
+
+/* Table rows */
+.sams-app-shell table tbody tr:nth-child(even) {
+  background: rgba(0,0,0,0.018) !important;
+}
+.sams-app-shell table tbody tr:hover,
+.sams-app-shell .sams-table tbody tr:hover {
+  background: rgba(0,0,0,0.035) !important;
+}
+.sams-app-shell .sams-table td,
+.sams-app-shell table td {
+  border-bottom-color: rgba(0,0,0,0.06) !important;
+}
+
+/* Scrollbar — thin neutral */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.14);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.25);
+}
+
+/* Icon buttons in sidebar */
+.sams-app-shell .sams-icon-button {
+  background: rgba(255,255,255,0.07) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.70) !important;
+}
+.sams-app-shell .sams-icon-button:hover {
+  background: rgba(255,255,255,0.14) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+  color: #ffffff !important;
+}
+
+/* Sidebar footer */
+.sams-app-shell .sams-sidebar > div:last-child {
+  border-top-color: rgba(255,255,255,0.07) !important;
+  background: #111111 !important;
+}
+
+/* Selection */
+::selection {
+  background: rgba(0,0,0,0.12);
+  color: #111111;
+}
+
+/* Skeleton shimmer */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e8e8e8 50%,
+    #f0f0f0 75%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 1.5s infinite !important;
+}
+
+/* DARK MODE OVERRIDES — Slate Glass (inspired by login cinematic) */
 .dark {
   color-scheme: dark;
 
-  /* ── [Kai] Surface depth — saturated blue-dark layers ── */
-  --surface: #111b2e;
-  --surface-raised: #162338;
-  --surface-sunken: #08091a;
-  --surface-hover: #1b2a3f;
-  --surface-muted: #0c1120;
-  --surface-soft: rgba(17,27,46,0.96);
-  --surface-glass: rgba(14,22,38,0.88);
+  /* Surfaces — deep cinematic black */
+  --surface: rgba(255,255,255,0.04);
+  --surface-raised: rgba(255,255,255,0.06);
+  --surface-sunken: #080808;
+  --surface-hover: rgba(255,255,255,0.07);
+  --surface-muted: rgba(255,255,255,0.02);
+  --surface-soft: rgba(255,255,255,0.04);
+  --surface-glass: rgba(0,0,0,0.55);
 
-  /* ── [Kai] Borders — blue-tinted for premium depth ── */
-  --border: rgba(91,130,190,0.18);
-  --border-strong: rgba(110,155,215,0.28);
-  --ui-border: rgba(91,130,190,0.16);
-  --ui-border-soft: rgba(80,118,180,0.12);
-  --ui-border-strong: rgba(120,162,220,0.30);
+  /* Borders — whisper-thin white */
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+  --ui-border: rgba(255,255,255,0.07);
+  --ui-border-soft: rgba(255,255,255,0.05);
+  --ui-border-strong: rgba(255,255,255,0.16);
 
-  /* ── [Sam] Text hierarchy — sharper contrast ── */
-  --text-primary: #edf3fc;
-  --text-secondary: #b8cfea;
-  --text-tertiary: #7a96b8;
-  --ui-text-strong: #edf3fc;
-  --ui-text-body: #b8cfea;
-  --ui-text-muted: #8aa5c4;
-  --ui-text-subtle: #6889a8;
-  --ui-surface-subtle: #0c1120;
-  --ui-surface-soft: #111b2e;
+  /* Text — white hierarchy like login page */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255,255,255,0.55);
+  --text-tertiary: rgba(255,255,255,0.30);
+  --ui-text-strong: #ffffff;
+  --ui-text-body: rgba(255,255,255,0.55);
+  --ui-text-muted: rgba(255,255,255,0.38);
+  --ui-text-subtle: rgba(255,255,255,0.25);
+  --ui-surface-subtle: rgba(255,255,255,0.03);
+  --ui-surface-soft: rgba(255,255,255,0.04);
 
-  /* ── Buttons ── */
-  --btn-primary-bg: linear-gradient(180deg, #5b9dff 0%, #2d6fe8 100%);
-  --btn-primary-bg-hover: linear-gradient(180deg, #78b2ff 0%, #4280f5 100%);
+  /* Buttons — flat solid, no gradients */
+  --btn-primary-bg: #3b82f6;
+  --btn-primary-bg-hover: #2563eb;
   --btn-primary-color: #ffffff;
-  --btn-primary-border: rgba(125,184,255,0.50);
-  --btn-primary-shadow: 0 18px 38px rgba(37,99,235,0.38), 0 1px 0 rgba(255,255,255,0.22) inset;
-  --btn-secondary-bg: #152030;
-  --btn-secondary-bg-hover: #1c2b40;
-  --btn-secondary-color: #c8dcf4;
-  --btn-secondary-border: rgba(91,130,190,0.26);
-  --btn-subtle-bg: rgba(91,157,255,0.16);
-  --btn-subtle-bg-hover: rgba(91,157,255,0.26);
-  --btn-subtle-color: #cce4ff;
-  --btn-subtle-border: rgba(120,184,255,0.38);
-  --btn-danger-bg: linear-gradient(180deg, #f26262 0%, #dc2626 100%);
-  --btn-danger-bg-hover: linear-gradient(180deg, #fc7a7a 0%, #ef4444 100%);
+  --btn-primary-border: rgba(59,130,246,0.50);
+  --btn-primary-shadow: none;
+  --btn-secondary-bg: rgba(255,255,255,0.06);
+  --btn-secondary-bg-hover: rgba(255,255,255,0.10);
+  --btn-secondary-color: rgba(255,255,255,0.85);
+  --btn-secondary-border: rgba(255,255,255,0.10);
+  --btn-subtle-bg: rgba(59,130,246,0.12);
+  --btn-subtle-bg-hover: rgba(59,130,246,0.20);
+  --btn-subtle-color: #93c5fd;
+  --btn-subtle-border: rgba(59,130,246,0.28);
+  --btn-danger-bg: #dc2626;
+  --btn-danger-bg-hover: #b91c1c;
   --btn-danger-color: #ffffff;
-  --btn-danger-border: rgba(248,113,113,0.52);
-  --btn-danger-soft-bg: rgba(248,113,113,0.15);
-  --btn-danger-soft-color: #ffcece;
-  --btn-danger-soft-border: rgba(248,113,113,0.38);
-  --btn-success-bg: linear-gradient(180deg, #34d870 0%, #16a34a 100%);
-  --btn-success-bg-hover: linear-gradient(180deg, #55e88c 0%, #22c55e 100%);
+  --btn-danger-border: rgba(220,38,38,0.40);
+  --btn-danger-soft-bg: rgba(220,38,38,0.12);
+  --btn-danger-soft-color: #fca5a5;
+  --btn-danger-soft-border: rgba(220,38,38,0.28);
+  --btn-success-bg: #16a34a;
+  --btn-success-bg-hover: #15803d;
   --btn-success-color: #ffffff;
-  --btn-success-border: rgba(74,222,128,0.48);
-  --btn-success-soft-bg: rgba(34,197,94,0.15);
-  --btn-success-soft-color: #ccf9dc;
-  --btn-success-soft-border: rgba(34,197,94,0.38);
+  --btn-success-border: rgba(22,163,74,0.40);
+  --btn-success-soft-bg: rgba(22,163,74,0.12);
+  --btn-success-soft-color: #86efac;
+  --btn-success-soft-border: rgba(22,163,74,0.28);
 
-  /* ── Accent ── */
+  /* Accent — electric blue, sparingly */
   --text-on-accent: #ffffff;
-  --accent: #7db8ff;
-  --accent-hover: #9dccff;
-  --accent-light: rgba(91,157,255,0.16);
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-light: rgba(59,130,246,0.12);
 
-  /* ── [Dom] Sidebar — deep navy with top ambient ── */
-  --sidebar-bg: linear-gradient(175deg, #0c1122 0%, #080d1c 38%, #060a16 70%, #050810 100%);
-  --sidebar-border: rgba(91,130,190,0.15);
-  --sidebar-text: #c8d8f0;
-  --sidebar-muted: #7a96b8;
-  --sidebar-footer-bg: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(0,0,0,0.32));
+  /* Sidebar — deep black, clean border */
+  --sidebar-bg: #080808;
+  --sidebar-border: rgba(255,255,255,0.07);
+  --sidebar-text: rgba(255,255,255,0.80);
+  --sidebar-muted: rgba(255,255,255,0.28);
+  --sidebar-footer-bg: #080808;
 
-  /* ── [Dom] Shadows — dramatic with color glow ── */
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.45);
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.35);
-  --shadow-md: 0 22px 54px -26px rgba(0,0,0,0.95), 0 4px 16px rgba(0,0,0,0.45);
-  --shadow-xl: 0 44px 108px -38px rgba(0,0,0,0.98), 0 18px 44px rgba(0,0,0,0.60);
-  --sh-card: 0 1px 0 rgba(125,184,255,0.10) inset, 0 0 0 1px rgba(91,130,190,0.10), 0 24px 56px -22px rgba(0,0,0,0.92), 0 6px 18px -4px rgba(0,0,0,0.42);
-  --sh-header: 0 1px 0 rgba(125,184,255,0.12) inset, 0 0 0 1px rgba(91,130,190,0.12), 0 28px 56px -28px rgba(0,0,0,0.90), 0 4px 18px -4px rgba(0,0,0,0.38);
-  --sh-focus: 0 0 0 3px rgba(91,157,255,0.38), 0 0 0 1px rgba(91,157,255,0.22);
+  /* Shadows — depth without color */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.60);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.70);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.50);
+  --shadow-xl: 0 8px 32px rgba(0,0,0,0.70);
+  --sh-card: 0 1px 0 rgba(255,255,255,0.06) inset;
+  --sh-header: 0 1px 0 rgba(255,255,255,0.06) inset;
+  --sh-focus: 0 0 0 3px rgba(59,130,246,0.28);
 
-  /* ── [Zara] Canvas — premium ambient mesh background ── */
-  --canvas-mesh:
-    radial-gradient(ellipse 72% 48% at 14% -8%, rgba(37,99,235,0.16) 0%, transparent 60%),
-    radial-gradient(ellipse 55% 45% at 90% 105%, rgba(99,102,241,0.12) 0%, transparent 55%),
-    radial-gradient(ellipse 38% 32% at 62% 88%, rgba(6,182,212,0.07) 0%, transparent 50%),
-    radial-gradient(ellipse 44% 38% at -5% 55%, rgba(59,130,246,0.08) 0%, transparent 55%),
-    linear-gradient(175deg, #07091c 0%, #080c1e 30%, #070a18 60%, #050810 100%);
+  /* Canvas — deep cinematic black */
+  --canvas-mesh: #0a0a0a;
 
-  /* ── Status badges — vivid but not harsh ── */
-  --status-draft-bg: rgba(148,163,184,0.14); --status-draft-text: #c4d4ea; --status-draft-border: rgba(148,163,184,0.28);
-  --status-pending-bg: rgba(245,158,11,0.17); --status-pending-text: #fde68a; --status-pending-border: rgba(245,158,11,0.40);
-  --status-processing-bg: rgba(59,130,246,0.18); --status-processing-text: #bfdbfe; --status-processing-border: rgba(96,165,250,0.40);
-  --status-approved-bg: rgba(34,197,94,0.16); --status-approved-text: #bbf7d0; --status-approved-border: rgba(34,197,94,0.40);
-  --status-admitted-bg: rgba(20,184,166,0.16); --status-admitted-text: #99f6e4; --status-admitted-border: rgba(45,212,191,0.40);
-  --status-rejected-bg: rgba(244,63,94,0.16); --status-rejected-text: #fecdd3; --status-rejected-border: rgba(244,63,94,0.40);
-  --status-revoked-bg: rgba(249,115,22,0.16); --status-revoked-text: #fed7aa; --status-revoked-border: rgba(249,115,22,0.40);
-  --status-pre-bg: rgba(168,85,247,0.16); --status-pre-text: #e9d5ff; --status-pre-border: rgba(168,85,247,0.40);
+  /* Status badges */
+  --status-draft-bg: rgba(255,255,255,0.07); --status-draft-text: rgba(255,255,255,0.55); --status-draft-border: rgba(255,255,255,0.12);
+  --status-pending-bg: rgba(245,158,11,0.14); --status-pending-text: #fde68a; --status-pending-border: rgba(245,158,11,0.32);
+  --status-processing-bg: rgba(59,130,246,0.14); --status-processing-text: #93c5fd; --status-processing-border: rgba(59,130,246,0.32);
+  --status-approved-bg: rgba(34,197,94,0.14); --status-approved-text: #86efac; --status-approved-border: rgba(34,197,94,0.32);
+  --status-admitted-bg: rgba(20,184,166,0.14); --status-admitted-text: #5eead4; --status-admitted-border: rgba(45,212,191,0.32);
+  --status-rejected-bg: rgba(244,63,94,0.14); --status-rejected-text: #fda4af; --status-rejected-border: rgba(244,63,94,0.32);
+  --status-revoked-bg: rgba(249,115,22,0.14); --status-revoked-text: #fdba74; --status-revoked-border: rgba(249,115,22,0.32);
+  --status-pre-bg: rgba(168,85,247,0.14); --status-pre-text: #d8b4fe; --status-pre-border: rgba(168,85,247,0.32);
 }
 
 /* BASE RESET & INHERITANCE */
@@ -877,210 +1044,137 @@
   [style
 
 /* ═══════════════════════════════════════════════════════
-   PREMIUM DARK — v2 TEAM REDESIGN
-   5 new visual ideas that change the architecture
+   SLATE GLASS — Login-Inspired Dark Mode
+   Deep black base. Glass cards. White text hierarchy.
+   Same input DNA as the sign-in page. Zero orbs. Zero glow.
    ═══════════════════════════════════════════════════════ */
 
-/* ────────────────────────────────────────────────────────
-   IDEA 1 [Zara]: Main content area — rich gradient canvas
-   NOT flat dark. 4-stop gradient + fixed parallax orbs
-   so the background "breathes" as you scroll.
-──────────────────────────────────────────────────────── */
+/* Main — deep cinematic black */
 .dark .sams-app-shell main {
-  background:
-    radial-gradient(ellipse 60% 40% at 70% 0%, rgba(37,99,235,0.12) 0%, transparent 58%),
-    radial-gradient(ellipse 42% 32% at 10% 80%, rgba(99,102,241,0.09) 0%, transparent 52%),
-    radial-gradient(ellipse 35% 28% at 88% 75%, rgba(6,182,212,0.07) 0%, transparent 50%),
-    linear-gradient(170deg, #08091d 0%, #07091a 40%, #060814 80%, #050810 100%) !important;
-  background-attachment: fixed !important;
+  background: #0a0a0a !important;
+  background-attachment: unset !important;
 }
-
-/* ────────────────────────────────────────────────────────
-   IDEA 2 [Dom]: Horizon glow line — electric blue seam
-   between header and content. Stays sticky at scroll top.
-   Classic premium UI signature (Linear / Raycast style).
-──────────────────────────────────────────────────────── */
 .dark .sams-app-shell main::before {
-  content: '';
-  display: block;
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  margin-bottom: -1px;
-  z-index: 999;
-  pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    transparent                   0%,
-    rgba(59,130,246,0.0)         8%,
-    rgba(59,130,246,0.85)        28%,
-    rgba(139,92,246,0.65)        50%,
-    rgba(59,130,246,0.85)        72%,
-    rgba(59,130,246,0.0)         92%,
-    transparent                  100%
-  );
-  box-shadow:
-    0 0 24px 6px  rgba(37,99,235,0.38),
-    0 0 70px 22px rgba(37,99,235,0.18),
-    0 0 140px 50px rgba(37,99,235,0.07);
+  display: none !important;
 }
 
-/* ────────────────────────────────────────────────────────
-   IDEA 3 [Mia]: Sidebar glowing right border
-   Gradient line: invisible at top/bottom, electric blue
-   at 30-70% — gives sidebar a lit-from-within feel.
-──────────────────────────────────────────────────────── */
+/* Sidebar — near-black flat, single crisp border */
 .dark .sams-app-shell .sams-sidebar {
-  border-right: none !important;
+  background: #080808 !important;
+  border-right: 1px solid rgba(255,255,255,0.07) !important;
   box-shadow: none !important;
-  position: relative;
 }
-.dark .sams-app-shell .sams-sidebar::after {
-  content: '';
-  position: absolute;
-  top: 0; right: 0; bottom: 0; width: 1px;
-  background: linear-gradient(
-    180deg,
-    transparent              0%,
-    rgba(91,157,255,0.15)   12%,
-    rgba(91,157,255,0.55)   30%,
-    rgba(99,102,241,0.45)   55%,
-    rgba(91,157,255,0.28)   75%,
-    transparent              100%
-  );
-  pointer-events: none;
-  z-index: 10;
-}
-
-/* Sidebar ambient top orb — blue bloom from brand area */
+.dark .sams-app-shell .sams-sidebar::after,
 .dark .sams-app-shell .sams-sidebar::before {
-  content: '';
-  position: absolute;
-  top: -60px; left: -40px;
-  width: 240px; height: 240px;
-  background: radial-gradient(ellipse, rgba(37,99,235,0.22) 0%, transparent 68%);
-  pointer-events: none;
-  z-index: 0;
-  border-radius: 50%;
+  display: none !important;
 }
 
-/* ────────────────────────────────────────────────────────
-   IDEA 4 [Kai]: Header — deep navy glass + bottom glow spill
-   Not just a dimmed white-card: a purpose-built dark element
-   with inner top highlight and a color bloom below.
-──────────────────────────────────────────────────────── */
-.dark .sams-app-shell header > div {
-  background: rgba(8,11,24,0.90) !important;
-  border-color: rgba(91,130,190,0.20) !important;
-  box-shadow:
-    0 1px 0 rgba(125,184,255,0.13) inset,
-    0 1px 0 rgba(59,130,246,0.22),
-    0 16px 44px -18px rgba(0,0,0,0.75),
-    0 0 80px -32px rgba(37,99,235,0.28) !important;
-}
+/* Header — glass panel, same spirit as login card */
 .dark .sams-app-shell header {
   background: transparent !important;
 }
+.dark .sams-app-shell header > div {
+  background: rgba(0,0,0,0.60) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+}
 
-/* ────────────────────────────────────────────────────────
-   IDEA 5 [Sam]: Cards — darker than surface, top-edge lit
-   Cards float at #0d1829 against the #08091d main canvas.
-   Top border is a micro-highlight: looks backlit.
-──────────────────────────────────────────────────────── */
+/* Cards — glass panels like login inputs/containers */
 .dark .sams-app-shell .card {
-  background: rgba(10,16,30,0.92) !important;
-  border-color: rgba(80,118,180,0.18) !important;
-  border-top-color: rgba(125,184,255,0.18) !important;
-  box-shadow:
-    0 1px 0 rgba(125,184,255,0.10) inset,
-    0 0 0 1px rgba(60,100,170,0.10),
-    0 22px 54px -22px rgba(0,0,0,0.90),
-    0 6px 18px -4px rgba(0,0,0,0.44) !important;
-  transition: border-color 200ms ease, box-shadow 200ms ease !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  transition: border-color 150ms ease, background 150ms ease !important;
 }
 .dark .sams-app-shell .card:hover {
-  border-color: rgba(91,130,190,0.30) !important;
-  border-top-color: rgba(125,184,255,0.30) !important;
-  box-shadow:
-    0 1px 0 rgba(125,184,255,0.15) inset,
-    0 0 0 1px rgba(91,157,255,0.14),
-    0 28px 64px -24px rgba(0,0,0,0.94),
-    0 8px 22px -4px rgba(0,0,0,0.50) !important;
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset !important;
 }
 
-/* ────────────────────────────────────────────────────────
-   SUPPORTING DETAILS — scrollbar, nav, table, inputs
-──────────────────────────────────────────────────────── */
-
-/* Thin blue scrollbar */
-.dark ::-webkit-scrollbar { width: 5px; height: 5px; }
-.dark ::-webkit-scrollbar-track { background: transparent; }
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(91,130,190,0.30);
-  border-radius: 6px;
-}
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(91,157,255,0.50);
-}
-
-/* Active nav — electric glow */
+/* Active nav — solid blue, clean */
 .dark .sams-app-shell .sams-nav-item[aria-current="page"] {
-  background: linear-gradient(135deg, #2d6fe8 0%, #1e52c0 100%) !important;
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.22) inset,
-    0 8px 24px -6px rgba(37,99,235,0.72),
-    0 0 0 1px rgba(91,157,255,0.32),
-    0 2px 8px rgba(37,99,235,0.38) !important;
+  background: #3b82f6 !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
 }
 
 /* Nav hover */
 .dark .sams-app-shell .sams-nav-item:not([aria-current="page"]):hover {
-  background: rgba(91,157,255,0.10) !important;
-  color: #edf3fc !important;
+  background: rgba(255,255,255,0.07) !important;
+  color: #ffffff !important;
+}
+
+/* Scrollbar — thin neutral */
+.dark ::-webkit-scrollbar { width: 4px; height: 4px; }
+.dark ::-webkit-scrollbar-track { background: transparent; }
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.14);
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.28);
 }
 
 /* Table header */
 .dark .sams-app-shell table thead th,
 .dark .sams-app-shell .sams-table th {
-  background: rgba(6,8,20,0.85) !important;
-  border-bottom: 1px solid rgba(91,130,190,0.25) !important;
-  letter-spacing: 0.07em;
+  background: rgba(255,255,255,0.03) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+  letter-spacing: 0.06em;
   font-size: 10.5px !important;
+  color: rgba(255,255,255,0.30) !important;
 }
 
-/* Table rows — alternating depth */
+/* Table rows */
 .dark .sams-app-shell table tbody tr:nth-child(even) {
-  background: rgba(12,17,32,0.55) !important;
+  background: rgba(255,255,255,0.02) !important;
 }
+.dark .sams-app-shell .sams-table td,
+.dark .sams-app-shell table td {
+  border-bottom-color: rgba(255,255,255,0.05) !important;
+  color: var(--text-primary) !important;
+}
+.dark .sams-app-shell .sams-table tbody tr:hover,
 .dark .sams-app-shell table tbody tr:hover {
-  background: rgba(27,44,72,0.80) !important;
+  background: rgba(255,255,255,0.05) !important;
 }
 
-/* Input focus ring */
+/* Inputs — same DNA as login page inputs */
+.dark .sams-app-shell input,
+.dark .sams-app-shell select,
+.dark .sams-app-shell textarea {
+  background: rgba(255,255,255,0.05) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  color: #ffffff !important;
+}
 .dark .sams-app-shell input:focus,
 .dark .sams-app-shell select:focus,
 .dark .sams-app-shell textarea:focus {
-  border-color: rgba(91,157,255,0.65) !important;
-  background: rgba(14,22,40,0.95) !important;
-  box-shadow:
-    0 0 0 3px rgba(91,157,255,0.20),
-    0 0 0 1px rgba(91,157,255,0.15) !important;
+  border-color: rgba(96,165,250,0.60) !important;
+  background: rgba(255,255,255,0.08) !important;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.20) !important;
+}
+.dark .sams-app-shell input::placeholder,
+.dark .sams-app-shell textarea::placeholder {
+  color: rgba(255,255,255,0.28) !important;
 }
 
 /* Badge weight */
 .dark .sams-app-shell [class*="badge-"] {
-  font-weight: 700 !important;
-  letter-spacing: 0.01em;
+  font-weight: 600 !important;
 }
 
-/* Shell background — ensure mesh visible in padding areas */
+/* Shell background */
 .dark .sams-app-shell {
-  background: var(--canvas-mesh) !important;
+  background: #0a0a0a !important;
 }
 
-/* Override all white/light inline backgrounds consistently */
+/* Inline white/light background overrides */
 .dark .sams-app-shell :is(
   [style*="background: rgb(255"],
   [style*="background-color: rgb(255"],
@@ -1089,9 +1183,9 @@
   [style*="background: #ffffff"],
   [style*="background: rgba(255"]
 ):not([style*="linear-gradient"]):not([class*="text-white"]):not(video) {
-  background: rgba(10,16,30,0.92) !important;
-  background-color: rgba(10,16,30,0.92) !important;
-  border-color: rgba(80,118,180,0.18) !important;
+  background: rgba(255,255,255,0.04) !important;
+  background-color: rgba(255,255,255,0.04) !important;
+  border-color: rgba(255,255,255,0.08) !important;
 }
 
 .dark .sams-app-shell :is(
@@ -1106,28 +1200,28 @@
   [style*="background: rgb(241"],
   [style*="background: rgb(238"]
 ) {
-  background: rgba(8,12,22,0.88) !important;
-  background-color: rgba(8,12,22,0.88) !important;
-  border-color: rgba(80,118,180,0.15) !important;
+  background: rgba(255,255,255,0.03) !important;
+  background-color: rgba(255,255,255,0.03) !important;
+  border-color: rgba(255,255,255,0.07) !important;
 }
 
-/* Colored semantic surfaces */
+/* Semantic colored surfaces */
 .dark .sams-app-shell [style*="background: #eff6ff"],
 .dark .sams-app-shell [style*="background: rgb(239, 246, 255"] {
-  background: rgba(37,99,235,0.14) !important;
-  border-color: rgba(91,157,255,0.30) !important;
+  background: rgba(59,130,246,0.10) !important;
+  border-color: rgba(59,130,246,0.25) !important;
 }
 .dark .sams-app-shell [style*="background: #f0fdf4"],
 .dark .sams-app-shell [style*="background: #ecfdf5"],
 .dark .sams-app-shell [style*="background: rgb(240, 253"] {
-  background: rgba(34,197,94,0.13) !important;
-  border-color: rgba(74,222,128,0.30) !important;
+  background: rgba(34,197,94,0.10) !important;
+  border-color: rgba(34,197,94,0.25) !important;
 }
 .dark .sams-app-shell [style*="background: #fef2f2"],
 .dark .sams-app-shell [style*="background: #fff1f2"],
 .dark .sams-app-shell [style*="background: rgb(254, 242"] {
-  background: rgba(248,113,113,0.13) !important;
-  border-color: rgba(248,113,113,0.30) !important;
+  background: rgba(220,38,38,0.10) !important;
+  border-color: rgba(220,38,38,0.25) !important;
 }
 
 /* Text overrides */
@@ -1157,7 +1251,7 @@
 .dark .sams-app-shell [style*="border: 1px solid rgb(226"],
 .dark .sams-app-shell [style*="border-color: #e2e8f0"],
 .dark .sams-app-shell [style*="border-color: rgb(226"] {
-  border-color: rgba(91,130,190,0.20) !important;
+  border-color: rgba(255,255,255,0.08) !important;
 }
 
 /* Button overrides */
@@ -1165,7 +1259,7 @@
   background: var(--btn-primary-bg) !important;
   border-color: var(--btn-primary-border) !important;
   color: var(--btn-primary-color) !important;
-  box-shadow: var(--btn-primary-shadow) !important;
+  box-shadow: none !important;
 }
 .dark .sams-app-shell :is(.btn-ghost, button[style*="background: var(--surface)"], button[style*="background: var(--btn-secondary-bg)"]) {
   background: var(--btn-secondary-bg) !important;
@@ -1183,55 +1277,44 @@
   color: var(--btn-success-color) !important;
 }
 
-/* Table class helpers */
-.dark .sams-app-shell .sams-table td,
-.dark .sams-app-shell table td {
-  border-bottom-color: rgba(60,90,140,0.18) !important;
-  color: var(--text-primary) !important;
-}
-.dark .sams-app-shell .sams-table tbody tr:hover,
-.dark .sams-app-shell table tbody tr:hover {
-  background: rgba(27,44,72,0.80) !important;
-}
-
 /* Selection */
 .dark ::selection {
-  background: rgba(37,99,235,0.44) !important;
-  color: #edf3fc !important;
+  background: rgba(59,130,246,0.35) !important;
+  color: #ffffff !important;
 }
 
-/* Skeleton */
+/* Skeleton shimmer */
 .dark .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(10,16,30,0.90) 25%,
-    rgba(20,35,60,0.70) 50%,
-    rgba(10,16,30,0.90) 75%
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%
   ) !important;
   background-size: 200% 100% !important;
   animation: shimmer 1.5s infinite !important;
 }
 
-/* Sidebar nav section label */
+/* Sidebar section labels */
 .dark .sams-app-shell .sams-sidebar [style*="var(--sidebar-muted)"] {
-  letter-spacing: 0.10em;
-  opacity: 0.70;
+  letter-spacing: 0.09em;
+  opacity: 0.60;
 }
 
-/* Icon buttons in sidebar */
+/* Icon buttons */
 .dark .sams-app-shell .sams-icon-button {
-  background: rgba(91,157,255,0.08) !important;
-  border-color: rgba(91,130,190,0.20) !important;
+  background: rgba(255,255,255,0.05) !important;
+  border-color: rgba(255,255,255,0.08) !important;
   color: var(--sidebar-text) !important;
 }
 .dark .sams-app-shell .sams-icon-button:hover {
-  background: rgba(91,157,255,0.18) !important;
-  border-color: rgba(91,157,255,0.32) !important;
-  color: #edf3fc !important;
+  background: rgba(255,255,255,0.10) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+  color: #ffffff !important;
   transform: translateY(-1px);
 }
 
-/* Sidebar footer user block */
+/* Sidebar footer */
 .dark .sams-app-shell .sams-sidebar > div:last-child {
-  border-top-color: rgba(91,130,190,0.18) !important;
+  border-top-color: rgba(255,255,255,0.07) !important;
 }
