@@ -675,7 +675,7 @@ export default function ExportPanel({ sourceRows = [] }: ExportPanelProps) {
                     ...exportBtnStyle,
                     border: '1px solid var(--status-approved-border)',
                     background: 'var(--status-approved-bg)',
-                    color: '#15803d',
+                    color: 'var(--btn-success-soft-color)',
                     opacity: !criteriaActive || loading || filteredCount === 0 ? 0.5 : 1,
                     cursor:
                       !criteriaActive || loading || filteredCount === 0

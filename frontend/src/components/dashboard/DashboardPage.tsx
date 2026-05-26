@@ -475,11 +475,11 @@ export default function DashboardPage() {
           fontSize: 22,
           fontWeight: 700,
           letterSpacing: '-0.03em',
-          color: '#0a0e1a',
+          color: 'var(--text-primary)',
         }}>
           {greeting}, {firstName} 👋
         </h2>
-        <p style={{ margin: '4px 0 0', fontSize: 13, color: '#64748b' }}>
+        <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-secondary)' }}>
           {isLoading
             ? 'Loading your dashboard...'
             : pendingCount > 0
@@ -638,7 +638,7 @@ export default function DashboardPage() {
               </colgroup>
 
               <thead>
-                <tr style={{ background: '#f8fafc' }}>
+                <tr style={{ background: 'var(--surface-raised)' }}>
                   {['App No.', 'Submitted By', 'Student', 'University', 'Status', 'Action'].map(
                     (h) => (
                       <th key={h} style={thStyle}>
@@ -659,7 +659,7 @@ export default function DashboardPage() {
                             style={{
                               height: 12,
                               width: j === 2 ? 100 : 72,
-                              background: '#eef2f7',
+                              background: 'var(--surface-hover)',
                               borderRadius: 8,
                             }}
                           />
@@ -681,7 +681,7 @@ export default function DashboardPage() {
                       <tr
                         key={s.id}
                         style={{
-                          borderBottom: '1px solid #eef2f7',
+                          borderBottom: '1px solid var(--border)',
                           transition: 'background 0.12s ease',
                         }}
                         onMouseEnter={(e) => {
@@ -813,7 +813,7 @@ export default function DashboardPage() {
                         onClick={() => navigate(`/students/${s.id}`)}
                         style={sideItemBtnStyle}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.background = '#fbfdff';
+                          e.currentTarget.style.background = 'transparent';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.background = 'transparent';
@@ -997,8 +997,8 @@ const statsGridStyle: React.CSSProperties = {
 
 const statCardStyle: React.CSSProperties = {
   position: 'relative',
-  background: 'rgba(255,255,255,0.88)',
-  border: '1px solid rgba(15,23,42,0.06)',
+  background: 'var(--surface)',
+  border: '1px solid var(--border)',
   borderRadius: 20,
   padding: 0,
   height: 132,
@@ -1008,7 +1008,7 @@ const statCardStyle: React.CSSProperties = {
   boxShadow: 'var(--sh-card)',
   transition: 'transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease',
   overflow: 'hidden',
-  backdropFilter: 'blur(16px)',
+  backdropFilter: 'none',
 };
 
 const statGlowStyle: React.CSSProperties = {
@@ -1053,8 +1053,8 @@ const statChevronBoxStyle: React.CSSProperties = {
   width: 30,
   height: 30,
   borderRadius: 11,
-  background: '#f8fafc',
-  border: '1px solid #edf2f7',
+  background: 'var(--surface-raised)',
+  border: '1px solid var(--border)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -1073,7 +1073,7 @@ const statNumberStyle: React.CSSProperties = {
   fontSize: 36,
   lineHeight: 1,
   fontWeight: 950,
-  color: '#0f172a',
+  color: 'var(--text-primary)',
   letterSpacing: '-0.06em',
 };
 
@@ -1107,19 +1107,19 @@ const statAccentPillStyle: React.CSSProperties = {
 
 const panelStyle: React.CSSProperties = {
   minHeight: 0,
-  background: 'rgba(255,255,255,0.88)',
-  border: '1px solid rgba(15,23,42,0.06)',
+  background: 'var(--surface)',
+  border: '1px solid var(--border)',
   borderRadius: 22,
   overflow: 'hidden',
   boxShadow: 'var(--sh-panel)',
   display: 'flex',
   flexDirection: 'column',
-  backdropFilter: 'blur(16px)',
+  backdropFilter: 'none',
 };
 
 const panelHeaderStyle: React.CSSProperties = {
   padding: '16px 18px',
-  borderBottom: '1px solid #edf2f7',
+  borderBottom: '1px solid var(--border)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -1153,8 +1153,8 @@ const panelSubtitleStyle: React.CSSProperties = {
 
 const filterGridStyle: React.CSSProperties = {
   padding: 12,
-  background: '#fbfdff',
-  borderBottom: '1px solid #edf2f7',
+  background: 'var(--surface-raised)',
+  borderBottom: '1px solid var(--border)',
   display: 'grid',
   gridTemplateColumns: 'minmax(220px, 1fr) 145px 155px 145px',
   gap: 10,

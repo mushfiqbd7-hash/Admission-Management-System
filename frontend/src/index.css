@@ -398,7 +398,7 @@
   ::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.10); border-radius: 6px; }
   .dark .sams-app-shell ::-webkit-scrollbar-thumb { background: var(--border-strong) !important; }
   ::selection { background: #dbeafe; color: #1e40af; }
-  .dark ::selection { background: var(--navy-700) !important; color: var(--gray-50) !important; }
+  .dark ::selection { background: rgba(59,130,246,0.30) !important; color: #ffffff !important; }
   :focus-visible { outline: none; box-shadow: var(--sh-focus); border-radius: 8px; }
 }
 
@@ -428,11 +428,11 @@
   .sams-input:focus { border-color: var(--navy-400); box-shadow: 0 0 0 3px rgba(31,58,95,0.1); }
   .sams-table { width: 100%; border-collapse: collapse; }
   .sams-table th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); background: var(--gray-50); border-bottom: 1px solid var(--border); transition: background var(--dur-base), color var(--dur-base), border-color var(--dur-base); }
-  .dark .sams-table th { background: var(--navy-800); color: var(--gray-400); border-bottom-color: var(--navy-700); }
+  .dark .sams-table th { background: #111111; color: rgba(255,255,255,0.45); border-bottom-color: rgba(255,255,255,0.08); }
   .sams-table td { padding: 11px 16px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; transition: background var(--dur-fast), border-color var(--dur-fast); }
-  .dark .sams-table td { border-bottom-color: var(--navy-800); }
+  .dark .sams-table td { border-bottom-color: rgba(255,255,255,0.06); }
   .sams-table tbody tr:hover { background: var(--gray-25); }
-  .dark .sams-table tbody tr:hover { background: var(--navy-900); }
+  .dark .sams-table tbody tr:hover { background: #1a1a1a; }
   .badge { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 20px; font-size: 11.5px; font-weight: 500; border: 1px solid transparent; }
   .badge::before { content: ''; display: block; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.7; }
   .badge-draft { background: var(--status-draft-bg); color: var(--status-draft-text); border-color: var(--status-draft-border); }
@@ -444,7 +444,7 @@
   .badge-revoked { background: var(--status-revoked-bg); color: var(--status-revoked-text); border-color: var(--status-revoked-border); }
   .badge-pre_admission { background: var(--status-pre-bg); color: var(--status-pre-text); border-color: var(--status-pre-border); }
   .skeleton { background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-50) 50%, var(--gray-100) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-sm); }
-  .dark .skeleton { background: linear-gradient(90deg, var(--navy-800) 25%, var(--navy-900) 50%, var(--navy-800) 75%); }
+  .dark .skeleton { background: linear-gradient(90deg, #1a1a1a 25%, #222222 50%, #1a1a1a 75%); }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -679,7 +679,9 @@
 .dark .sams-app-shell [style*="color: rgb(29, 78, 216)"],
 .dark .sams-app-shell [style*="color: #1d4ed8"],
 .dark .sams-app-shell [style*="color: rgb(37, 99, 235)"],
-.dark .sams-app-shell [style*="color: #2563eb"] {
+.dark .sams-app-shell [style*="color: #2563eb"],
+.dark .sams-app-shell [style*="color: rgb(30, 58, 138)"],
+.dark .sams-app-shell [style*="color: #1e3a8a"] {
   color: var(--btn-subtle-color) !important;
 }
 
@@ -727,6 +729,7 @@
 .dark .sams-app-shell [style*="border: 1px solid #e5eaf2"],
 .dark .sams-app-shell [style*="border: 1px solid #e8edf4"],
 .dark .sams-app-shell [style*="border: 1px solid #edf2f7"],
+.dark .sams-app-shell [style*="border: 1px solid #eef2f7"],
 .dark .sams-app-shell [style*="border: 1px solid #dbe3ef"],
 .dark .sams-app-shell [style*="border: 1px solid #dbeafe"],
 .dark .sams-app-shell [style*="border-color: rgb(226, 232, 240)"],
@@ -749,10 +752,12 @@
 .dark .sams-app-shell [style*="border-bottom: 1px solid #e2e8f0"],
 .dark .sams-app-shell [style*="border-bottom: 1px solid #e8edf4"],
 .dark .sams-app-shell [style*="border-bottom: 1px solid #edf2f7"],
+.dark .sams-app-shell [style*="border-bottom: 1px solid #eef2f7"],
 .dark .sams-app-shell [style*="border-top: 1px solid rgb(226, 232, 240)"],
 .dark .sams-app-shell [style*="border-top: 1px solid #e2e8f0"],
 .dark .sams-app-shell [style*="border-top: 1px solid #e8edf4"],
-.dark .sams-app-shell [style*="border-top: 1px solid #edf2f7"] {
+.dark .sams-app-shell [style*="border-top: 1px solid #edf2f7"],
+.dark .sams-app-shell [style*="border-top: 1px solid #eef2f7"] {
   border-color: var(--border) !important;
 }
 

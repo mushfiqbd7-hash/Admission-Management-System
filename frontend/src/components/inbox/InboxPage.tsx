@@ -1225,7 +1225,7 @@ const railHelperCardStyle: CSSProperties = {
 const helperTitleStyle: CSSProperties = {
   fontSize: 12.5,
   fontWeight: 950,
-  color: '#1e3a8a',
+  color: 'var(--btn-subtle-color)',
 };
 
 const helperTextStyle: CSSProperties = {

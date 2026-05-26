@@ -84,7 +84,7 @@ export default function PublicApplicationPage() {
 const centeredPage: React.CSSProperties = {
   display: 'flex', flexDirection: 'column', alignItems: 'center',
   justifyContent: 'center', minHeight: '100vh', gap: 16,
-  background: '#f8fafc', padding: 24,
+  background: 'var(--surface-raised)', padding: 24,
 };
 
 const heading: React.CSSProperties = {
