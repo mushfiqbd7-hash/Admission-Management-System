@@ -57,17 +57,15 @@ function HeaderButton({
       style={buttonStyle}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-1px)';
-        e.currentTarget.style.boxShadow = dark
-          ? '0 6px 18px rgba(0,0,0,0.55)'
-          : '0 10px 22px rgba(15,23,42,0.12)';
-        e.currentTarget.style.borderColor = 'var(--status-processing-border)';
+        e.currentTarget.style.background = dark ? 'rgba(255,255,255,0.07)' : 'var(--surface-raised)';
+        e.currentTarget.style.borderColor = dark ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.14)';
+        e.currentTarget.style.color = dark ? '#ffffff' : 'var(--text-primary)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = dark
-          ? '0 2px 8px rgba(0,0,0,0.40)'
-          : '0 8px 18px rgba(15,23,42,0.08)';
-        e.currentTarget.style.borderColor = 'var(--ui-border)';
+        e.currentTarget.style.background = 'var(--surface)';
+        e.currentTarget.style.borderColor = 'var(--border)';
+        e.currentTarget.style.color = 'var(--text-secondary)';
       }}
     >
       {children}
@@ -122,7 +120,7 @@ export default function HeaderRealtimeActions() {
         count={unreadNotifications}
         onClick={() => navigate('/inbox?tab=notifications')}
       >
-        <Bell size={21} />
+        <Bell size={17} />
       </HeaderButton>
 
       <HeaderButton
@@ -134,7 +132,7 @@ export default function HeaderRealtimeActions() {
         count={unreadMessages}
         onClick={() => navigate('/inbox')}
       >
-        <Mail size={21} />
+        <Mail size={17} />
       </HeaderButton>
     </div>
   );
@@ -148,35 +146,36 @@ const wrapStyle: CSSProperties = {
 
 const buttonStyle: CSSProperties = {
   position: 'relative',
-  width: 54,
-  height: 54,
-  borderRadius: 18,
-  border: '1px solid var(--ui-border)',
+  width: 40,
+  height: 40,
+  borderRadius: 12,
+  border: '1px solid var(--border)',
   background: 'var(--surface)',
-  color: 'var(--btn-subtle-color)',
+  color: 'var(--text-secondary)',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   cursor: 'pointer',
-  boxShadow: 'var(--shadow-sm)',
+  boxShadow: 'none',
   transition: 'all 0.16s ease',
 };
 
 const badgeStyle: CSSProperties = {
   position: 'absolute',
-  top: -6,
-  right: -6,
-  minWidth: 21,
-  height: 21,
-  padding: '0 6px',
+  top: -5,
+  right: -5,
+  minWidth: 18,
+  height: 18,
+  padding: '0 5px',
   borderRadius: 999,
-  background: 'var(--btn-danger-bg)',
-  color: 'var(--btn-primary-color)',
+  background: '#ef4444',
+  color: '#ffffff',
   border: '2px solid var(--surface)',
-  fontSize: 10.5,
-  fontWeight: 950,
+  fontSize: 9.5,
+  fontWeight: 800,
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   lineHeight: 1,
+  animation: 'pulse-badge 2.4s ease-in-out infinite',
 };

@@ -173,7 +173,15 @@ export default function SettingsPage() {
                   {/* Avatar with upload overlay */}
                   <div className="relative shrink-0">
                     <div
-                      className="flex h-[78px] w-[78px] cursor-pointer items-center justify-center overflow-hidden rounded-[24px] bg-[#061a33] text-[30px] font-black text-white shadow-[0_16px_30px_rgba(6,26,51,0.18)]"
+                      className="flex h-[78px] w-[78px] cursor-pointer items-center justify-center overflow-hidden rounded-[24px] text-[30px] font-black text-white"
+                      style={{
+                        background: isDark
+                          ? 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%)'
+                          : 'linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%)',
+                        boxShadow: isDark
+                          ? '0 8px 24px rgba(37,99,235,0.35)'
+                          : '0 12px 28px rgba(30,58,95,0.22)',
+                      }}
                       onClick={() => !avatarUploading && fileInputRef.current?.click()}
                       title="Click to change profile picture"
                     >

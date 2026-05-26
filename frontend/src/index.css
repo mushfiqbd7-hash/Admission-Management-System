@@ -91,8 +91,8 @@
   /* Sidebar — flat dark, matches Slate Glass aesthetic */
   --sidebar-bg: #111111;
   --sidebar-border: rgba(255,255,255,0.07);
-  --sidebar-text: rgba(255,255,255,0.80);
-  --sidebar-muted: rgba(255,255,255,0.30);
+  --sidebar-text: rgba(255,255,255,0.88);
+  --sidebar-muted: rgba(255,255,255,0.44);
   --sidebar-footer-bg: #111111;
 
   /* Status badges */
@@ -177,17 +177,29 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.10) !important;
 }
 
-/* Active nav — black, no glow */
+/* Active nav — white pill on dark sidebar (light mode) */
 .sams-app-shell .sams-nav-item[aria-current="page"] {
   background: #ffffff !important;
   color: #111111 !important;
   box-shadow: none !important;
 }
+.sams-app-shell .sams-nav-item[aria-current="page"] span {
+  color: #111111 !important;
+}
+.sams-app-shell .sams-nav-item[aria-current="page"] svg {
+  color: #111111 !important;
+}
 
-/* Nav hover */
+/* Nav hover — light mode */
 .sams-app-shell .sams-nav-item:not([aria-current="page"]):hover {
-  background: rgba(255,255,255,0.10) !important;
+  background: rgba(255,255,255,0.12) !important;
   color: #ffffff !important;
+}
+.sams-app-shell .sams-nav-item:not([aria-current="page"]):hover span {
+  color: #ffffff !important;
+}
+.sams-app-shell .sams-nav-item:not([aria-current="page"]):hover svg {
+  color: rgba(255,255,255,0.85) !important;
 }
 
 /* Inputs — clean white */
@@ -348,8 +360,8 @@
   /* Sidebar — deep black, clean border */
   --sidebar-bg: #080808;
   --sidebar-border: rgba(255,255,255,0.07);
-  --sidebar-text: rgba(255,255,255,0.80);
-  --sidebar-muted: rgba(255,255,255,0.28);
+  --sidebar-text: rgba(255,255,255,0.90);
+  --sidebar-muted: rgba(255,255,255,0.50);
   --sidebar-footer-bg: #080808;
 
   /* Shadows — depth without color */
@@ -416,9 +428,13 @@
 }
 
 /* ANIMATIONS */
-@keyframes fadeUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+@keyframes fadeUp { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
 @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-.fade-up { animation: fadeUp 420ms var(--ease) both; }
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.18); }
+}
+.fade-up { animation: fadeUp 280ms var(--ease) both; }
 
 /* UTILITIES */
 @layer utilities {
@@ -430,9 +446,10 @@
   .sams-icon-button:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.18); color: var(--text-on-accent); transform: translateY(-1px); }
   .sams-icon-button:active { transform: translateY(0); }
   .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 38px; padding: 0 15px; background: var(--btn-primary-bg); color: var(--btn-primary-color); border: 1px solid var(--btn-primary-border); border-radius: var(--btn-radius); font-family: var(--font-ui); font-size: 13px; font-weight: 800; cursor: pointer; transition: background var(--dur-base), box-shadow var(--dur-base), transform var(--dur-fast), border-color var(--dur-base); box-shadow: var(--btn-primary-shadow); }
-  .btn-primary:hover { background: var(--btn-primary-bg-hover); box-shadow: var(--shadow-md); transform: translateY(-1px); }
-  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:hover { background: var(--btn-primary-bg-hover); box-shadow: 0 4px 14px rgba(0,0,0,0.22), 0 1px 3px rgba(0,0,0,0.14); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); box-shadow: none; }
   .btn-primary:disabled { opacity: 0.62; cursor: not-allowed; transform: none; box-shadow: none; }
+  .badge-pulse { animation: pulse-badge 2s ease-in-out infinite; }
   .btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 38px; padding: 0 14px; background: var(--btn-secondary-bg); color: var(--btn-secondary-color); border: 1px solid var(--btn-secondary-border); border-radius: var(--btn-radius); font-family: var(--font-ui); font-size: 13px; font-weight: 750; cursor: pointer; transition: background var(--dur-base), border-color var(--dur-base), color var(--dur-base), transform var(--dur-fast), box-shadow var(--dur-base); }
   .btn-ghost:hover { background: var(--btn-secondary-bg-hover); transform: translateY(-1px); }
   .btn-ghost:active { transform: translateY(0); }
@@ -1149,17 +1166,27 @@
   background: #1a1a1a !important;
 }
 
-/* Active nav — solid blue, clean */
+/* Active nav — solid blue pill + inset left-bar glow */
 .dark .sams-app-shell .sams-nav-item[aria-current="page"] {
   background: #3b82f6 !important;
-  box-shadow: none !important;
+  color: #ffffff !important;
+  box-shadow: 3px 0 0 rgba(255,255,255,0.20) inset, 0 1px 0 rgba(255,255,255,0.14) inset, 0 6px 18px -6px rgba(37,99,235,0.50) !important;
+}
+.dark .sams-app-shell .sams-nav-item[aria-current="page"] span,
+.dark .sams-app-shell .sams-nav-item[aria-current="page"] svg {
   color: #ffffff !important;
 }
 
-/* Nav hover */
+/* Nav hover — dark mode */
 .dark .sams-app-shell .sams-nav-item:not([aria-current="page"]):hover {
-  background: rgba(255,255,255,0.07) !important;
+  background: rgba(255,255,255,0.08) !important;
   color: #ffffff !important;
+}
+.dark .sams-app-shell .sams-nav-item:not([aria-current="page"]):hover span {
+  color: #ffffff !important;
+}
+.dark .sams-app-shell .sams-nav-item:not([aria-current="page"]):hover svg {
+  color: rgba(255,255,255,0.85) !important;
 }
 
 /* Scrollbar — thin neutral */
@@ -1348,10 +1375,9 @@
   animation: shimmer 1.5s infinite !important;
 }
 
-/* Sidebar section labels */
+/* Sidebar section labels — no extra opacity, token already defines contrast */
 .dark .sams-app-shell .sams-sidebar [style*="var(--sidebar-muted)"] {
   letter-spacing: 0.09em;
-  opacity: 0.60;
 }
 
 /* Icon buttons */

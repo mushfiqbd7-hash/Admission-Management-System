@@ -46,29 +46,30 @@ function NavItem({ label, path, icon: Icon, end: forceEnd }: {
       end={forceEnd ?? path === '/students'}
       title={label}
       style={({ isActive }) => ({
+        position: 'relative',
         display: 'flex',
         alignItems: 'center',
         gap: 10,
-        padding: '8px 10px',
+        padding: '9px 11px',
         marginBottom: 2,
-        borderRadius: 9,
+        borderRadius: 10,
         border: 'none',
         background: isActive ? 'var(--btn-primary-bg)' : 'transparent',
-        color: isActive ? 'var(--btn-primary-color)' : 'var(--sidebar-text)',
+        color: isActive ? '#ffffff' : 'var(--sidebar-text)',
         cursor: 'pointer',
         fontFamily: 'inherit',
         textDecoration: 'none',
         fontSize: 13.5,
-        fontWeight: isActive ? 600 : 500,
+        fontWeight: isActive ? 600 : 450,
         letterSpacing: '-0.01em',
         boxShadow: isActive
-          ? '0 1px 0 rgba(255,255,255,0.18) inset, 0 6px 16px -6px rgba(37,99,235,0.55), 0 2px 4px rgba(37,99,235,0.20)'
+          ? '3px 0 0 rgba(255,255,255,0.22) inset, 0 1px 0 rgba(255,255,255,0.16) inset, 0 6px 18px -6px rgba(37,99,235,0.50)'
           : 'none',
-        transition: 'background 140ms ease, color 140ms ease, box-shadow 140ms ease',
+        transition: 'background 160ms ease, color 160ms ease, box-shadow 160ms ease',
       })}
       className="sams-nav-item"
     >
-      <Icon size={16} strokeWidth={1.8} />
+      <Icon size={15} strokeWidth={2} />
       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {label}
       </span>
@@ -76,19 +77,28 @@ function NavItem({ label, path, icon: Icon, end: forceEnd }: {
   );
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+function SectionLabel({ children, withDivider = false }: { children: React.ReactNode; withDivider?: boolean }) {
   return (
-    <div style={{
-      padding: '6px 10px',
-      fontSize: 10.5,
-      fontWeight: 700,
-      color: 'var(--sidebar-muted)',
-      letterSpacing: '0.09em',
-      textTransform: 'uppercase',
-      marginTop: 18,
-      marginBottom: 2,
-    }}>
-      {children}
+    <div style={{ marginTop: withDivider ? 22 : 10, marginBottom: 3 }}>
+      {withDivider && (
+        <div style={{
+          height: 1,
+          background: 'rgba(255,255,255,0.07)',
+          marginBottom: 14,
+          marginLeft: 10,
+          marginRight: 10,
+        }} />
+      )}
+      <div style={{
+        padding: '0 11px',
+        fontSize: 10,
+        fontWeight: 700,
+        color: 'var(--sidebar-muted)',
+        letterSpacing: '0.10em',
+        textTransform: 'uppercase',
+      }}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -166,10 +176,10 @@ export default function AppShell() {
             A
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em', color: '#f8fafc' }}>
-            Admission
+            <div style={{ fontSize: 14.5, fontWeight: 700, letterSpacing: '-0.025em', color: '#ffffff' }}>
+              Admission
             </div>
-            <div style={{ fontSize: 11, color: 'var(--sidebar-muted)', marginTop: 1 }}>
+            <div style={{ fontSize: 10.5, color: 'var(--sidebar-muted)', marginTop: 1, letterSpacing: '0.01em' }}>
               Management System
             </div>
           </div>
@@ -193,7 +203,7 @@ export default function AppShell() {
         <div style={{ marginTop: 'auto', paddingTop: 16 }}>
           {(isAdmin || isAgentPlus) && (
             <>
-              <SectionLabel>Admin</SectionLabel>
+              <SectionLabel withDivider>Admin</SectionLabel>
               {ADMIN_ITEMS.filter(item => {
                 if ((item as any).adminOnly && !isAdmin) return false;
                 if ((item as any).agentPlus && !isAgentPlus) return false;
@@ -225,7 +235,7 @@ export default function AppShell() {
               : displayName.charAt(0).toUpperCase()}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#f8fafc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', letterSpacing: '-0.01em' }}>
               {displayName}
             </div>
             <div style={{ fontSize: 11, color: 'var(--sidebar-muted)', textTransform: 'capitalize', marginTop: 1 }}>
@@ -341,22 +351,42 @@ export default function AppShell() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
               <form onSubmit={handleTopSearch} className="hidden lg:block" style={{ position: 'relative' }}>
                 <Search style={{
-                  position: 'absolute', left: 14, top: '50%',
+                  position: 'absolute', left: 12, top: '50%',
                   transform: 'translateY(-50%)', color: 'var(--text-tertiary)',
-                  transition: 'color 0.25s ease',
-                }} size={16} />
+                  transition: 'color 0.2s ease', pointerEvents: 'none',
+                }} size={15} />
                 <input
                   value={topSearch}
                   onChange={(e) => setTopSearch(e.target.value)}
                   placeholder="Search applications..."
+                  onFocus={e => {
+                    e.currentTarget.style.borderColor = 'var(--accent)';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.14)';
+                  }}
+                  onBlur={e => {
+                    e.currentTarget.style.borderColor = 'var(--border)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
                   style={{
-                    height: 40, width: 280, paddingLeft: 40, paddingRight: 14,
-                    borderRadius: 12, border: '1px solid var(--border)',
-                    background: 'var(--surface)', fontSize: 13.5, color: 'var(--text-primary)',
+                    height: 38, width: 264, paddingLeft: 36, paddingRight: 52,
+                    borderRadius: 10, border: '1px solid var(--border)',
+                    background: isDark ? 'rgba(255,255,255,0.05)' : 'var(--surface)',
+                    fontSize: 13, color: 'var(--text-primary)',
                     outline: 'none', fontFamily: 'inherit',
-                    transition: 'background 0.25s ease, border-color 0.25s ease, color 0.25s ease',
+                    transition: 'background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease',
                   }}
                 />
+                <kbd style={{
+                  position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                  display: 'inline-flex', alignItems: 'center', gap: 2,
+                  fontSize: 10, fontWeight: 600, color: 'var(--text-tertiary)',
+                  background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)',
+                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.09)'}`,
+                  borderRadius: 5, padding: '2px 5px', fontFamily: 'inherit',
+                  pointerEvents: 'none',
+                }}>
+                  ⌘K
+                </kbd>
               </form>
               <HeaderRealtimeActions />
             </div>
@@ -364,7 +394,9 @@ export default function AppShell() {
         </header>
 
         <main style={{ flex: 1, minWidth: 0, overflowY: 'auto', overflowX: 'hidden', background: isDark ? '#0d0d0d' : 'var(--surface-sunken)', transition: 'background 0.25s ease' }}>
-          <Outlet />
+          <div key={location.pathname} className="fade-up" style={{ minHeight: '100%' }}>
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
