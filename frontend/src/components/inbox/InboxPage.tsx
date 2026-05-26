@@ -26,6 +26,7 @@ import {
 
 import { api, messagesApi } from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
+import { useTheme } from '@/context/ThemeContext';
 import type { Message, Notification } from '@/types';
 import { toast } from 'sonner';
 
@@ -218,6 +219,8 @@ function SkeletonList() {
 
 export default function InboxPage() {
   const { user } = useAuthStore();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   const navigate = useNavigate();
   const location = useLocation();
   const qc = useQueryClient();
@@ -512,7 +515,7 @@ export default function InboxPage() {
   ];
 
   return (
-    <div style={pageStyle}>
+    <div style={{ ...pageStyle, background: isDark ? '#0d0d0d' : pageStyle.background }}>
       {/* LEFT FOLDER RAIL */}
       <aside style={folderRailStyle}>
         <div style={railHeaderStyle}>

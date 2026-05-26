@@ -22,6 +22,7 @@ import { api } from '@/api/client';
 import { DEGREE_LABELS } from '@/types';
 import type { Student } from '@/types';
 import { useAuthStore } from '@/store/authStore';
+import { useTheme } from '@/context/ThemeContext';
 import { toast } from 'sonner';
 import ExportPanel from '../students/ExportPanel';
 
@@ -207,6 +208,8 @@ export default function WorkStationPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { user } = useAuthStore();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
 
   const canManage = user?.role === 'admin' || user?.role === 'staff';
 
@@ -338,7 +341,13 @@ export default function WorkStationPage() {
   }
 
   return (
-    <div style={isFullScreen ? fullScreenStyle : pageStyle}>
+    <div style={isFullScreen ? {
+      ...fullScreenStyle,
+      background: isDark ? '#0d0d0d' : fullScreenStyle.background,
+    } : {
+      ...pageStyle,
+      background: isDark ? '#0d0d0d' : pageStyle.background,
+    }}>
       {/* Status quick filters */}
       <div style={statusPanelStyle}>
         <div style={statusGridStyle}>

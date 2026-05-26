@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { KeyRound, Shield, User, Camera, Loader2 } from 'lucide-react';
 import { authApi, api } from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
+import { useTheme } from '@/context/ThemeContext';
 import { toast } from 'sonner';
 
 
@@ -64,6 +65,8 @@ function Spinner() {
 
 export default function SettingsPage() {
   const { user, setUser } = useAuthStore();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
 
   const [pw, setPw] = useState({ currentPassword: '', newPassword: '', confirm: '' });
   const [pwError, setPwError] = useState('');
@@ -151,7 +154,14 @@ export default function SettingsPage() {
   const avatarSrc = user?.avatar_url || null;
 
   return (
-    <div className="h-full overflow-auto bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.06),transparent_28%),linear-gradient(180deg,var(--ui-surface-subtle)_0%,var(--surface-muted)_100%)] px-6 py-7">
+    <div
+      className="h-full overflow-auto px-6 py-7"
+      style={{
+        background: isDark
+          ? '#0d0d0d'
+          : 'radial-gradient(circle at top left, rgba(37,99,235,0.06), transparent 28%), linear-gradient(180deg, var(--ui-surface-subtle) 0%, var(--surface-muted) 100%)',
+      }}
+    >
       <div className="mx-auto max-w-[1180px]">
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
 

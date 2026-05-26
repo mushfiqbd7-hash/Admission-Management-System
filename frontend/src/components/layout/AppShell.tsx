@@ -20,6 +20,7 @@ import {
 import HeaderRealtimeActions from '@/components/layout/HeaderRealtimeActions';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useAuthStore } from '@/store/authStore';
+import { useTheme } from '@/context/ThemeContext';
 
 const WORKSPACE_ITEMS = [
   { label: 'Dashboard',       path: '/dashboard',         icon: LayoutDashboard },
@@ -99,6 +100,9 @@ export default function AppShell() {
   const [topSearch, setTopSearch] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+
   const isAdmin        = user?.role === 'admin';
   const isAdminOrStaff = user?.role === 'admin' || user?.role === 'staff';
   const isAgentPlus    = ['admin', 'staff', 'agent'].includes(user?.role || '');
@@ -146,7 +150,6 @@ export default function AppShell() {
       overflowY: 'auto', overflowX: 'hidden',
       transition: 'background 0.25s ease, border-color 0.25s ease',
     }}>
-      {/* Brand */}
       <div style={{
         padding: '20px 16px 16px', flexShrink: 0, position: 'relative', zIndex: 1,
         borderBottom: '1px solid var(--sidebar-border)',
@@ -173,7 +176,6 @@ export default function AppShell() {
         </div>
       </div>
 
-      {/* Nav */}
       <nav
         style={{ flex: 1, padding: '6px 10px 12px', overflowY: 'auto', position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column' }}
         onClick={() => setMobileOpen(false)}
@@ -204,14 +206,12 @@ export default function AppShell() {
         </div>
       </nav>
 
-      {/* User block + Theme Toggle */}
       <div style={{
         padding: '12px 14px', borderTop: '1px solid var(--sidebar-border)', flexShrink: 0,
         background: 'var(--sidebar-footer-bg)',
         position: 'relative', zIndex: 1,
         transition: 'border-color 0.25s ease',
       }}>
-        {/* User Info */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
           <div style={{
             width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
@@ -234,17 +234,13 @@ export default function AppShell() {
           </div>
         </div>
 
-        {/* Controls: Theme Toggle + Sign Out */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
           <ThemeToggle />
-          
           <button
             onClick={handleLogout}
             className="sams-icon-button"
             title="Sign out"
-            style={{
-              flexShrink: 0
-            }}
+            style={{ flexShrink: 0 }}
           >
             <LogOut size={14} />
           </button>
@@ -256,11 +252,10 @@ export default function AppShell() {
   return (
     <div className="sams-app-shell" style={{
       display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden',
-      background: 'var(--canvas-mesh, #f4f7fb)',
+      background: isDark ? '#0a0a0a' : 'var(--canvas-mesh, #f4f7fb)',
       backgroundAttachment: 'fixed',
       transition: 'background 0.25s ease',
     }}>
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           onClick={() => setMobileOpen(false)}
@@ -271,12 +266,10 @@ export default function AppShell() {
         />
       )}
 
-      {/* Desktop sidebar */}
       <div className="hidden lg:flex" style={{ height: '100%', flexShrink: 0 }}>
         <Sidebar />
       </div>
 
-      {/* Mobile drawer */}
       <div style={{
         position: 'fixed', inset: 0, zIndex: 50,
         pointerEvents: mobileOpen ? 'auto' : 'none',
@@ -304,19 +297,17 @@ export default function AppShell() {
         </div>
       </div>
 
-      {/* Main area */}
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-        {/* Glass header (Cleaned: No toggle here anymore) */}
         <header style={{ flexShrink: 0, padding: '14px 20px 0' }}>
           <div style={{
             height: 64, padding: '0 20px', borderRadius: 16,
-            background: 'var(--surface-soft, rgba(255,255,255,0.82))',
+            background: isDark ? 'rgba(14,14,14,0.92)' : 'rgba(255,255,255,0.88)',
             backdropFilter: 'blur(24px) saturate(180%)',
             WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-            border: '1px solid var(--border)',
-            boxShadow: 'var(--sh-header)',
+            border: isDark ? '1px solid rgba(255,255,255,0.07)' : '1px solid var(--border)',
+            boxShadow: isDark ? '0 1px 0 rgba(255,255,255,0.04) inset, 0 4px 16px rgba(0,0,0,0.55)' : 'var(--sh-header)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
-            transition: 'background 0.25s ease, border-color 0.25s ease',
+            transition: 'background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
           }}>
             <button
               onClick={() => setMobileOpen(true)}
@@ -372,7 +363,7 @@ export default function AppShell() {
           </div>
         </header>
 
-        <main style={{ flex: 1, minWidth: 0, overflowY: 'auto', overflowX: 'hidden', background: 'var(--surface-sunken)', transition: 'background 0.25s ease' }}>
+        <main style={{ flex: 1, minWidth: 0, overflowY: 'auto', overflowX: 'hidden', background: isDark ? '#0d0d0d' : 'var(--surface-sunken)', transition: 'background 0.25s ease' }}>
           <Outlet />
         </main>
       </div>

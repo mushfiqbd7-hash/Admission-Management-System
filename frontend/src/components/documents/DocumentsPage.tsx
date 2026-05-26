@@ -19,6 +19,7 @@ import {
 
 import { api, sharedDocsApi } from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
+import { useTheme } from '@/context/ThemeContext';
 import { toast } from 'sonner';
 
 interface SharedDocument {
@@ -402,6 +403,8 @@ function UploadModal({
 
 export default function DocumentsPage() {
   const { user } = useAuthStore();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   const qc = useQueryClient();
 
   const canManage = user?.role === 'admin' || user?.role === 'staff';
@@ -530,7 +533,7 @@ export default function DocumentsPage() {
   const hasFilters = Boolean(search || catFilter);
 
   return (
-    <div className="docs-page">
+    <div className="docs-page" style={isDark ? { background: '#0d0d0d' } : undefined}>
       <style>{documentsPageCss}</style>
 
       <div className="docs-toolbar">
