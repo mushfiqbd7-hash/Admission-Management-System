@@ -1,6 +1,7 @@
 // src/components/layout/HeaderRealtimeActions.tsx
 import { useMemo, type CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../context/ThemeContext';
 import { useQuery } from '@tanstack/react-query';
 import { Bell, Mail } from 'lucide-react';
 
@@ -45,6 +46,9 @@ function HeaderButton({
   onClick: () => void;
   children: React.ReactNode;
 }) {
+  const { resolvedTheme } = useTheme();
+  const dark = resolvedTheme === 'dark';
+
   return (
     <button
       type="button"
@@ -53,12 +57,16 @@ function HeaderButton({
       style={buttonStyle}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-1px)';
-        e.currentTarget.style.boxShadow = '0 10px 22px rgba(15,23,42,0.12)';
+        e.currentTarget.style.boxShadow = dark
+          ? '0 6px 18px rgba(0,0,0,0.55)'
+          : '0 10px 22px rgba(15,23,42,0.12)';
         e.currentTarget.style.borderColor = 'var(--status-processing-border)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = '0 8px 18px rgba(15,23,42,0.08)';
+        e.currentTarget.style.boxShadow = dark
+          ? '0 2px 8px rgba(0,0,0,0.40)'
+          : '0 8px 18px rgba(15,23,42,0.08)';
         e.currentTarget.style.borderColor = 'var(--ui-border)';
       }}
     >
@@ -150,7 +158,7 @@ const buttonStyle: CSSProperties = {
   alignItems: 'center',
   justifyContent: 'center',
   cursor: 'pointer',
-  boxShadow: '0 8px 18px rgba(15,23,42,0.08)',
+  boxShadow: 'var(--shadow-sm)',
   transition: 'all 0.16s ease',
 };
 

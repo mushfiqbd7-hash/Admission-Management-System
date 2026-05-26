@@ -1102,10 +1102,25 @@
 }
 
 /* Kill residual backdrop-filter on inline-styled white cards in dark mode */
+/* NOTE: header > div restored below with higher-specificity rule */
 .dark .sams-app-shell [style*="backdrop-filter"],
 .dark .sams-app-shell [style*="backdropFilter"] {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+
+/* ─── HEADER GLASS RESTORE ────────────────────────────────────────────────
+   spec (0,3,2) > nuclear kill (0,3,0) → header blur wins.
+   Keeps the cinematic frosted-glass pill in dark mode.
+   ──────────────────────────────────────────────────────────────────────── */
+.dark .sams-app-shell header > div[style*="backdropFilter"],
+.dark .sams-app-shell header > div[style*="backdrop-filter"],
+.dark .sams-app-shell header > div[style] {
+  background: rgba(10,10,10,0.88) !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset !important;
 }
 
 /* Table rows — solid dark, kill f8fafc / f7f9fc row tints */
@@ -1394,7 +1409,7 @@
   border-color: var(--border) !important;
 }
 
-/* Tab active underline — keep it visible */
+/* Tab active underline — keep visible */
 .dark .sams-app-shell [class*="border-b-2"] {
   border-bottom-color: var(--accent) !important;
 }
@@ -1411,4 +1426,44 @@
 .dark .sams-app-shell [class*="text-slate-4"],
 .dark .sams-app-shell [class*="text-slate-5"] {
   color: var(--text-tertiary) !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE CONTAINER BACKGROUNDS — deep black in dark mode
+   Kills gradient containers: WorkStation, Settings, Docs.
+   ═══════════════════════════════════════════════════════ */
+
+/* WorkStation pageStyle / fullScreenStyle inline gradients */
+.dark .sams-app-shell [style*="var(--ui-surface-subtle)"] {
+  background: #0a0a0a !important;
+}
+
+/* DocumentsPage .docs-page injected via <style> tag */
+.dark .sams-app-shell .docs-page {
+  background: #0a0a0a !important;
+}
+.dark .sams-app-shell .docs-toolbar {
+  background: rgba(20,20,20,0.92) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.40) !important;
+}
+
+/* SettingsPage Tailwind arbitrary bg-[radial-gradient(...)] class */
+.dark .sams-app-shell [class*="bg-[radial-gradient"] {
+  background: #0a0a0a !important;
+}
+
+/* Any remaining light #f9* inline backgrounds */
+.dark .sams-app-shell [style*="background: #f9"],
+.dark .sams-app-shell [style*="background:#f9"],
+.dark .sams-app-shell [style*="background: rgb(249"] {
+  background: var(--surface-raised) !important;
+}
+
+/* Kill navy-tinted box-shadows on header icon buttons */
+.dark .sams-app-shell header button[style*="box-shadow"] {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.50) !important;
+}
+.dark .sams-app-shell header button[style*="box-shadow"]:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.60) !important;
 }
