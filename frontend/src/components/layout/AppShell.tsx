@@ -54,16 +54,16 @@ function NavItem({ label, path, icon: Icon, end: forceEnd }: {
         marginBottom: 2,
         borderRadius: 10,
         border: 'none',
-        background: isActive ? 'var(--btn-primary-bg)' : 'transparent',
-        color: isActive ? '#ffffff' : 'var(--sidebar-text)',
+        background: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
+        color: isActive ? 'var(--sidebar-active-text)' : 'var(--sidebar-text)',
         cursor: 'pointer',
         fontFamily: 'inherit',
         textDecoration: 'none',
         fontSize: 13.5,
-        fontWeight: isActive ? 600 : 450,
+        fontWeight: isActive ? 600 : 500,
         letterSpacing: '-0.01em',
         boxShadow: isActive
-          ? '3px 0 0 rgba(255,255,255,0.22) inset, 0 1px 0 rgba(255,255,255,0.16) inset, 0 6px 18px -6px rgba(37,99,235,0.50)'
+          ? '0 2px 8px rgba(37,99,235,0.35), 0 1px 0 rgba(255,255,255,0.10) inset'
           : 'none',
         transition: 'background 160ms ease, color 160ms ease, box-shadow 160ms ease',
       })}

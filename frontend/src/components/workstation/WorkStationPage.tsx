@@ -217,6 +217,9 @@ export default function WorkStationPage() {
   const [statusFilter, setStatusFilter] = useState<'all' | WSStatus>('all');
   const [page, setPage] = useState(1);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [tableZoom, setTableZoom] = useState(0.85);
+  const zoomIn  = () => setTableZoom(z => Math.min(1.5, +(z + 0.05).toFixed(2)));
+  const zoomOut = () => setTableZoom(z => Math.max(0.5, +(z - 0.05).toFixed(2)));
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -452,6 +455,29 @@ export default function WorkStationPage() {
           <span style={recordsTextStyle}>
             {allStudents.length} visible · {total} workstation records
           </span>
+
+          {/* Zoom control */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 4,
+            background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+            border: `1px solid ${isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)'}`,
+            borderRadius: 10, padding: '3px 6px',
+          }}>
+            <button
+              onClick={zoomOut}
+              title="Zoom out (table only)"
+              style={{ ...zoomBtnStyle, color: isDark ? 'rgba(255,255,255,0.7)' : '#374151' }}
+            >−</button>
+            <span style={{ fontSize: 11.5, fontWeight: 700, minWidth: 36, textAlign: 'center', color: isDark ? 'rgba(255,255,255,0.6)' : '#6b7280', fontFamily: 'monospace' }}>
+              {Math.round(tableZoom * 100)}%
+            </span>
+            <button
+              onClick={zoomIn}
+              title="Zoom in (table only)"
+              style={{ ...zoomBtnStyle, color: isDark ? 'rgba(255,255,255,0.7)' : '#374151' }}
+            >+</button>
+          </div>
+
           <button
             style={fullScreenBtnStyle}
             onClick={() => setIsFullScreen((v) => !v)}
@@ -465,6 +491,7 @@ export default function WorkStationPage() {
 
       {/* Table */}
       <div style={isFullScreen ? tableWrapFullStyle : tableWrapStyle}>
+        <div style={{ transformOrigin: 'top left', transform: `scale(${tableZoom})`, width: `${100 / tableZoom}%` }}>
         <table style={tableStyle}>
           <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
             <tr>
@@ -730,6 +757,7 @@ export default function WorkStationPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Footer */}
@@ -937,6 +965,24 @@ const tableWrapFullStyle: CSSProperties = {
   minHeight: 0,
   overflow: 'auto',
   padding: '14px 0 0',
+};
+
+const zoomBtnStyle: CSSProperties = {
+  width: 24,
+  height: 24,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  border: 'none',
+  background: 'transparent',
+  cursor: 'pointer',
+  borderRadius: 6,
+  fontSize: 16,
+  fontWeight: 700,
+  fontFamily: 'monospace',
+  lineHeight: 1,
+  padding: 0,
+  transition: 'background 120ms ease',
 };
 
 const fullScreenBtnStyle: CSSProperties = {
